@@ -29,7 +29,7 @@ class HomeFragment : Fragment() {
 
         binding.button.setOnClickListener {
             val transaction = childFragmentManager.beginTransaction()
-            transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+            transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_MATCH_ACTIVITY_OPEN)
             transaction.add(R.id.container, DialogLikeFragment.newInstance())
             transaction.addToBackStack(null)
             transaction.commit()
