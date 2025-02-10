@@ -1,7 +1,10 @@
 package com.mirrar.tablettryon
 
+import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.AttributeSet
+import android.view.View
 import com.mirrar.tablettryon.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {

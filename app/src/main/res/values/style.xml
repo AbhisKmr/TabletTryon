@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="CustomAlertDialog" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="android:windowBackground">@android:color/transparent</item>
+    </style>
+
+    <style name="CustomCheckbox">
+        <item name="colorControlActivated">@color/black</item>
+        <item name="colorControlNormal">@color/black</item>
+    </style>
+</resources>
