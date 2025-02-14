@@ -7,12 +7,16 @@
 
     <fragment
         android:id="@+id/cameraFragment"
-        android:name="com.mirrar.tablettryon.fragment.CameraFragment"
+        android:name="com.mirrar.tablettryon.fragment.camera.CameraFragment"
         android:label="fragment_camera"
         tools:layout="@layout/fragment_camera" />
     <fragment
         android:id="@+id/homeFragment"
         android:name="com.mirrar.tablettryon.fragment.HomeFragment"
         android:label="fragment_home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_homeFragment_to_cameraFragment"
+            app:destination="@id/cameraFragment" />
+    </fragment>
 </navigation>
