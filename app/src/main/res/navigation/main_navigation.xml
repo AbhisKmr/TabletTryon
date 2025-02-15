@@ -6,17 +6,31 @@
     app:startDestination="@id/homeFragment">
 
     <fragment
-        android:id="@+id/cameraFragment"
-        android:name="com.mirrar.tablettryon.fragment.camera.CameraFragment"
-        android:label="fragment_camera"
-        tools:layout="@layout/fragment_camera" />
-    <fragment
         android:id="@+id/homeFragment"
         android:name="com.mirrar.tablettryon.fragment.HomeFragment"
         android:label="fragment_home"
-        tools:layout="@layout/fragment_home" >
+        tools:layout="@layout/fragment_home">
         <action
             android:id="@+id/action_homeFragment_to_cameraFragment"
             app:destination="@id/cameraFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/cameraFragment"
+        android:name="com.mirrar.tablettryon.fragment.camera.CameraFragment"
+        android:label="fragment_camera"
+        tools:layout="@layout/fragment_camera">
+        <action
+            android:id="@+id/action_cameraFragment_to_cameraImagePreviewFragment4"
+            app:destination="@id/cameraImagePreviewFragment4"
+            app:enterAnim="@anim/slide_in_right"
+            app:popExitAnim="@anim/slide_out_left" />
+    </fragment>
+    <fragment
+        android:id="@+id/cameraImagePreviewFragment4"
+        android:name="com.mirrar.tablettryon.fragment.camera.CameraImagePreviewFragment"
+        android:label="fragment_camera_image_preview"
+        tools:layout="@layout/fragment_camera_image_preview">
+
     </fragment>
 </navigation>

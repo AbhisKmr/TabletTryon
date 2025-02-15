@@ -9,9 +9,7 @@ import android.widget.CheckBox
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.navigation.fragment.findNavController
-import com.google.android.material.navigation.NavigationView
 import com.mirrar.tablettryon.R
-import com.mirrar.tablettryon.tools.CustomFragmentNavigator
 
 
 class DialogLikeFragment : Fragment() {
