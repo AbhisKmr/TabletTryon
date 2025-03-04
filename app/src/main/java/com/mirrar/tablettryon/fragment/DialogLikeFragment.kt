@@ -1,6 +1,7 @@
 package com.mirrar.tablettryon.fragment
 
 import android.os.Bundle
+import android.text.Html
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,27 +11,38 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.navigation.fragment.findNavController
 import com.mirrar.tablettryon.R
+import com.mirrar.tablettryon.databinding.CustomAlertLayoutBinding
+import com.mirrar.tablettryon.tools.FirebaseHelper
 
 
 class DialogLikeFragment : Fragment() {
 
+    private var _binding: CustomAlertLayoutBinding? = null
+    private val binding get() = _binding!!
+
+    private val firebaseHelper = FirebaseHelper()
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.custom_alert_layout, container, false)
+    ): View {
+        _binding = CustomAlertLayoutBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val check = view.findViewById<CheckBox>(R.id.checkbox)
-
-        view.findViewById<View>(R.id.closeView).setOnClickListener {
+        binding.closeView.setOnClickListener {
             dismissDialog()
         }
 
-        view.findViewById<View>(R.id.imageView2).setOnClickListener {
+        binding.imageView2.setOnClickListener {
             dismissDialog()
         }
 
@@ -38,14 +50,21 @@ class DialogLikeFragment : Fragment() {
         exitTransition = android.transition.Fade()
 
         view.findViewById<Button>(R.id.button).setOnClickListener {
-            if (!check.isChecked) {
-                check.error = "Please accept the terms to proceed."
+            if (!binding.checkbox.isChecked) {
+                binding.checkbox.error = "Please accept the terms to proceed."
                 return@setOnClickListener
             }
 
             findNavController().navigate(R.id.cameraFragment)
         }
 
+        observer()
+    }
+
+    private fun observer() {
+        firebaseHelper.getTermAndCondition {
+            binding.tnc.text = Html.fromHtml(it, Html.FROM_HTML_MODE_COMPACT)
+        }
     }
 
     private fun dismissDialog() {
