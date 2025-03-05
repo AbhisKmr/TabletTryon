@@ -38,7 +38,7 @@
     </fragment>
     <fragment
         android:id="@+id/tryOnFragment"
-        android:name="com.mirrar.tablettryon.view.fragment.TryOnFragment"
+        android:name="com.mirrar.tablettryon.view.fragment.tryon.TryOnFragment"
         android:label="fragment_try_on"
         tools:layout="@layout/fragment_try_on" />
 </navigation>
