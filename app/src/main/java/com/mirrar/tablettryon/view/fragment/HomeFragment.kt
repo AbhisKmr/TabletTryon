@@ -1,4 +1,4 @@
-package com.mirrar.tablettryon.fragment
+package com.mirrar.tablettryon.view.fragment
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
