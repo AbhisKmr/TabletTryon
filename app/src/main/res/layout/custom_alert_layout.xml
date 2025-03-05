@@ -36,6 +36,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
+            android:id="@+id/textView6"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
@@ -53,6 +54,7 @@
             app:layout_constraintTop_toBottomOf="@+id/textView2" />
 
         <ScrollView
+            android:id="@+id/scrollView2"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_margin="64dp"
@@ -60,7 +62,8 @@
             android:textColor="@color/black"
             android:textSize="16sp"
             app:layout_constraintBottom_toTopOf="@+id/checkbox"
-            app:layout_constraintTop_toBottomOf="@+id/textView2">
+            app:layout_constraintTop_toBottomOf="@+id/textView2"
+            tools:layout_editor_absoluteX="64dp">
 
             <TextView
                 android:id="@+id/tnc"
@@ -72,6 +75,17 @@
                 tools:text="@tools:sample/lorem/random" />
 
         </ScrollView>
+
+        <ProgressBar
+            android:id="@+id/loader"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminateTint="@color/text_black"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@+id/scrollView2"
+            app:layout_constraintEnd_toEndOf="@+id/scrollView2"
+            app:layout_constraintStart_toStartOf="@+id/scrollView2"
+            app:layout_constraintTop_toBottomOf="@+id/textView6" />
 
         <androidx.appcompat.widget.AppCompatCheckBox
             android:id="@+id/checkbox"
@@ -93,20 +107,20 @@
 
         <Button
             android:id="@+id/button"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="100dp"
-            android:backgroundTint="@color/black"
+            android:backgroundTint="@color/primery_purple"
             android:maxWidth="1000dp"
             android:maxLines="1"
-            android:paddingHorizontal="74dp"
-            android:paddingVertical="24dp"
+            android:paddingHorizontal="24dp"
+            android:paddingVertical="17dp"
             android:text="Accept and Proceed with Confidence"
             android:textColor="@color/white"
-            android:textSize="20sp"
+            android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintEnd_toEndOf="@+id/scrollView2"
+            app:layout_constraintStart_toStartOf="@+id/scrollView2" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

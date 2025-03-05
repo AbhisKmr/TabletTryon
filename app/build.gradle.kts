@@ -49,6 +49,13 @@ dependencies {
     implementation("androidx.navigation:navigation-fragment-ktx:2.8.6")
     implementation("androidx.navigation:navigation-ui-ktx:2.8.6")
     implementation("com.google.firebase:firebase-database:21.0.0")
+
+    // search algolia
+//    implementation("com.algolia:instantsearch-compose:3.3.0")
+    implementation("com.algolia:instantsearch-android-paging3:3.3.0")
+
+    implementation("com.algolia:algoliasearch-client-kotlin:2.1.3")
+
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.2.1")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")

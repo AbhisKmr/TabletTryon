@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.CheckBox
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.navigation.fragment.findNavController
@@ -49,7 +50,7 @@ class DialogLikeFragment : Fragment() {
         enterTransition = android.transition.Fade()
         exitTransition = android.transition.Fade()
 
-        view.findViewById<Button>(R.id.button).setOnClickListener {
+        binding.button.setOnClickListener {
             if (!binding.checkbox.isChecked) {
                 binding.checkbox.error = "Please accept the terms to proceed."
                 return@setOnClickListener
@@ -58,11 +59,13 @@ class DialogLikeFragment : Fragment() {
             findNavController().navigate(R.id.cameraFragment)
         }
 
+        binding.loader.isVisible = binding.tnc.text.isEmpty()
         observer()
     }
 
     private fun observer() {
         firebaseHelper.getTermAndCondition {
+            binding.loader.isVisible = false
             binding.tnc.text = Html.fromHtml(it, Html.FROM_HTML_MODE_COMPACT)
         }
     }
