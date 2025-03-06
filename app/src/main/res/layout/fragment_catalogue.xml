@@ -34,13 +34,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingHorizontal="1dp"
-            android:paddingVertical="2dp">
+            android:padding="12dp">
 
             <ImageView
                 android:layout_width="74dp"
                 android:layout_height="74dp"
-                android:src="@drawable/close"
+                android:src="@drawable/close_white"
                 android:visibility="invisible" />
 
             <ImageView
@@ -48,8 +47,7 @@
                 android:layout_width="74dp"
                 android:layout_height="74dp"
                 android:layout_marginTop="24dp"
-                android:src="@drawable/close"
-                app:tint="@color/white" />
+                android:src="@drawable/close_white" />
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 

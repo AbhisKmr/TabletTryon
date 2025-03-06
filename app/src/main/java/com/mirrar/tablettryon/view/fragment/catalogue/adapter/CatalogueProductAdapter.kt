@@ -32,7 +32,7 @@ class CatalogueProductAdapter : RecyclerView.Adapter<CatalogueProductAdapter.Vie
     override fun onBindViewHolder(holder: CatalogueProductAdapter.ViewHolder, position: Int) {
 
         holder.binding.tag.setImageDrawable(
-            if (position < 3) {
+            if (position < 4) {
                 ContextCompat.getDrawable(ctx, R.drawable.recommended_orange)
             } else if (position < 5) {
                 ContextCompat.getDrawable(ctx, R.drawable.new_tag)
