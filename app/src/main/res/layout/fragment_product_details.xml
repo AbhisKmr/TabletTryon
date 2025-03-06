@@ -20,7 +20,9 @@
         android:layout_height="0dp"
         android:layout_margin="64dp"
         android:background="@drawable/rounded_corner"
+        android:clickable="true"
         android:clipChildren="true"
+        android:focusable="true"
         app:cardCornerRadius="64dp"
         app:layout_constraintHeight_percent=".8"
         app:layout_constraintTop_toTopOf="parent">

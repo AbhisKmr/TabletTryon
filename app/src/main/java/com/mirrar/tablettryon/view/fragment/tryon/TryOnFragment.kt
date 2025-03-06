@@ -12,6 +12,7 @@ import com.mirrar.tablettryon.databinding.FragmentTryOnBinding
 import com.mirrar.tablettryon.view.fragment.DialogLikeFragment
 import com.mirrar.tablettryon.view.fragment.EmailFragment
 import com.mirrar.tablettryon.view.fragment.ProductDetailsFragment
+import com.mirrar.tablettryon.view.fragment.bookmark.YouBookmarkFragment
 import com.mirrar.tablettryon.view.fragment.tryon.adapter.ProductAdapter
 
 class TryOnFragment : Fragment() {
@@ -45,6 +46,10 @@ class TryOnFragment : Fragment() {
 
         binding.email.setOnClickListener {
             openFragment(EmailFragment.newInstance())
+        }
+
+        binding.cardView2.setOnClickListener {
+            openFragment(YouBookmarkFragment.newInstance())
         }
 
         binding.productRecycler.adapter = ProductAdapter()
