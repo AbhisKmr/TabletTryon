@@ -10,6 +10,7 @@ import androidx.navigation.fragment.findNavController
 import com.mirrar.tablettryon.R
 import com.mirrar.tablettryon.databinding.FragmentTryOnBinding
 import com.mirrar.tablettryon.view.fragment.DialogLikeFragment
+import com.mirrar.tablettryon.view.fragment.EmailFragment
 import com.mirrar.tablettryon.view.fragment.ProductDetailsFragment
 import com.mirrar.tablettryon.view.fragment.tryon.adapter.ProductAdapter
 
@@ -39,13 +40,21 @@ class TryOnFragment : Fragment() {
         }
 
         binding.details.setOnClickListener {
-            val transaction = childFragmentManager.beginTransaction()
-            transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_MATCH_ACTIVITY_OPEN)
-            transaction.add(R.id.container, ProductDetailsFragment.newInstance())
-            transaction.addToBackStack(null)
-            transaction.commit()
+            openFragment(ProductDetailsFragment.newInstance())
+        }
+
+        binding.email.setOnClickListener {
+            openFragment(EmailFragment.newInstance())
         }
 
         binding.productRecycler.adapter = ProductAdapter()
+    }
+
+    private fun openFragment(fr: Fragment) {
+        val transaction = childFragmentManager.beginTransaction()
+        transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_MATCH_ACTIVITY_OPEN)
+        transaction.add(R.id.container, fr)
+        transaction.addToBackStack(null)
+        transaction.commit()
     }
 }
