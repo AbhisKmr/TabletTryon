@@ -40,5 +40,14 @@
         android:id="@+id/tryOnFragment"
         android:name="com.mirrar.tablettryon.view.fragment.tryon.TryOnFragment"
         android:label="fragment_try_on"
-        tools:layout="@layout/fragment_try_on" />
+        tools:layout="@layout/fragment_try_on" >
+        <action
+            android:id="@+id/action_tryOnFragment_to_catalogueFragment"
+            app:destination="@id/catalogueFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/catalogueFragment"
+        android:name="com.mirrar.tablettryon.view.fragment.catalogue.CatalogueFragment"
+        android:label="fragment_catalogue"
+        tools:layout="@layout/fragment_catalogue" />
 </navigation>

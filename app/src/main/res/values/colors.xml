@@ -4,6 +4,7 @@
     <color name="white">#FFFFFFFF</color>
     <color name="button_gray">#cfced6</color>
     <color name="text_gray">#868595</color>
+    <color name="chip_gray">#E7E7EA</color>
     <color name="text_black">#0E0B2B</color>
     <color name="primery_purple">#7D4AE6</color>
     <color name="primery_purple_light">#D4C2F7</color>

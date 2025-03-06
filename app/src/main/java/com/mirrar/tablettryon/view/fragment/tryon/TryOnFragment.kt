@@ -5,6 +5,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.fragment.findNavController
+import com.mirrar.tablettryon.R
 import com.mirrar.tablettryon.databinding.FragmentTryOnBinding
 import com.mirrar.tablettryon.view.fragment.tryon.adapter.ProductAdapter
 
@@ -28,6 +30,10 @@ class TryOnFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        binding.catalogue.setOnClickListener {
+            findNavController().navigate(R.id.action_tryOnFragment_to_catalogueFragment)
+        }
 
         binding.productRecycler.adapter = ProductAdapter()
     }
