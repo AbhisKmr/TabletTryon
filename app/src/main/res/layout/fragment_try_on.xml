@@ -98,14 +98,20 @@
         app:cardCornerRadius="44dp"
         app:cardElevation="0dp"
         app:layout_constraintHeight_percent=".7"
-        app:layout_constraintTop_toBottomOf="@+id/cardView2"
-        tools:layout_editor_absoluteX="24dp">
+        app:layout_constraintTop_toBottomOf="@+id/cardView2">
 
         <ImageView
+            android:id="@+id/imagePreview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="centerCrop"
             android:src="@drawable/tryon_image" />
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="140dp"
+            android:layout_gravity="bottom"
+            android:src="@drawable/black_bottom_gradient" />
 
     </androidx.cardview.widget.CardView>
 

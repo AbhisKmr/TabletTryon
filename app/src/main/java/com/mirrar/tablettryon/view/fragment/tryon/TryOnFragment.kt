@@ -1,10 +1,17 @@
 package com.mirrar.tablettryon.view.fragment.tryon
 
+import android.Manifest
+import android.content.pm.PackageManager
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentTransaction
@@ -70,6 +77,10 @@ class TryOnFragment : Fragment() {
             }
         }
 
+        binding.cardView3.setOnClickListener {
+            checkPermissionAndOpenGallery()
+        }
+
         val adapter = ProductAdapter {
             selectedProduct = it
             updateHeartIcon(Bookmarks.getBookmarks())
@@ -105,5 +116,67 @@ class TryOnFragment : Fragment() {
 
     private fun openDialogFragment(fragment: DialogFragment) {
         fragment.show(childFragmentManager, fragment.tag)
+    }
+
+    private val pickImageLauncher = registerForActivityResult(
+        ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        uri?.let {
+            handleImageSelection(it)
+        }
+    }
+
+    private val permissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+            if (isGranted) {
+                openGallery()
+            } else {
+                Toast.makeText(requireContext(), "Permission Denied", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+    private fun checkPermissionAndOpenGallery() {
+        val permission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            Manifest.permission.READ_MEDIA_IMAGES
+        } else {
+            Manifest.permission.READ_EXTERNAL_STORAGE
+        }
+
+        when {
+            ContextCompat.checkSelfPermission(
+                requireContext(),
+                permission
+            ) == PackageManager.PERMISSION_GRANTED -> {
+                openGallery()
+            }
+
+            shouldShowRequestPermissionRationale(permission) -> {
+                showPermissionRationale(permission)
+            }
+
+            else -> {
+                permissionLauncher.launch(permission)
+            }
+        }
+    }
+
+    private fun showPermissionRationale(permission: String) {
+        AlertDialog.Builder(requireContext())
+            .setTitle("Permission Needed")
+            .setMessage("This app requires access to your gallery to select images.")
+            .setPositiveButton("OK") { _, _ ->
+                permissionLauncher.launch(permission)
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
+    private fun openGallery() {
+        pickImageLauncher.launch("image/*")
+    }
+
+    private fun handleImageSelection(uri: Uri) {
+        binding.imagePreview.setImageURI(uri)
+        Toast.makeText(requireContext(), "Image Selected: $uri", Toast.LENGTH_SHORT).show()
     }
 }
