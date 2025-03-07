@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -51,16 +52,16 @@ class TryOnFragment : Fragment() {
 
         binding.details.setOnClickListener {
             if (selectedProduct != null) {
-                openFragment(ProductDetailsFragment.newInstance(selectedProduct!!))
+                openDialogFragment(ProductDetailsFragment.newInstance(selectedProduct!!))
             }
         }
 
         binding.email.setOnClickListener {
-            openFragment(EmailFragment.newInstance())
+            openDialogFragment(EmailFragment.newInstance())
         }
 
         binding.cardView2.setOnClickListener {
-            openFragment(YouBookmarkFragment.newInstance())
+            openDialogFragment(YouBookmarkFragment.newInstance())
         }
 
         binding.wishlist.setOnClickListener {
@@ -100,6 +101,10 @@ class TryOnFragment : Fragment() {
         }
 
         binding.wishlist.setCompoundDrawablesWithIntrinsicBounds(drawable, null, null, null)
+    }
+
+    private fun openDialogFragment(fragment: DialogFragment) {
+        fragment.show(childFragmentManager, fragment.tag) // No need to add to back stack
     }
 
     private fun openFragment(fr: Fragment) {

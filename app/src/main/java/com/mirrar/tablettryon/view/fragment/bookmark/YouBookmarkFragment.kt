@@ -5,12 +5,14 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentTransaction
+import com.mirrar.tablettryon.R
 import com.mirrar.tablettryon.databinding.FragmentYouBookmarkBinding
 import com.mirrar.tablettryon.utility.Bookmarks
 import com.mirrar.tablettryon.view.fragment.bookmark.adapter.BookmarkAdapter
 
-class YouBookmarkFragment : Fragment() {
+class YouBookmarkFragment : DialogFragment() {
 
     private var _binding: FragmentYouBookmarkBinding? = null
     private val binding get() = _binding!!
@@ -27,6 +29,17 @@ class YouBookmarkFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
+
+    override fun onStart() {
+        super.onStart()
+        dialog?.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setStyle(STYLE_NORMAL, R.style.FullScreenDialog)
+    }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

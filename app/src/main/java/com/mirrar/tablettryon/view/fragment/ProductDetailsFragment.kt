@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentTransaction
 import com.bumptech.glide.Glide
 import com.mirrar.tablettryon.R
@@ -13,7 +14,7 @@ import com.mirrar.tablettryon.databinding.FragmentProductDetailsBinding
 import com.mirrar.tablettryon.utility.Bookmarks
 import com.mirrar.tablettryon.view.fragment.tryon.dataModel.Product
 
-class ProductDetailsFragment(private val product: Product) : Fragment() {
+class ProductDetailsFragment(private val product: Product) : DialogFragment() {
 
     private var _binding: FragmentProductDetailsBinding? = null
     private val binding get() = _binding!!
@@ -24,6 +25,16 @@ class ProductDetailsFragment(private val product: Product) : Fragment() {
     ): View {
         _binding = FragmentProductDetailsBinding.inflate(inflater, container, false)
         return binding.root
+    }
+
+    override fun onStart() {
+        super.onStart()
+        dialog?.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setStyle(STYLE_NORMAL, R.style.FullScreenDialog)
     }
 
     override fun onDestroyView() {
