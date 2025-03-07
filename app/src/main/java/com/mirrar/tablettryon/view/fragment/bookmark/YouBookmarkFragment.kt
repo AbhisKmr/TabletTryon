@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.FragmentTransaction
 import com.mirrar.tablettryon.databinding.FragmentYouBookmarkBinding
+import com.mirrar.tablettryon.utility.Bookmarks
 import com.mirrar.tablettryon.view.fragment.bookmark.adapter.BookmarkAdapter
 
 class YouBookmarkFragment : Fragment() {
@@ -38,7 +39,15 @@ class YouBookmarkFragment : Fragment() {
             dismissDialog()
         }
 
-        binding.productRecycler.adapter = BookmarkAdapter()
+        val bookmarkAdapter = BookmarkAdapter()
+        Bookmarks.bookmarks.observe(viewLifecycleOwner) { bookmarkedProducts ->
+            if (bookmarkedProducts == null) {
+                return@observe
+            }
+            bookmarkAdapter.updateData(bookmarkedProducts)
+        }
+
+        binding.productRecycler.adapter = bookmarkAdapter
     }
 
     private fun dismissDialog() {
