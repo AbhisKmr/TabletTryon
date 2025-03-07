@@ -10,7 +10,7 @@ import com.bumptech.glide.Glide
 import com.mirrar.tablettryon.databinding.ProductCardBinding
 import com.mirrar.tablettryon.view.fragment.tryon.dataModel.Product
 
-class ProductAdapter(private val clickListener: (Product) -> Unit) :
+class ProductAdapter(private val clickListener: (Int, Product) -> Unit) :
     RecyclerView.Adapter<ProductAdapter.ViewHolder>() {
 
     inner class ViewHolder(val binding: ProductCardBinding) : RecyclerView.ViewHolder(binding.root)
@@ -50,7 +50,7 @@ class ProductAdapter(private val clickListener: (Product) -> Unit) :
 
         Glide.with(ctx).load(url).into(holder.binding.thumb)
         holder.binding.root.setOnClickListener {
-            clickListener(list[position])
+            clickListener(position, list[position])
             selectedIndex = position
             notifyDataSetChanged()
         }

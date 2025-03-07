@@ -2,10 +2,11 @@ package com.mirrar.tablettryon.view.fragment.tryon
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,19 +15,21 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.FragmentTransaction
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import com.google.mlkit.vision.common.InputImage
 import com.mirrar.tablettryon.R
 import com.mirrar.tablettryon.databinding.FragmentTryOnBinding
+import com.mirrar.tablettryon.tools.faceDetector.mlkit.FaceDetectionActivity
 import com.mirrar.tablettryon.utility.Bookmarks
-import com.mirrar.tablettryon.view.fragment.DialogLikeFragment
 import com.mirrar.tablettryon.view.fragment.EmailFragment
 import com.mirrar.tablettryon.view.fragment.ProductDetailsFragment
 import com.mirrar.tablettryon.view.fragment.bookmark.YouBookmarkFragment
 import com.mirrar.tablettryon.view.fragment.tryon.adapter.ProductAdapter
 import com.mirrar.tablettryon.view.fragment.tryon.dataModel.Product
 import com.mirrar.tablettryon.view.fragment.tryon.viewModel.AlgoliaViewModel
+import java.io.IOException
 
 class TryOnFragment : Fragment() {
 
@@ -34,6 +37,10 @@ class TryOnFragment : Fragment() {
     private val binding get() = _binding!!
 
     private var selectedProduct: Product? = null
+
+    private lateinit var faceDetectionActivity: FaceDetectionActivity
+
+    private val imageList = listOf(R.drawable.eye1, R.drawable.eye2)
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -50,6 +57,8 @@ class TryOnFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        faceDetectionActivity = FaceDetectionActivity(binding.glassPreview)
 
         val viewModel = ViewModelProvider.create(this)[AlgoliaViewModel::class.java]
 
@@ -81,9 +90,10 @@ class TryOnFragment : Fragment() {
             checkPermissionAndOpenGallery()
         }
 
-        val adapter = ProductAdapter {
-            selectedProduct = it
+        val adapter = ProductAdapter { i, p ->
+            selectedProduct = p
             updateHeartIcon(Bookmarks.getBookmarks())
+            binding.glassPreview.setImageDrawable(requireContext().resources.getDrawable(imageList[i % 2]))
         }
 
         binding.productRecycler.adapter = adapter
@@ -177,6 +187,22 @@ class TryOnFragment : Fragment() {
 
     private fun handleImageSelection(uri: Uri) {
         binding.imagePreview.setImageURI(uri)
+        try {
+            faceDetectionActivity.detectFaces(
+                InputImage.fromBitmap(viewToBitmap(binding.imagePreview), 0),
+                binding.canvasView
+            )
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+
         Toast.makeText(requireContext(), "Image Selected: $uri", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun viewToBitmap(view: View): Bitmap {
+        val bitmap = Bitmap.createBitmap(view.width, view.height, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(bitmap)
+        view.draw(canvas)
+        return bitmap
     }
 }

@@ -1,9 +1,12 @@
 package com.mirrar.tablettryon.view.activity
 
 import android.os.Bundle
+import android.util.DisplayMetrics
+import android.util.Size
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.mirrar.tablettryon.databinding.ActivityMainBinding
+import com.mirrar.tablettryon.utility.AppConstraint.IMAGE_RENDER_SIZE
 
 class MainActivity : AppCompatActivity() {
 
@@ -14,6 +17,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         _binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        IMAGE_RENDER_SIZE = Size(getScreenSize().first, getScreenSize().second)
+
     }
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
@@ -33,5 +38,10 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
+    }
+
+    private fun getScreenSize(): Pair<Int, Int> {
+        val metrics: DisplayMetrics = resources.displayMetrics
+        return Pair(metrics.widthPixels, metrics.heightPixels)
     }
 }
