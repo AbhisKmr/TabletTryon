@@ -104,14 +104,6 @@ class TryOnFragment : Fragment() {
     }
 
     private fun openDialogFragment(fragment: DialogFragment) {
-        fragment.show(childFragmentManager, fragment.tag) // No need to add to back stack
-    }
-
-    private fun openFragment(fr: Fragment) {
-        val transaction = childFragmentManager.beginTransaction()
-        transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_MATCH_ACTIVITY_OPEN)
-        transaction.add(R.id.container, fr)
-        transaction.addToBackStack(null)
-        transaction.commit()
+        fragment.show(childFragmentManager, fragment.tag)
     }
 }

@@ -1,15 +1,29 @@
 package com.mirrar.tablettryon.view.fragment
 
+import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.DialogFragment.STYLE_NORMAL
 import androidx.fragment.app.FragmentTransaction
 import com.mirrar.tablettryon.R
 import com.mirrar.tablettryon.databinding.FragmentEmailBinding
+import com.mirrar.tablettryon.network.RetrofitClient
+import com.mirrar.tablettryon.utility.EmailHelper
+import com.mirrar.tablettryon.view.fragment.email.dataModel.EmailRequest
+import com.mirrar.tablettryon.view.fragment.email.dataModel.EmailResponse
+import com.mirrar.tablettryon.view.fragment.email.dataModel.Recipient
+import com.mirrar.tablettryon.view.fragment.email.dataModel.Sender
+import okhttp3.Callback
+import retrofit2.Call
+import retrofit2.Response
+import java.io.BufferedReader
+import java.io.InputStreamReader
 
 class EmailFragment : DialogFragment() {
 
@@ -30,7 +44,10 @@ class EmailFragment : DialogFragment() {
 
     override fun onStart() {
         super.onStart()
-        dialog?.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        dialog?.window?.setLayout(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -47,6 +64,40 @@ class EmailFragment : DialogFragment() {
 
         binding.imageView2.setOnClickListener {
             dismissDialog()
+        }
+
+        binding.send.setOnClickListener {
+
+            if (binding.name.text.trim().isEmpty()) {
+                binding.name.error = "Required"
+                return@setOnClickListener
+            }
+
+            if (binding.email.text.trim().isEmpty()) {
+                binding.email.error = "Required"
+                return@setOnClickListener
+            }
+
+            if (!EmailHelper.isValidEmail(binding.email.text.trim().toString())) {
+                binding.email.error = "Invalid email"
+                return@setOnClickListener
+            }
+
+            EmailHelper.sendDynamicEmail(
+                context = requireContext(),
+                recipientEmail = binding.email.text.toString(),
+                username = binding.name.text.toString(), {
+                    if (it) {
+                        dismissDialog()
+                    } else {
+                        Toast.makeText(
+                            requireContext(),
+                            "Failed to send email.",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+            )
         }
     }
 
