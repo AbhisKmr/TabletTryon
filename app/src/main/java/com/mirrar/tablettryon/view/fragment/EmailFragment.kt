@@ -1,29 +1,15 @@
 package com.mirrar.tablettryon.view.fragment
 
-import android.content.Context
 import android.os.Bundle
-import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.DialogFragment.STYLE_NORMAL
 import androidx.fragment.app.FragmentTransaction
 import com.mirrar.tablettryon.R
 import com.mirrar.tablettryon.databinding.FragmentEmailBinding
-import com.mirrar.tablettryon.network.RetrofitClient
 import com.mirrar.tablettryon.utility.EmailHelper
-import com.mirrar.tablettryon.view.fragment.email.dataModel.EmailRequest
-import com.mirrar.tablettryon.view.fragment.email.dataModel.EmailResponse
-import com.mirrar.tablettryon.view.fragment.email.dataModel.Recipient
-import com.mirrar.tablettryon.view.fragment.email.dataModel.Sender
-import okhttp3.Callback
-import retrofit2.Call
-import retrofit2.Response
-import java.io.BufferedReader
-import java.io.InputStreamReader
 
 class EmailFragment : DialogFragment() {
 

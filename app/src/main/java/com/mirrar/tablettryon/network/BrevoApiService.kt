@@ -2,9 +2,6 @@ package com.mirrar.tablettryon.network
 
 import com.mirrar.tablettryon.view.fragment.email.dataModel.EmailRequest
 import com.mirrar.tablettryon.view.fragment.email.dataModel.EmailResponse
-import okhttp3.RequestBody
-import okhttp3.Response
-import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.Header

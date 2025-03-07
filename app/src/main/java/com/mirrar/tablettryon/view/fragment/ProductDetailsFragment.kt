@@ -29,7 +29,10 @@ class ProductDetailsFragment(private val product: Product) : DialogFragment() {
 
     override fun onStart() {
         super.onStart()
-        dialog?.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        dialog?.window?.setLayout(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -57,11 +60,21 @@ class ProductDetailsFragment(private val product: Product) : DialogFragment() {
             dismissDialog()
         }
 
-        Glide.with(requireContext()).load(product.ImageLink).into(binding.thumb)
-        binding.productDetailsLayout.brand.text = product.Brand
-        binding.productDetailsLayout.productCode.text = product.Primary
-        binding.productDetailsLayout.productPrice.text = product.Secondary
-        binding.productDetailsLayout.textView9.text = product.Description
+        val url = if (!product.imageUrlBase.isNullOrBlank()) {
+            product.imageUrlBase
+        } else if (!product.imageThumbnail.isNullOrBlank()) {
+            product.imageThumbnail
+        } else {
+            product.imageSmall ?: ""
+        }
+
+        Glide.with(requireContext()).load(url).into(binding.thumb)
+
+        binding.productDetailsLayout.brand.text = product.brand
+        binding.productDetailsLayout.productCode.text = product.localItemCode
+        binding.productDetailsLayout.productPrice.text =
+            "${product.currency} ${product.priceDutyFree}"
+        binding.productDetailsLayout.textView9.text = product.description
 
         binding.productDetailsLayout.wishlist.setOnClickListener {
             Bookmarks.addToBookmark(product)

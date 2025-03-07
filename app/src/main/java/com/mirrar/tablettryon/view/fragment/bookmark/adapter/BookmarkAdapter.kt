@@ -31,9 +31,18 @@ class BookmarkAdapter : RecyclerView.Adapter<BookmarkAdapter.ViewHolder>() {
     override fun getItemCount(): Int = list.size
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        Glide.with(ctx).load(list[position].ImageLink).into(holder.binding.glassImage)
-        holder.binding.productName.text = list[position].Brand
-        holder.binding.productDetails.text = list[position].Description
+
+        val url = if (!list[position].imageSmall.isNullOrBlank()) {
+            list[position].imageSmall
+        } else if (!list[position].imageThumbnail.isNullOrBlank()) {
+            list[position].imageThumbnail
+        } else {
+            list[position].imageUrlBase ?: ""
+        }
+
+        Glide.with(ctx).load(url).into(holder.binding.glassImage)
+        holder.binding.productName.text = list[position].brand
+        holder.binding.productDetails.text = list[position].description
 
         holder.binding.delete.setOnClickListener {
             Bookmarks.removeBookmark(list[position])

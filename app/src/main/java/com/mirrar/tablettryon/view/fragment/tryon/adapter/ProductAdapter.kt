@@ -32,13 +32,23 @@ class ProductAdapter(private val clickListener: (Product) -> Unit) :
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    override fun onBindViewHolder(holder: ProductAdapter.ViewHolder, @SuppressLint("RecyclerView") position: Int) {
+    override fun onBindViewHolder(
+        holder: ProductAdapter.ViewHolder,
+        @SuppressLint("RecyclerView") position: Int
+    ) {
 
 //        holder.binding.recommendationTag.isVisible = position % 2 == 0
         holder.binding.selectorHighlight.isVisible = selectedIndex == position
 
-        Glide.with(ctx).load(list[position].ImageLink).into(holder.binding.thumb)
+        val url = if (!list[position].imageSmall.isNullOrBlank()) {
+            list[position].imageSmall
+        } else if (!list[position].imageThumbnail.isNullOrBlank()) {
+            list[position].imageThumbnail
+        } else {
+            list[position].imageUrlBase ?: ""
+        }
 
+        Glide.with(ctx).load(url).into(holder.binding.thumb)
         holder.binding.root.setOnClickListener {
             clickListener(list[position])
             selectedIndex = position

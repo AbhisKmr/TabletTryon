@@ -1,5 +1,6 @@
 package com.mirrar.tablettryon.view.fragment.tryon.viewModel
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -17,7 +18,7 @@ class AlgoliaViewModel : ViewModel() {
     private val searcher = HitsSearcher(
         applicationID = ApplicationID("V0MFZORLHS"),
         apiKey = APIKey("f9b905571a819c23a15b192b778e7b3a"),
-        indexName = IndexName("ZurichFrames3.0-CopyofSheet1")
+        indexName = IndexName("avolta-glasses")
     )
 
     private val _products = MutableLiveData<List<Product>>()
