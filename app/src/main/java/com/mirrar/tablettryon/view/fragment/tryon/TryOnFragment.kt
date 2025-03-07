@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.FragmentTransaction
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.mirrar.tablettryon.R
 import com.mirrar.tablettryon.databinding.FragmentTryOnBinding
@@ -14,6 +15,7 @@ import com.mirrar.tablettryon.view.fragment.EmailFragment
 import com.mirrar.tablettryon.view.fragment.ProductDetailsFragment
 import com.mirrar.tablettryon.view.fragment.bookmark.YouBookmarkFragment
 import com.mirrar.tablettryon.view.fragment.tryon.adapter.ProductAdapter
+import com.mirrar.tablettryon.view.fragment.tryon.viewModel.AlgoliaViewModel
 
 class TryOnFragment : Fragment() {
 
@@ -36,6 +38,9 @@ class TryOnFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val viewModel = ViewModelProvider.create(this)[AlgoliaViewModel::class.java]
+
+
         binding.catalogue.setOnClickListener {
             findNavController().navigate(R.id.action_tryOnFragment_to_catalogueFragment)
         }
@@ -52,7 +57,17 @@ class TryOnFragment : Fragment() {
             openFragment(YouBookmarkFragment.newInstance())
         }
 
-        binding.productRecycler.adapter = ProductAdapter()
+        val adapter = ProductAdapter{
+
+        }
+
+        binding.productRecycler.adapter = adapter
+
+        viewModel.product.observe(viewLifecycleOwner) {
+            adapter.updateData(it)
+        }
+
+        viewModel.getData()
     }
 
     private fun openFragment(fr: Fragment) {

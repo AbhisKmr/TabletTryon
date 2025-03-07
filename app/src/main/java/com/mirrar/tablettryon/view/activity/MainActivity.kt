@@ -1,4 +1,4 @@
-package com.mirrar.tablettryon
+package com.mirrar.tablettryon.view.activity
 
 import android.os.Bundle
 import android.view.View
