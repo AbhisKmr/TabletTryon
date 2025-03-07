@@ -15,12 +15,15 @@ import com.mirrar.tablettryon.view.fragment.EmailFragment
 import com.mirrar.tablettryon.view.fragment.ProductDetailsFragment
 import com.mirrar.tablettryon.view.fragment.bookmark.YouBookmarkFragment
 import com.mirrar.tablettryon.view.fragment.tryon.adapter.ProductAdapter
+import com.mirrar.tablettryon.view.fragment.tryon.dataModel.Product
 import com.mirrar.tablettryon.view.fragment.tryon.viewModel.AlgoliaViewModel
 
 class TryOnFragment : Fragment() {
 
     private var _binding: FragmentTryOnBinding? = null
     private val binding get() = _binding!!
+
+    private var selectedProduct: Product? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -46,7 +49,9 @@ class TryOnFragment : Fragment() {
         }
 
         binding.details.setOnClickListener {
-            openFragment(ProductDetailsFragment.newInstance())
+            if (selectedProduct != null) {
+                openFragment(ProductDetailsFragment.newInstance(selectedProduct!!))
+            }
         }
 
         binding.email.setOnClickListener {
@@ -57,8 +62,8 @@ class TryOnFragment : Fragment() {
             openFragment(YouBookmarkFragment.newInstance())
         }
 
-        val adapter = ProductAdapter{
-
+        val adapter = ProductAdapter {
+            selectedProduct = it
         }
 
         binding.productRecycler.adapter = adapter

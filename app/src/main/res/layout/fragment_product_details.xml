@@ -40,10 +40,10 @@
                 android:layout_height="0dp"
                 android:background="#FBFBFF"
                 android:scaleType="centerCrop"
-                android:src="@drawable/glass_preview"
                 app:layout_constraintHeight_percent=".5"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:layout_editor_absoluteX="76dp" />
+                tools:layout_editor_absoluteX="76dp"
+                tools:src="@drawable/glass_preview" />
 
             <ScrollView
                 android:layout_width="match_parent"

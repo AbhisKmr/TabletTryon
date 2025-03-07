@@ -6,10 +6,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.FragmentTransaction
+import com.bumptech.glide.Glide
 import com.mirrar.tablettryon.R
 import com.mirrar.tablettryon.databinding.FragmentProductDetailsBinding
+import com.mirrar.tablettryon.view.fragment.tryon.dataModel.Product
 
-class ProductDetailsFragment : Fragment() {
+class ProductDetailsFragment(private val product: Product) : Fragment() {
 
     private var _binding: FragmentProductDetailsBinding? = null
     private val binding get() = _binding!!
@@ -37,6 +39,16 @@ class ProductDetailsFragment : Fragment() {
         binding.imageView2.setOnClickListener {
             dismissDialog()
         }
+
+        binding.tryOnBtn.setOnClickListener {
+            dismissDialog()
+        }
+
+        Glide.with(requireContext()).load(product.ImageLink).into(binding.thumb)
+        binding.productDetailsLayout.brand.text = product.Brand
+        binding.productDetailsLayout.productCode.text = product.Primary
+        binding.productDetailsLayout.productPrice.text = product.Secondary
+        binding.productDetailsLayout.textView9.text = product.Description
     }
 
     private fun dismissDialog() {
@@ -48,6 +60,6 @@ class ProductDetailsFragment : Fragment() {
 
     companion object {
         @JvmStatic
-        fun newInstance() = ProductDetailsFragment()
+        fun newInstance(p: Product) = ProductDetailsFragment(p)
     }
 }
