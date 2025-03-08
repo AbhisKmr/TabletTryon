@@ -92,6 +92,11 @@ class TryOnFragment : Fragment() {
 
         val adapter = ProductAdapter { i, p ->
             selectedProduct = p
+            binding.brand.text = p.brand
+            binding.productCode.text = p.localItemCode
+            binding.productPrice.text =
+                "${p.currency} ${p.priceDutyFree}"
+
             updateHeartIcon(Bookmarks.getBookmarks())
             binding.glassPreview.setImageDrawable(requireContext().resources.getDrawable(imageList[i % 2]))
         }
