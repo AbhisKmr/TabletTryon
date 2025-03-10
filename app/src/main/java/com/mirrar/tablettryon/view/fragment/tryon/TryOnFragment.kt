@@ -105,6 +105,9 @@ class TryOnFragment : Fragment() {
 
         viewModel.product.observe(viewLifecycleOwner) {
             adapter.updateData(it)
+
+            // remove this
+            applyAR(binding.imagePreview)
         }
 
         Bookmarks.bookmarks.observe(viewLifecycleOwner) { bookmarkedProducts ->
@@ -192,22 +195,25 @@ class TryOnFragment : Fragment() {
 
     private fun handleImageSelection(uri: Uri) {
         binding.imagePreview.setImageURI(uri)
+        applyAR(binding.imagePreview)
+        Toast.makeText(requireContext(), "Image Selected: $uri", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun applyAR(view: View){
         try {
+            if (view.width == 0 && view.height == 0){
+                return
+            }
+            val bitmap = Bitmap.createBitmap(view.width, view.height, Bitmap.Config.ARGB_8888)
+            val canvas = Canvas(bitmap)
+            view.draw(canvas)
+
             faceDetectionActivity.detectFaces(
-                InputImage.fromBitmap(viewToBitmap(binding.imagePreview), 0),
+                InputImage.fromBitmap(bitmap, 0),
                 binding.canvasView
             )
         } catch (e: IOException) {
             e.printStackTrace()
         }
-
-        Toast.makeText(requireContext(), "Image Selected: $uri", Toast.LENGTH_SHORT).show()
-    }
-
-    private fun viewToBitmap(view: View): Bitmap {
-        val bitmap = Bitmap.createBitmap(view.width, view.height, Bitmap.Config.ARGB_8888)
-        val canvas = Canvas(bitmap)
-        view.draw(canvas)
-        return bitmap
     }
 }

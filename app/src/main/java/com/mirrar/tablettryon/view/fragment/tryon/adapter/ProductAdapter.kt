@@ -54,6 +54,10 @@ class ProductAdapter(private val clickListener: (Int, Product) -> Unit) :
             SELECTED_INDEX = position
             notifyDataSetChanged()
         }
+
+        if (SELECTED_INDEX != -1 && SELECTED_INDEX < list.size) {
+            clickListener(SELECTED_INDEX, list[SELECTED_INDEX])
+        }
     }
 
     override fun getItemCount(): Int = list.size
