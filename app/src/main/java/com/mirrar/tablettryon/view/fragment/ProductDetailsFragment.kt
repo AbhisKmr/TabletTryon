@@ -1,7 +1,6 @@
 package com.mirrar.tablettryon.view.fragment
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,7 +11,7 @@ import com.bumptech.glide.Glide
 import com.mirrar.tablettryon.R
 import com.mirrar.tablettryon.databinding.FragmentProductDetailsBinding
 import com.mirrar.tablettryon.utility.Bookmarks
-import com.mirrar.tablettryon.utility.HelperFunctions.GET_IMAGE_URL_FROM_PRODUCT
+import com.mirrar.tablettryon.utility.HelperFunctions.getImageUrlFromProduct
 import com.mirrar.tablettryon.view.fragment.tryon.dataModel.Product
 
 class ProductDetailsFragment(private val product: Product) : DialogFragment() {
@@ -61,7 +60,7 @@ class ProductDetailsFragment(private val product: Product) : DialogFragment() {
             dismissDialog()
         }
 
-        val url = GET_IMAGE_URL_FROM_PRODUCT(product)
+        val url = getImageUrlFromProduct(product)
 
         Glide.with(requireContext()).load(url).into(binding.thumb)
 

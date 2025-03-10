@@ -8,11 +8,17 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentTransaction
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.withCreated
 import com.bumptech.glide.Glide
 import com.mirrar.tablettryon.R
 import com.mirrar.tablettryon.databinding.FragmentEmailBinding
-import com.mirrar.tablettryon.utility.HelperFunctions.GET_IMAGE_URL_FROM_PRODUCT
+import com.mirrar.tablettryon.utility.HelperFunctions
+import com.mirrar.tablettryon.utility.HelperFunctions.getImageUrlFromProduct
 import com.mirrar.tablettryon.view.fragment.tryon.dataModel.Product
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class EmailFragment(private val p: Product, private val bitmap: Bitmap) : DialogFragment() {
 
@@ -55,7 +61,7 @@ class EmailFragment(private val p: Product, private val bitmap: Bitmap) : Dialog
             dismissDialog()
         }
 
-        Glide.with(requireContext()).load(GET_IMAGE_URL_FROM_PRODUCT(p)).into(binding.glassImage)
+        Glide.with(requireContext()).load(getImageUrlFromProduct(p)).into(binding.glassImage)
         binding.modelImage.setImageBitmap(bitmap)
         binding.productName.text = p.name
         binding.productDetails.text = p.description
@@ -94,9 +100,17 @@ class EmailFragment(private val p: Product, private val bitmap: Bitmap) : Dialog
             )
         }
 
-        EmailHelper.uploadBase64Image(bitmap) {
-            if (it != null) {
-                
+        lifecycleScope.launch {
+
+            withContext(Dispatchers.IO) {
+                EmailHelper.uploadBase64Image(bitmap) {
+                    if (it != null) {
+                        val b = HelperFunctions.generateQRCode(it.url)
+                        if (b != null) {
+                            binding.imageView4.setImageBitmap(b)
+                        }
+                    }
+                }
             }
         }
     }

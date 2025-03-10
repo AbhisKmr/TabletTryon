@@ -117,11 +117,11 @@
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="0dp"
                 android:layout_height="0dp"
+                android:layout_marginBottom="-30dp"
                 android:elevation="24dp"
                 app:cardBackgroundColor="@color/white"
                 app:cardCornerRadius="24dp"
                 app:cardElevation="24dp"
-                android:layout_marginBottom="-30dp"
                 app:layout_constraintBottom_toBottomOf="@+id/cardView8"
                 app:layout_constraintEnd_toEndOf="@+id/cardView7"
                 app:layout_constraintHeight_percent=".09"
@@ -205,6 +205,7 @@
                 android:layout_marginStart="62dp"
                 android:src="@drawable/qr_code"
                 app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintDimensionRatio="1:1"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/cardView6" />
 
