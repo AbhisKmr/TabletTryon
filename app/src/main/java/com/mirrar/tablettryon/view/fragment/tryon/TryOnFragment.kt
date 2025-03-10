@@ -16,6 +16,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.google.mlkit.vision.common.InputImage
@@ -23,6 +24,8 @@ import com.mirrar.tablettryon.R
 import com.mirrar.tablettryon.databinding.FragmentTryOnBinding
 import com.mirrar.tablettryon.tools.faceDetector.mlkit.FaceDetectionActivity
 import com.mirrar.tablettryon.utility.Bookmarks
+import com.mirrar.tablettryon.view.fragment.ClubAvoltaFragment
+import com.mirrar.tablettryon.view.fragment.DialogLikeFragment
 import com.mirrar.tablettryon.view.fragment.email.EmailFragment
 import com.mirrar.tablettryon.view.fragment.ProductDetailsFragment
 import com.mirrar.tablettryon.view.fragment.bookmark.YouBookmarkFragment
@@ -95,6 +98,10 @@ class TryOnFragment : Fragment() {
 
         binding.cardView3.setOnClickListener {
             checkPermissionAndOpenGallery()
+        }
+
+        binding.cardView4.setOnClickListener {
+            openDialogFragment(ClubAvoltaFragment.newInstance())
         }
 
         val adapter = ProductAdapter { i, p ->

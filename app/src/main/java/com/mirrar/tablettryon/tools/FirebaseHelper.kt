@@ -9,6 +9,7 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.getValue
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import com.mirrar.tablettryon.utility.AppConstraint
 import com.mirrar.tablettryon.view.fragment.email.EmailHelper
 
 class FirebaseHelper {
@@ -22,10 +23,11 @@ class FirebaseHelper {
         myRef.addValueEventListener(object : ValueEventListener {
 
             override fun onDataChange(snapshot: DataSnapshot) {
-                EmailHelper.BREVO_API_KEY = snapshot.child("brevoApiKey").getValue<String>() ?: ""
-                EmailHelper.SENDER_NAME = snapshot.child("senderName").getValue<String>() ?: ""
-                EmailHelper.SENDER_EMAIL = snapshot.child("senderEmail").getValue<String>() ?: ""
-                EmailHelper.WELCOME_MESSAGE = snapshot.child("welcomeMsg").getValue<String>() ?: ""
+                AppConstraint.BREVO_API_KEY = snapshot.child("brevoApiKey").getValue<String>() ?: ""
+                AppConstraint.SENDER_NAME = snapshot.child("senderName").getValue<String>() ?: ""
+                AppConstraint.SENDER_EMAIL = snapshot.child("senderEmail").getValue<String>() ?: ""
+                AppConstraint.WELCOME_MESSAGE = snapshot.child("welcomeMsg").getValue<String>() ?: ""
+                AppConstraint.CLUB_AVOLTA = snapshot.child("clubAvoltaUrl").getValue<String>() ?: ""
 
                 res(snapshot.child("termAndCondition").getValue<String>())
             }

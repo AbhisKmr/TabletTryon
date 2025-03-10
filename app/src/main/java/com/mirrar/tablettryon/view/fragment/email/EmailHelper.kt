@@ -5,6 +5,11 @@ import android.graphics.Bitmap
 import android.util.Base64
 import android.util.Log
 import com.mirrar.tablettryon.network.RetrofitClient
+import com.mirrar.tablettryon.utility.AppConstraint
+import com.mirrar.tablettryon.utility.AppConstraint.BREVO_API_KEY
+import com.mirrar.tablettryon.utility.AppConstraint.SENDER_EMAIL
+import com.mirrar.tablettryon.utility.AppConstraint.SENDER_NAME
+import com.mirrar.tablettryon.utility.AppConstraint.WELCOME_MESSAGE
 import com.mirrar.tablettryon.view.fragment.email.dataModel.EmailRequest
 import com.mirrar.tablettryon.view.fragment.email.dataModel.EmailResponse
 import com.mirrar.tablettryon.view.fragment.email.dataModel.ImageUploadRequest
@@ -19,11 +24,6 @@ import java.io.ByteArrayOutputStream
 import java.io.InputStreamReader
 
 object EmailHelper {
-
-    var BREVO_API_KEY = ""
-    var SENDER_NAME = ""
-    var SENDER_EMAIL = ""
-    var WELCOME_MESSAGE = ""
 
     fun sendDynamicEmail(
         context: Context,
