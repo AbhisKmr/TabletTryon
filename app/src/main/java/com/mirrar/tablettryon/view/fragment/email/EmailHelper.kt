@@ -1,15 +1,21 @@
-package com.mirrar.tablettryon.utility
+package com.mirrar.tablettryon.view.fragment.email
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.util.Base64
 import android.util.Log
 import com.mirrar.tablettryon.network.RetrofitClient
 import com.mirrar.tablettryon.view.fragment.email.dataModel.EmailRequest
 import com.mirrar.tablettryon.view.fragment.email.dataModel.EmailResponse
+import com.mirrar.tablettryon.view.fragment.email.dataModel.ImageUploadRequest
+import com.mirrar.tablettryon.view.fragment.email.dataModel.ImageUploadResponse
 import com.mirrar.tablettryon.view.fragment.email.dataModel.Recipient
 import com.mirrar.tablettryon.view.fragment.email.dataModel.Sender
 import retrofit2.Call
+import retrofit2.Callback
 import retrofit2.Response
 import java.io.BufferedReader
+import java.io.ByteArrayOutputStream
 import java.io.InputStreamReader
 
 object EmailHelper {
@@ -34,7 +40,7 @@ object EmailHelper {
             htmlContent = emailContent
         )
 
-        RetrofitClient.api.sendEmail(
+        RetrofitClient.getInstance().sendEmail(
             BREVO_API_KEY,
             emailRequest
         ).enqueue(object :
@@ -75,4 +81,30 @@ object EmailHelper {
             .replace("{{username}}", username)
     }
 
+    fun uploadBase64Image(bitmap: Bitmap, res: (ImageUploadResponse?) -> Unit) {
+        val base64Image = bitmapToBase64(bitmap)
+        val requestBody = ImageUploadRequest(image = base64Image)
+
+        val call = RetrofitClient.getInstance("https://m.mirrar.com/").uploadImage(requestBody)
+
+        call.enqueue(object : Callback<ImageUploadResponse> {
+            override fun onResponse(
+                call: Call<ImageUploadResponse>,
+                response: Response<ImageUploadResponse>
+            ) {
+                res(response.body())
+            }
+
+            override fun onFailure(call: Call<ImageUploadResponse>, t: Throwable) {
+                res(null)
+            }
+        })
+    }
+
+    private fun bitmapToBase64(bitmap: Bitmap): String {
+        val outputStream = ByteArrayOutputStream()
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
+        val byteArray = outputStream.toByteArray()
+        return Base64.encodeToString(byteArray, Base64.NO_WRAP)
+    }
 }

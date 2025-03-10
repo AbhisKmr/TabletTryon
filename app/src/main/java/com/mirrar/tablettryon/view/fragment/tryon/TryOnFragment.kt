@@ -23,7 +23,7 @@ import com.mirrar.tablettryon.R
 import com.mirrar.tablettryon.databinding.FragmentTryOnBinding
 import com.mirrar.tablettryon.tools.faceDetector.mlkit.FaceDetectionActivity
 import com.mirrar.tablettryon.utility.Bookmarks
-import com.mirrar.tablettryon.view.fragment.EmailFragment
+import com.mirrar.tablettryon.view.fragment.email.EmailFragment
 import com.mirrar.tablettryon.view.fragment.ProductDetailsFragment
 import com.mirrar.tablettryon.view.fragment.bookmark.YouBookmarkFragment
 import com.mirrar.tablettryon.view.fragment.tryon.adapter.ProductAdapter

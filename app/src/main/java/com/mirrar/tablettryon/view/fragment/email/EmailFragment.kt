@@ -1,4 +1,4 @@
-package com.mirrar.tablettryon.view.fragment
+package com.mirrar.tablettryon.view.fragment.email
 
 import android.graphics.Bitmap
 import android.os.Bundle
@@ -11,7 +11,6 @@ import androidx.fragment.app.FragmentTransaction
 import com.bumptech.glide.Glide
 import com.mirrar.tablettryon.R
 import com.mirrar.tablettryon.databinding.FragmentEmailBinding
-import com.mirrar.tablettryon.utility.EmailHelper
 import com.mirrar.tablettryon.utility.HelperFunctions.GET_IMAGE_URL_FROM_PRODUCT
 import com.mirrar.tablettryon.view.fragment.tryon.dataModel.Product
 
@@ -58,6 +57,8 @@ class EmailFragment(private val p: Product, private val bitmap: Bitmap) : Dialog
 
         Glide.with(requireContext()).load(GET_IMAGE_URL_FROM_PRODUCT(p)).into(binding.glassImage)
         binding.modelImage.setImageBitmap(bitmap)
+        binding.productName.text = p.name
+        binding.productDetails.text = p.description
 
         binding.send.setOnClickListener {
 
@@ -91,6 +92,12 @@ class EmailFragment(private val p: Product, private val bitmap: Bitmap) : Dialog
                     }
                 }
             )
+        }
+
+        EmailHelper.uploadBase64Image(bitmap) {
+            if (it != null) {
+                
+            }
         }
     }
 
