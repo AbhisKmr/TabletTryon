@@ -73,7 +73,14 @@ class TryOnFragment : Fragment() {
         }
 
         binding.email.setOnClickListener {
-            openDialogFragment(EmailFragment.newInstance())
+            if (selectedProduct != null) {
+                openDialogFragment(
+                    EmailFragment.newInstance(
+                        selectedProduct!!,
+                        viewToBitmap(binding.cardView3)!!
+                    )
+                )
+            }
         }
 
         binding.cardView2.setOnClickListener {
@@ -107,7 +114,7 @@ class TryOnFragment : Fragment() {
             adapter.updateData(it)
 
             // remove this
-            applyAR(binding.imagePreview)
+            applyAR()
         }
 
         Bookmarks.bookmarks.observe(viewLifecycleOwner) { bookmarkedProducts ->
@@ -195,19 +202,13 @@ class TryOnFragment : Fragment() {
 
     private fun handleImageSelection(uri: Uri) {
         binding.imagePreview.setImageURI(uri)
-        applyAR(binding.imagePreview)
+        applyAR()
         Toast.makeText(requireContext(), "Image Selected: $uri", Toast.LENGTH_SHORT).show()
     }
 
-    private fun applyAR(view: View){
+    private fun applyAR() {
         try {
-            if (view.width == 0 && view.height == 0){
-                return
-            }
-            val bitmap = Bitmap.createBitmap(view.width, view.height, Bitmap.Config.ARGB_8888)
-            val canvas = Canvas(bitmap)
-            view.draw(canvas)
-
+            val bitmap = viewToBitmap(binding.imagePreview) ?: return
             faceDetectionActivity.detectFaces(
                 InputImage.fromBitmap(bitmap, 0),
                 binding.canvasView
@@ -215,5 +216,15 @@ class TryOnFragment : Fragment() {
         } catch (e: IOException) {
             e.printStackTrace()
         }
+    }
+
+    private fun viewToBitmap(view: View): Bitmap? {
+        if (view.width == 0 && view.height == 0) {
+            return null
+        }
+        val bitmap = Bitmap.createBitmap(view.width, view.height, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(bitmap)
+        view.draw(canvas)
+        return bitmap
     }
 }

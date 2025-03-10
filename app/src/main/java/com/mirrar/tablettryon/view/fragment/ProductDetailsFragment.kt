@@ -12,6 +12,7 @@ import com.bumptech.glide.Glide
 import com.mirrar.tablettryon.R
 import com.mirrar.tablettryon.databinding.FragmentProductDetailsBinding
 import com.mirrar.tablettryon.utility.Bookmarks
+import com.mirrar.tablettryon.utility.HelperFunctions.GET_IMAGE_URL_FROM_PRODUCT
 import com.mirrar.tablettryon.view.fragment.tryon.dataModel.Product
 
 class ProductDetailsFragment(private val product: Product) : DialogFragment() {
@@ -60,13 +61,7 @@ class ProductDetailsFragment(private val product: Product) : DialogFragment() {
             dismissDialog()
         }
 
-        val url = if (!product.imageUrlBase.isNullOrBlank()) {
-            product.imageUrlBase
-        } else if (!product.imageThumbnail.isNullOrBlank()) {
-            product.imageThumbnail
-        } else {
-            product.imageSmall ?: ""
-        }
+        val url = GET_IMAGE_URL_FROM_PRODUCT(product)
 
         Glide.with(requireContext()).load(url).into(binding.thumb)
 

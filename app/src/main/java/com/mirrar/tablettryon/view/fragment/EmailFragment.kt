@@ -1,5 +1,6 @@
 package com.mirrar.tablettryon.view.fragment
 
+import android.graphics.Bitmap
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -7,11 +8,14 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentTransaction
+import com.bumptech.glide.Glide
 import com.mirrar.tablettryon.R
 import com.mirrar.tablettryon.databinding.FragmentEmailBinding
 import com.mirrar.tablettryon.utility.EmailHelper
+import com.mirrar.tablettryon.utility.HelperFunctions.GET_IMAGE_URL_FROM_PRODUCT
+import com.mirrar.tablettryon.view.fragment.tryon.dataModel.Product
 
-class EmailFragment : DialogFragment() {
+class EmailFragment(private val p: Product, private val bitmap: Bitmap) : DialogFragment() {
 
     private var _binding: FragmentEmailBinding? = null
     private val binding get() = _binding!!
@@ -51,6 +55,9 @@ class EmailFragment : DialogFragment() {
         binding.imageView2.setOnClickListener {
             dismissDialog()
         }
+
+        Glide.with(requireContext()).load(GET_IMAGE_URL_FROM_PRODUCT(p)).into(binding.glassImage)
+        binding.modelImage.setImageBitmap(bitmap)
 
         binding.send.setOnClickListener {
 
@@ -94,6 +101,6 @@ class EmailFragment : DialogFragment() {
 
     companion object {
         @JvmStatic
-        fun newInstance() = EmailFragment()
+        fun newInstance(p: Product, bitmap: Bitmap) = EmailFragment(p, bitmap)
     }
 }
