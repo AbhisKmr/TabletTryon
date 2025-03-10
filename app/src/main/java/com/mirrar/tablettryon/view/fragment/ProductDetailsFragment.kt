@@ -12,6 +12,7 @@ import com.mirrar.tablettryon.R
 import com.mirrar.tablettryon.databinding.FragmentProductDetailsBinding
 import com.mirrar.tablettryon.utility.Bookmarks
 import com.mirrar.tablettryon.utility.HelperFunctions.getImageUrlFromProduct
+import com.mirrar.tablettryon.view.fragment.email.EmailPopupFragment
 import com.mirrar.tablettryon.view.fragment.tryon.dataModel.Product
 
 class ProductDetailsFragment(private val product: Product) : DialogFragment() {
@@ -80,6 +81,11 @@ class ProductDetailsFragment(private val product: Product) : DialogFragment() {
             }
             updateHeartIcon(it)
         }
+
+        binding.email.setOnClickListener {
+            openDialogFragment(EmailPopupFragment.newInstance())
+        }
+
     }
 
     private fun updateHeartIcon(list: List<Product>) {
@@ -102,5 +108,9 @@ class ProductDetailsFragment(private val product: Product) : DialogFragment() {
     companion object {
         @JvmStatic
         fun newInstance(p: Product) = ProductDetailsFragment(p)
+    }
+
+    private fun openDialogFragment(fragment: DialogFragment) {
+        fragment.show(childFragmentManager, fragment.tag)
     }
 }

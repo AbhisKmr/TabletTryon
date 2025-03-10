@@ -2,35 +2,21 @@ package com.mirrar.tablettryon.view.fragment.email
 
 import android.graphics.Bitmap
 import android.os.Bundle
+import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentTransaction
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.withCreated
-import com.bumptech.glide.Glide
 import com.mirrar.tablettryon.R
-import com.mirrar.tablettryon.databinding.FragmentEmailBinding
-import com.mirrar.tablettryon.utility.HelperFunctions
-import com.mirrar.tablettryon.utility.HelperFunctions.getImageUrlFromProduct
+import com.mirrar.tablettryon.databinding.FragmentEmailPopupBinding
 import com.mirrar.tablettryon.view.fragment.tryon.dataModel.Product
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
-class EmailFragment(private val p: Product, private val bitmap: Bitmap) : DialogFragment() {
+class EmailPopupFragment : DialogFragment() {
 
-    private var _binding: FragmentEmailBinding? = null
+    private var _binding: FragmentEmailPopupBinding? = null
     private val binding get() = _binding!!
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
-    ): View {
-        _binding = FragmentEmailBinding.inflate(inflater, container, false)
-        return binding.root
-    }
 
     override fun onDestroyView() {
         super.onDestroyView()
@@ -50,20 +36,18 @@ class EmailFragment(private val p: Product, private val bitmap: Bitmap) : Dialog
         setStyle(STYLE_NORMAL, R.style.FullScreenDialog)
     }
 
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentEmailPopupBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.closeView.setOnClickListener {
-            dismissDialog()
-        }
 
-        binding.imageView2.setOnClickListener {
-            dismissDialog()
-        }
-
-        Glide.with(requireContext()).load(getImageUrlFromProduct(p)).into(binding.glassImage)
-        binding.modelImage.setImageBitmap(bitmap)
-        binding.productName.text = p.name
-        binding.productDetails.text = p.description
+        binding.close.setOnClickListener { dismissDialog() }
 
         binding.send.setOnClickListener {
 
@@ -98,29 +82,18 @@ class EmailFragment(private val p: Product, private val bitmap: Bitmap) : Dialog
                 }
             )
         }
-
-        lifecycleScope.launch {
-
-            withContext(Dispatchers.IO) {
-                EmailHelper.uploadBase64Image(bitmap) {
-                    if (it != null) {
-                        val b = HelperFunctions.generateQRCode(it.url)
-                        if (b != null) {
-                            binding.imageView4.setImageBitmap(b)
-                        }
-                    }
-                }
-            }
-        }
     }
 
     private fun dismissDialog() {
         parentFragmentManager.beginTransaction()
-            .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE).remove(this).commit()
+            .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE)
+            .remove(this)
+            .commit()
     }
+
 
     companion object {
         @JvmStatic
-        fun newInstance(p: Product, bitmap: Bitmap) = EmailFragment(p, bitmap)
+        fun newInstance() = EmailPopupFragment()
     }
 }
