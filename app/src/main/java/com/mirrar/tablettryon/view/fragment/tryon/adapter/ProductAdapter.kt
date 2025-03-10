@@ -8,6 +8,7 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.mirrar.tablettryon.databinding.ProductCardBinding
+import com.mirrar.tablettryon.utility.AppConstraint.SELECTED_INDEX
 import com.mirrar.tablettryon.view.fragment.tryon.dataModel.Product
 
 class ProductAdapter(private val clickListener: (Int, Product) -> Unit) :
@@ -18,7 +19,6 @@ class ProductAdapter(private val clickListener: (Int, Product) -> Unit) :
     private lateinit var ctx: Context
 
     private val list = mutableListOf<Product>()
-    private var selectedIndex = -1
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProductAdapter.ViewHolder {
         this.ctx = parent.context
@@ -38,7 +38,7 @@ class ProductAdapter(private val clickListener: (Int, Product) -> Unit) :
     ) {
 
 //        holder.binding.recommendationTag.isVisible = position % 2 == 0
-        holder.binding.selectorHighlight.isVisible = selectedIndex == position
+        holder.binding.selectorHighlight.isVisible = SELECTED_INDEX == position
 
         val url = if (!list[position].imageSmall.isNullOrBlank()) {
             list[position].imageSmall
@@ -51,7 +51,7 @@ class ProductAdapter(private val clickListener: (Int, Product) -> Unit) :
         Glide.with(ctx).load(url).into(holder.binding.thumb)
         holder.binding.root.setOnClickListener {
             clickListener(position, list[position])
-            selectedIndex = position
+            SELECTED_INDEX = position
             notifyDataSetChanged()
         }
     }
@@ -60,6 +60,9 @@ class ProductAdapter(private val clickListener: (Int, Product) -> Unit) :
 
     @SuppressLint("NotifyDataSetChanged")
     fun updateData(list: List<Product>) {
+        if (SELECTED_INDEX > list.size) {
+            SELECTED_INDEX = -1
+        }
         this.list.clear()
         this.list.addAll(list)
         notifyDataSetChanged()

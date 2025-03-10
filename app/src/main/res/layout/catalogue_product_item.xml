@@ -21,17 +21,19 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/recommended_orange"
+            android:visibility="invisible"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
+            android:id="@+id/thumb"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:layout_marginTop="12dp"
             android:scaleType="centerCrop"
-            android:src="@drawable/eye_wear"
             app:layout_constraintBottom_toTopOf="@+id/brand"
-            app:layout_constraintTop_toBottomOf="@+id/tag" />
+            app:layout_constraintTop_toBottomOf="@+id/tag"
+            tools:src="@drawable/eye_wear" />
 
         <TextView
             android:id="@+id/brand"
@@ -39,11 +41,11 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="12dp"
             android:fontFamily="@font/manrope_bold"
-            android:text="Ray-Ban"
             android:textColor="@color/black"
             android:textSize="20sp"
             app:layout_constraintBottom_toTopOf="@+id/productCode"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            tools:text="Ray-Ban" />
 
         <TextView
             android:id="@+id/productCode"
@@ -51,22 +53,22 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="12dp"
             android:fontFamily="@font/manrope_regular"
-            android:text="0rb2180 49"
             android:textColor="@color/black"
             android:textSize="16sp"
             app:layout_constraintBottom_toTopOf="@+id/productPrice"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            tools:text="0rb2180 49" />
 
         <TextView
             android:id="@+id/productPrice"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/manrope_bold"
-            android:text="CHF 145.00"
             android:textColor="@color/black"
             android:textSize="20sp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            tools:text="CHF 145.00" />
 
         <ImageView
             android:id="@+id/wishlist"

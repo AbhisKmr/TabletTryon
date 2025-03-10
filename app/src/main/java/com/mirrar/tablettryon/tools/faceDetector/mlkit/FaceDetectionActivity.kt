@@ -12,12 +12,17 @@ import com.google.mlkit.vision.face.FaceDetectorOptions
 import com.google.mlkit.vision.face.FaceLandmark
 import com.mirrar.tablettryon.tools.ARPlacingHandler
 import com.mirrar.tablettryon.tools.CanvasView
+import kotlin.math.PI
 
 
 class FaceDetectionActivity(private val glassImage: ImageView) {
 
     private val alignmentSolver = AlignmentSolver()
     private val arPlacingHandler = ARPlacingHandler(glassImage)
+
+    private fun eulerToDegrees(eulerAngle: Float): Float {
+        return eulerAngle * (180f / PI.toFloat())
+    }
 
     fun detectFaces(image: InputImage, cv: CanvasView) {
         // [START set_detector_options]
@@ -41,15 +46,23 @@ class FaceDetectionActivity(private val glassImage: ImageView) {
         val result = detector.process(image).addOnSuccessListener { faces ->
             if (!faces.isNullOrEmpty()) {
                 val face = faces[0]
-                val bounds = face.boundingBox
 
-                val faceContour = alignmentSolver.rearrangePoints(
-                    face.getContour(FaceContour.FACE)?.points ?: listOf()
-                )
+                val y = eulerToDegrees(face.headEulerAngleY)
+                val x = eulerToDegrees(face.headEulerAngleX)
+                val z = eulerToDegrees(face.headEulerAngleZ)
 
-                val nose = alignmentSolver.rearrangePoints(
-                    face.getContour(FaceContour.NOSE_BRIDGE)?.points ?: listOf()
-                )
+                Log.v("mlkit angle", "${x}: ${y}: ${z}: ")
+
+                val faceContour = face.getContour(FaceContour.FACE)?.points ?: listOf()
+//                val faceContour = alignmentSolver.rearrangePoints(
+//                    face.getContour(FaceContour.FACE)?.points ?: listOf()
+//                )
+
+                val nose = face.getContour(FaceContour.NOSE_BRIDGE)?.points ?: listOf()
+
+//                val nose = alignmentSolver.rearrangePoints(
+//                    face.getContour(FaceContour.NOSE_BRIDGE)?.points ?: listOf()
+//                )
 
                 val nosePair = nose.map { Pair(it.x, it.y) }
 

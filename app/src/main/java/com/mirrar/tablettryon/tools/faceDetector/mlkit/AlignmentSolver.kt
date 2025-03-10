@@ -16,10 +16,11 @@ class AlignmentSolver {
         }
 
         return points.map { point ->
-            PointF(
+            PointF(point.x, point.y)
+            /*PointF(
                 (point.x / img.width) * canvasSize.width,
                 (point.y / img.height) * canvasSize.height
-            )
+            )*/
         }
     }
 }
