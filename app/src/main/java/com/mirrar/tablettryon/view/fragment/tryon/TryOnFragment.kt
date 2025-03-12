@@ -23,6 +23,7 @@ import com.google.mlkit.vision.common.InputImage
 import com.mirrar.tablettryon.R
 import com.mirrar.tablettryon.databinding.FragmentTryOnBinding
 import com.mirrar.tablettryon.tools.faceDetector.mlkit.FaceDetectionActivity
+import com.mirrar.tablettryon.utility.AppConstraint.AR_BITMAP
 import com.mirrar.tablettryon.utility.Bookmarks
 import com.mirrar.tablettryon.view.fragment.ClubAvoltaFragment
 import com.mirrar.tablettryon.view.fragment.DialogLikeFragment
@@ -60,6 +61,8 @@ class TryOnFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        binding.imagePreview.setImageBitmap(AR_BITMAP)
 
         faceDetectionActivity = FaceDetectionActivity(binding.glassPreview)
 

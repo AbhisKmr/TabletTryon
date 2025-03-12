@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
 import com.mirrar.tablettryon.R
 import com.mirrar.tablettryon.databinding.FragmentCameraImagePreviewBinding
+import com.mirrar.tablettryon.utility.AppConstraint.AR_BITMAP
 
 class CameraImagePreviewFragment : Fragment() {
 
@@ -24,6 +25,8 @@ class CameraImagePreviewFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        binding.cameraPreview.setImageBitmap(AR_BITMAP)
 
         binding.back.setOnClickListener {
             requireActivity().onBackPressedDispatcher.onBackPressed()

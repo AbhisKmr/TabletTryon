@@ -1,5 +1,6 @@
 package com.mirrar.tablettryon.utility
 
+import android.graphics.Bitmap
 import android.util.Size
 
 object AppConstraint {
@@ -11,4 +12,6 @@ object AppConstraint {
     var SENDER_EMAIL = ""
     var WELCOME_MESSAGE = ""
     var CLUB_AVOLTA = ""
+
+    var AR_BITMAP: Bitmap? = null
 }
