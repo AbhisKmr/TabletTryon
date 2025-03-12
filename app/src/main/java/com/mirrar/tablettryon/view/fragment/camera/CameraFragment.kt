@@ -167,7 +167,7 @@ class CameraFragment : Fragment() {
                 override fun onCaptureSuccess(image: ImageProxy) {
                     super.onCaptureSuccess(image)
 
-                    val bitmap = rotateBitmap(imageProxyToBitmap(image), 90f)
+                    val bitmap = rotateBitmap(imageProxyToBitmap(image), 270f)
                     image.close()
                     AR_BITMAP = bitmap
                     findNavController().navigate(R.id.action_cameraFragment_to_cameraImagePreviewFragment4)
