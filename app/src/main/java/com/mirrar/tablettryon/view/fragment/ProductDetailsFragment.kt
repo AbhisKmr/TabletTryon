@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentTransaction
 import com.bumptech.glide.Glide
@@ -94,8 +95,8 @@ class ProductDetailsFragment(private val product: Product) : DialogFragment() {
     private fun setSeeMoreFunctionality(textView: TextView, seeMoreButton: TextView, fullText: String) {
 
         textView.text = fullText
-        textView.maxLines = 3
-        textView.ellipsize = android.text.TextUtils.TruncateAt.END
+//        textView.maxLines = 3
+//        textView.ellipsize = android.text.TextUtils.TruncateAt.END
 
         seeMoreButton.setOnClickListener {
             if (textView.maxLines == 3) {
@@ -104,6 +105,26 @@ class ProductDetailsFragment(private val product: Product) : DialogFragment() {
             } else {
                 textView.maxLines = 3
                 seeMoreButton.text = "See More"
+            }
+        }
+        isTextEllipsized(textView) {
+            seeMoreButton.isVisible = it
+        }
+    }
+
+    private fun isTextEllipsized(textView: TextView, callback: (Boolean) -> Unit) {
+        textView.post {
+            val layout = textView.layout
+            if (layout != null) {
+                val lineCount = layout.lineCount
+                if (lineCount > 0) {
+                    val ellipsisCount = layout.getEllipsisCount(lineCount - 1)
+                    callback(ellipsisCount > 0)
+                } else {
+                    callback(false)
+                }
+            } else {
+                callback(false)
             }
         }
     }

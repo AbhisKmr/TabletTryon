@@ -77,7 +77,7 @@
         android:fontFamily="@font/manrope_regular"
         android:maxLines="3"
         android:textColor="@color/black"
-        android:textSize="20sp"
+        android:textSize="18sp"
         app:layout_constraintTop_toBottomOf="@+id/textView8"
         tools:text="A true standout pair - these aviator sunglasses take the classic Carrera style into a new realm. Designed with a distinctive double nose bridge, they're shaped from lightweight injection-molded polyamide to an oversized teardrop" />
 
