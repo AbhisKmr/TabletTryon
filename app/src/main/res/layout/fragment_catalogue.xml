@@ -68,6 +68,7 @@
         android:layout_marginHorizontal="8dp"
         android:layout_marginTop="48dp"
         android:orientation="horizontal"
+        android:visibility="invisible"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/filter"
