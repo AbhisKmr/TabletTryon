@@ -4,10 +4,9 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.net.Uri
+import android.graphics.Matrix
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,13 +21,12 @@ import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.mirrar.tablettryon.R
 import com.mirrar.tablettryon.databinding.FragmentCameraBinding
 import com.mirrar.tablettryon.utility.AppConstraint.AR_BITMAP
 import java.io.File
-import java.text.SimpleDateFormat
-import java.util.Locale
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
@@ -119,7 +117,7 @@ class CameraFragment : Fragment() {
                 .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY)
                 .build()
 
-            val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
+            val cameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA
 
             try {
                 cameraProvider.unbindAll()
@@ -169,7 +167,7 @@ class CameraFragment : Fragment() {
                 override fun onCaptureSuccess(image: ImageProxy) {
                     super.onCaptureSuccess(image)
 
-                    val bitmap = imageProxyToBitmap(image)
+                    val bitmap = rotateBitmap(imageProxyToBitmap(image), 270f)
                     image.close()
                     AR_BITMAP = bitmap
                     findNavController().navigate(R.id.action_cameraFragment_to_cameraImagePreviewFragment4)
@@ -182,6 +180,12 @@ class CameraFragment : Fragment() {
                 }
             }
         )
+    }
+
+    private fun rotateBitmap(source: Bitmap, angle: Float): Bitmap {
+        val matrix = Matrix()
+        matrix.postRotate(angle)
+        return Bitmap.createBitmap(source, 0, 0, source.width, source.height, matrix, true)
     }
 
     private fun imageProxyToBitmap(image: ImageProxy): Bitmap {
