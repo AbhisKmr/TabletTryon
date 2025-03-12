@@ -65,6 +65,7 @@ dependencies {
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.11.0")
+    implementation("com.google.firebase:firebase-crashlytics:19.4.1")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.2.1")
@@ -79,8 +80,4 @@ dependencies {
     implementation ("androidx.camera:camera-lifecycle:1.4.1")
     implementation ("androidx.camera:camera-view:1.4.1")
     implementation ("androidx.camera:camera-camera2:1.4.1")
-
-    implementation(platform("com.google.firebase:firebase-bom:33.10.0"))
-    implementation("com.google.firebase:firebase-crashlytics")
-    implementation("com.google.firebase:firebase-analytics")
 }
