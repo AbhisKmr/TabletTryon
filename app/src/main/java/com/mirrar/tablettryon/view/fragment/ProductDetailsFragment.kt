@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentTransaction
@@ -69,7 +71,8 @@ class ProductDetailsFragment(private val product: Product) : DialogFragment() {
         binding.productDetailsLayout.productCode.text = product.localItemCode
         binding.productDetailsLayout.productPrice.text =
             "${product.currency} ${product.priceDutyFree}"
-        binding.productDetailsLayout.textView9.text = product.description
+
+        setSeeMoreFunctionality(binding.productDetailsLayout.textView9, binding.productDetailsLayout.textView10, product.description)
 
         binding.productDetailsLayout.wishlist.setOnClickListener {
             Bookmarks.addToBookmark(product)
@@ -86,6 +89,23 @@ class ProductDetailsFragment(private val product: Product) : DialogFragment() {
             openDialogFragment(EmailPopupFragment.newInstance())
         }
 
+    }
+
+    private fun setSeeMoreFunctionality(textView: TextView, seeMoreButton: TextView, fullText: String) {
+
+        textView.text = fullText
+        textView.maxLines = 3
+        textView.ellipsize = android.text.TextUtils.TruncateAt.END
+
+        seeMoreButton.setOnClickListener {
+            if (textView.maxLines == 3) {
+                textView.maxLines = Int.MAX_VALUE
+                seeMoreButton.text = "See Less"
+            } else {
+                textView.maxLines = 3
+                seeMoreButton.text = "See More"
+            }
+        }
     }
 
     private fun updateHeartIcon(list: List<Product>) {

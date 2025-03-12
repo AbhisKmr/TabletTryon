@@ -90,6 +90,10 @@ class TryOnFragment : Fragment() {
         }
 
         binding.cardView2.setOnClickListener {
+            if (Bookmarks.getBookmarks().isEmpty()) {
+                Toast.makeText(requireContext(), "Wishlist is empty", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
             openDialogFragment(YouBookmarkFragment.newInstance())
         }
 

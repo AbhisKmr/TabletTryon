@@ -8,6 +8,9 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import com.mirrar.tablettryon.R
 import com.mirrar.tablettryon.databinding.FragmentHomeBinding
+import com.mirrar.tablettryon.utility.HelperFunctions.getActionBarSize
+import com.mirrar.tablettryon.utility.HelperFunctions.getDisplaySize
+import com.mirrar.tablettryon.utility.HelperFunctions.getNavigationBarHeight
 
 class HomeFragment : Fragment() {
 
@@ -31,6 +34,14 @@ class HomeFragment : Fragment() {
             transaction.add(R.id.container, DialogLikeFragment.newInstance())
             transaction.addToBackStack(null)
             transaction.commit()
+        }
+
+        binding.club.setOnClickListener {
+            val dis = getDisplaySize(requireContext())
+            val bar = getActionBarSize(requireContext())
+            val nav = getNavigationBarHeight(requireContext())
+            binding.reso.text = "w: ${dis.first} || h: ${dis.second+nav} || nav: $nav"
+            //displayMetrics.widthPixels, displayMetrics.heightPixels
         }
     }
 

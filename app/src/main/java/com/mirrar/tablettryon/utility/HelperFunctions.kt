@@ -1,6 +1,9 @@
 package com.mirrar.tablettryon.utility
 
+import android.content.Context
 import android.graphics.Bitmap
+import android.util.DisplayMetrics
+import android.util.TypedValue
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.MultiFormatWriter
 import com.google.zxing.common.BitMatrix
@@ -27,6 +30,29 @@ object HelperFunctions {
         } catch (e: Exception) {
             e.printStackTrace()
             null
+        }
+    }
+
+    fun getDisplaySize(context: Context): Pair<Int, Int> {
+        val displayMetrics = DisplayMetrics()
+        val windowManager = context.getSystemService(Context.WINDOW_SERVICE) as android.view.WindowManager
+        windowManager.defaultDisplay.getMetrics(displayMetrics)
+        return Pair(displayMetrics.widthPixels, displayMetrics.heightPixels)
+    }
+
+    fun getActionBarSize(context: Context): Int {
+        val typedValue = TypedValue()
+        context.theme.resolveAttribute(android.R.attr.actionBarSize, typedValue, true)
+        return TypedValue.complexToDimensionPixelSize(typedValue.data, context.resources.displayMetrics)
+    }
+
+    fun getNavigationBarHeight(context: Context): Int {
+        val resources = context.resources
+        val resourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android")
+        return if (resourceId > 0) {
+            resources.getDimensionPixelSize(resourceId)
+        } else {
+            0
         }
     }
 }
