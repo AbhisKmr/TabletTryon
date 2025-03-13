@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.mirrar.tablettryon.databinding.ProductCardBinding
 import com.mirrar.tablettryon.utility.AppConstraint.SELECTED_INDEX
+import com.mirrar.tablettryon.utility.AppConstraint.recommendationModel
 import com.mirrar.tablettryon.view.fragment.tryon.dataModel.Product
 
 class ProductAdapter(private val clickListener: (Int, Product) -> Unit) :
@@ -37,7 +38,13 @@ class ProductAdapter(private val clickListener: (Int, Product) -> Unit) :
         @SuppressLint("RecyclerView") position: Int
     ) {
 
-//        holder.binding.recommendationTag.isVisible = position % 2 == 0
+        if (recommendationModel != null && recommendationModel!!.recommendations.isNotEmpty()) {
+            holder.binding.recommendationTag.isVisible =
+                recommendationModel!!.recommendations.contains(list[position].name)
+        } else {
+            holder.binding.recommendationTag.isVisible = false
+        }
+
         holder.binding.selectorHighlight.isVisible = SELECTED_INDEX == position
 
         val url = if (!list[position].imageSmall.isNullOrBlank()) {

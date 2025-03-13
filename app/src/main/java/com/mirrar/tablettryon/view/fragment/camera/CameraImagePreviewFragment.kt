@@ -5,10 +5,13 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
 import com.mirrar.tablettryon.R
 import com.mirrar.tablettryon.databinding.FragmentCameraImagePreviewBinding
+import com.mirrar.tablettryon.tools.model.FaceRecommendationModel
 import com.mirrar.tablettryon.utility.AppConstraint.AR_BITMAP
+import com.mirrar.tablettryon.utility.AppConstraint.recommendationModel
 
 class CameraImagePreviewFragment : Fragment() {
 
@@ -33,7 +36,12 @@ class CameraImagePreviewFragment : Fragment() {
         }
 
         binding.next.setOnClickListener {
-            findNavController().navigate(R.id.action_cameraImagePreviewFragment4_to_tryOnFragment)
+            binding.progress.isVisible = true
+            ImageUploadForRecommendation().uploadBitmap(AR_BITMAP!!, requireContext()) {
+                recommendationModel = it
+                binding.progress.isVisible = false
+                findNavController().navigate(R.id.action_cameraImagePreviewFragment4_to_tryOnFragment)
+            }
         }
 
     }

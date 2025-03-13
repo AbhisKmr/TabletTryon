@@ -6,10 +6,12 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.mirrar.tablettryon.R
 import com.mirrar.tablettryon.databinding.CatalogueProductItemBinding
+import com.mirrar.tablettryon.utility.AppConstraint.recommendationModel
 import com.mirrar.tablettryon.utility.Bookmarks
 import com.mirrar.tablettryon.view.fragment.tryon.dataModel.Product
 
@@ -50,6 +52,16 @@ class CatalogueProductAdapter(private val clickListener: (Int, Product) -> Unit)
                 null
             }
         )*/
+
+        if (recommendationModel != null && recommendationModel!!.recommendations.isNotEmpty()) {
+            holder.binding.tag.setImageDrawable(
+                ContextCompat.getDrawable(
+                    ctx,
+                    R.drawable.recommended_orange
+                )
+            )
+        }
+
         updateHeartIcon(holder.binding.wishlist, p.isBookmarked)
 
         holder.binding.brand.text = p.brand

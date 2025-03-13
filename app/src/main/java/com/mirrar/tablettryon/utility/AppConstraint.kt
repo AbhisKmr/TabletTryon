@@ -2,6 +2,8 @@ package com.mirrar.tablettryon.utility
 
 import android.graphics.Bitmap
 import android.util.Size
+import com.algolia.search.model.recommend.RecommendationModel
+import com.mirrar.tablettryon.tools.model.FaceRecommendationModel
 
 object AppConstraint {
     var IMAGE_RENDER_SIZE = Size(0,0)
@@ -14,4 +16,5 @@ object AppConstraint {
     var CLUB_AVOLTA = ""
 
     var AR_BITMAP: Bitmap? = null
+    var recommendationModel: FaceRecommendationModel? = null
 }
