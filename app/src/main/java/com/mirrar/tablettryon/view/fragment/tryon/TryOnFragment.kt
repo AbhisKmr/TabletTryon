@@ -14,6 +14,7 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
@@ -131,6 +132,13 @@ class TryOnFragment : Fragment() {
             applyAR()
         }
 
+        viewModel.filter.observe(viewLifecycleOwner) {
+            binding.imageView3.isVisible = !it.isNullOrEmpty()
+            if (!it.isNullOrEmpty()) {
+                println(it.toString())
+            }
+        }
+
         Bookmarks.bookmarks.observe(viewLifecycleOwner) { bookmarkedProducts ->
             if (bookmarkedProducts == null) {
                 return@observe
@@ -141,6 +149,7 @@ class TryOnFragment : Fragment() {
         }
 
         viewModel.getData()
+        viewModel.fetchAllBrands()
     }
 
     private fun updateHeartIcon(list: List<Product>) {

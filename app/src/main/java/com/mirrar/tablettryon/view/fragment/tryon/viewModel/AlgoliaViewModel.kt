@@ -6,12 +6,17 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.algolia.instantsearch.searcher.hits.HitsSearcher
+import com.algolia.search.client.ClientSearch
+import com.algolia.search.configuration.ConfigurationSearch
 import com.algolia.search.model.APIKey
 import com.algolia.search.model.ApplicationID
+import com.algolia.search.model.Attribute
 import com.algolia.search.model.IndexName
 import com.google.gson.GsonBuilder
 import com.mirrar.tablettryon.view.fragment.tryon.dataModel.Product
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import com.algolia.search.model.search.Query
 
 class AlgoliaViewModel : ViewModel() {
 
@@ -21,36 +26,56 @@ class AlgoliaViewModel : ViewModel() {
         indexName = IndexName("avolta-glasses")
     )
 
+//    private val client = ClientSearch(
+//        applicationID = ApplicationID("V0MFZORLHS"),
+//        apiKey = APIKey("f9b905571a819c23a15b192b778e7b3a")
+//    )
+//    val index = client.initIndex(indexName = IndexName("avolta-glasses"))
+
+    val client = ClientSearch(
+        ConfigurationSearch(
+            ApplicationID("V0MFZORLHS"),
+            APIKey("f9b905571a819c23a15b192b778e7b3a")
+        )
+    )
+    val index = client.initIndex(IndexName("avolta-glasses"))
+
     private val _products = MutableLiveData<List<Product>>()
     val product: LiveData<List<Product>> = _products
-            /*
-                private val _searchLookFlow: MutableStateFlow<NetworkResult<List<AlgoliaLookModel>>> =
-        MutableStateFlow(NetworkResult.Idle())
-    val searchLookFlow = _searchLookFlow.asStateFlow()
-             */
 
-//    private val searcher = HitsSearcher(
-//        applicationID = ApplicationID("latency"),
-//        apiKey = APIKey("1f6fd3a6fb973cb08419fe7d288fa4db"),
-//        indexName = IndexName("instant_search")
-//    )
-    
-    /*
-    ALGOLIA_APPLICATION_ID=V0MFZORLHS
-    ALGOLIA_SECRET_KEY=5168d91cbcaa03d0400d579c40d8570d
-    ALGOLIA_SEARCH_API_KEY=f9b905571a819c23a15b192b778e7b3a
-    APPLICATION=avolta-data
-    INDEX=ZurichFrames3.0-CopyofSheet1
-     */
+    private val _filter = MutableLiveData<List<String>>()
+    val filter: LiveData<List<String>> = _filter
 
     fun getData() {
         viewModelScope.launch {
             val list = searcher.search()?.hits?.map {
                 GsonBuilder().create().fromJson(it.json.toString(), Product::class.java)
             }
-            _products.value = list?: listOf()
+            _products.value = list ?: listOf()
         }
     }
+
+    fun fetchAllBrands() {
+        _filter.value = runBlocking {
+            val query = Query().apply {
+                facets = setOf(Attribute("brand"))
+            }
+
+            val response = index.search(query)
+            response.facets[Attribute("brand")]?.map {
+                it.value
+            } ?: emptyList()
+        }
+    }
+
+//    fun fetchFilteredProducts(selectedBrands: List<String>): List<String> {
+//        return runBlocking {
+//            val filter = FacetFilters(selectedBrands.map { "brand:$it" }.or())
+//            val query = Query().setFacetFilters(filter)
+//            val response = searcher.search(query)
+//            response?.hits.map { it["name"].toString() }
+//        }
+//    }
 
     override fun onCleared() {
         super.onCleared()
