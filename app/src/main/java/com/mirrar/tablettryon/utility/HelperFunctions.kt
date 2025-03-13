@@ -1,9 +1,12 @@
 package com.mirrar.tablettryon.utility
 
+import android.animation.ObjectAnimator
 import android.content.Context
 import android.graphics.Bitmap
 import android.util.DisplayMetrics
 import android.util.TypedValue
+import android.view.animation.DecelerateInterpolator
+import android.widget.ImageView
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.EncodeHintType
 import com.google.zxing.MultiFormatWriter
@@ -58,5 +61,15 @@ object HelperFunctions {
         } else {
             0
         }
+    }
+
+    fun rotateImage(imageView: ImageView, angle: Float = 180f, startAngle: Float = 0f) {
+        val rotationAnimator = ObjectAnimator.ofFloat(imageView, "rotation", startAngle, angle)
+
+        rotationAnimator.duration = 200
+
+        rotationAnimator.interpolator = DecelerateInterpolator()
+
+        rotationAnimator.start()
     }
 }

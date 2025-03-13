@@ -7,6 +7,33 @@
     android:background="@color/white"
     tools:context=".view.fragment.catalogue.CatalogueFragment">
 
+    <androidx.drawerlayout.widget.DrawerLayout
+        android:id="@+id/drawerLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <FrameLayout
+            android:id="@+id/content_frame"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <com.google.android.material.navigation.NavigationView
+            android:id="@+id/navigation_view"
+            android:layout_width="500dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="start"
+            android:layout_marginStart="32dp"
+            app:drawerLayoutCornerSize="20dp">
+
+            <include
+                android:id="@+id/filter_nav_layout"
+                layout="@layout/filter_nav_layout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </com.google.android.material.navigation.NavigationView>
+
+    </androidx.drawerlayout.widget.DrawerLayout>
+
     <TextView
         android:id="@+id/textView7"
         android:layout_width="wrap_content"
@@ -96,6 +123,5 @@
             app:spanCount="2"
             tools:listitem="@layout/catalogue_product_item" />
     </com.google.android.material.card.MaterialCardView>
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

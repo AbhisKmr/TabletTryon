@@ -17,6 +17,7 @@ import com.mirrar.tablettryon.view.fragment.tryon.dataModel.Product
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import com.algolia.search.model.search.Query
+import com.mirrar.tablettryon.tools.filter.FilterDataModel
 
 class AlgoliaViewModel : ViewModel() {
 
@@ -43,8 +44,8 @@ class AlgoliaViewModel : ViewModel() {
     private val _products = MutableLiveData<List<Product>>()
     val product: LiveData<List<Product>> = _products
 
-    private val _filter = MutableLiveData<List<String>>()
-    val filter: LiveData<List<String>> = _filter
+    private val _filter = MutableLiveData<List<FilterDataModel>>()
+    val filter: LiveData<List<FilterDataModel>> = _filter
 
     fun getData() {
         viewModelScope.launch {
@@ -63,7 +64,7 @@ class AlgoliaViewModel : ViewModel() {
 
             val response = index.search(query)
             response.facets[Attribute("brand")]?.map {
-                it.value
+                FilterDataModel(it.value)
             } ?: emptyList()
         }
     }
