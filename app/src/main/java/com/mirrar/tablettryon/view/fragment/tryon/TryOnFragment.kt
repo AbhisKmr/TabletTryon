@@ -15,7 +15,9 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
+import androidx.core.view.GravityCompat
 import androidx.core.view.isVisible
+import androidx.drawerlayout.widget.DrawerLayout.DrawerListener
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -27,9 +29,11 @@ import com.mirrar.tablettryon.tools.faceDetector.mlkit.FaceDetectionActivity
 import com.mirrar.tablettryon.utility.AppConstraint.AR_BITMAP
 import com.mirrar.tablettryon.utility.AppConstraint.filterTryOn
 import com.mirrar.tablettryon.utility.Bookmarks
+import com.mirrar.tablettryon.utility.HelperFunctions.rotateImage
 import com.mirrar.tablettryon.view.fragment.ClubAvoltaFragment
 import com.mirrar.tablettryon.view.fragment.ProductDetailsFragment
 import com.mirrar.tablettryon.view.fragment.bookmark.YouBookmarkFragment
+import com.mirrar.tablettryon.view.fragment.catalogue.adapter.FilterListAdapter
 import com.mirrar.tablettryon.view.fragment.email.EmailFragment
 import com.mirrar.tablettryon.view.fragment.selfie.SelfieFragment
 import com.mirrar.tablettryon.view.fragment.tryon.adapter.ProductAdapter
@@ -70,6 +74,30 @@ class TryOnFragment : Fragment() {
         faceDetectionActivity = FaceDetectionActivity(binding.glassPreview)
 
         val viewModel = ViewModelProvider.create(this)[AlgoliaViewModel::class.java]
+
+        binding.filterNavLayout.recyclerDropdownBrand.title.text = "Brand"
+        binding.imageView3.setOnClickListener {
+            binding.drawerLayout.elevation = 100f
+            binding.drawerLayout.openDrawer(GravityCompat.START)
+        }
+
+        binding.drawerLayout.addDrawerListener(object : DrawerListener {
+            override fun onDrawerSlide(drawerView: View, slideOffset: Float) {
+                binding.drawerLayout.elevation = 100f
+            }
+
+            override fun onDrawerOpened(drawerView: View) {
+                binding.drawerLayout.elevation = 100f
+            }
+
+            override fun onDrawerClosed(drawerView: View) {
+                binding.drawerLayout.elevation = 0f
+            }
+
+            override fun onDrawerStateChanged(newState: Int) {
+
+            }
+        })
 
         binding.catalogue.setOnClickListener {
             findNavController().navigate(R.id.action_tryOnFragment_to_catalogueFragment)
@@ -145,13 +173,68 @@ class TryOnFragment : Fragment() {
             binding.productRecyclerLoader.isVisible = false
             adapter.updateData(it)
             // remove this
+            binding.filterNavLayout.applyProgress.isVisible = false
+            binding.filterNavLayout.apply.text = "Apply"
+
             applyAR()
         }
 
+        binding.filterNavLayout.sortbyDropdown.dropArrow.setOnClickListener {
+            val vis = binding.filterNavLayout.sortbyDropdown.radioGroup.isVisible
+            binding.filterNavLayout.sortbyDropdown.radioGroup.isVisible = !vis
+
+            rotateImage(
+                binding.filterNavLayout.sortbyDropdown.dropArrow,
+                if (!vis) 180f else 0f,
+                0f,
+            )
+        }
+
         viewModel.filter.observe(viewLifecycleOwner) {
-            binding.imageView3.isVisible = !it.isNullOrEmpty()
             if (!it.isNullOrEmpty()) {
-                println(it.toString())
+
+                binding.filterNavLayout.apply.setOnClickListener { v ->
+                    val selectedIndex =
+                        binding.filterNavLayout.sortbyDropdown.radioGroup.indexOfChild(
+                            view.findViewById(binding.filterNavLayout.sortbyDropdown.radioGroup.checkedRadioButtonId)
+                        )
+
+                    if (it.none { iii -> iii.isSelected } && selectedIndex < 0) {
+                        Toast.makeText(
+                            requireContext(), "Please select filter first", Toast.LENGTH_SHORT
+                        ).show()
+                        return@setOnClickListener
+                    }
+
+                    binding.filterNavLayout.applyProgress.isVisible = true
+                    binding.filterNavLayout.apply.text = ""
+
+                    viewModel.fetchFilteredProducts(it, selectedIndex)
+                    binding.drawerLayout.closeDrawers()
+                }
+
+                binding.filterNavLayout.recyclerDropdownBrand.dropArrow.setOnClickListener {
+                    val vis = binding.filterNavLayout.recyclerDropdownBrand.optionParent.isVisible
+                    binding.filterNavLayout.recyclerDropdownBrand.optionParent.isVisible = !vis
+
+                    rotateImage(
+                        binding.filterNavLayout.recyclerDropdownBrand.dropArrow,
+                        if (!vis) 180f else 0f,
+                        0f,
+                    )
+                }
+                val ad = FilterListAdapter(it) {
+
+                }
+                binding.filterNavLayout.recyclerDropdownBrand.options.adapter = ad
+
+
+                binding.filterNavLayout.reset.setOnClickListener { v ->
+                    it.forEach { pp -> pp.isSelected = false }
+                    viewModel.fetchFilteredProducts(it)
+                    ad.notifyDataSetChanged()
+                }
+
             }
         }
 
