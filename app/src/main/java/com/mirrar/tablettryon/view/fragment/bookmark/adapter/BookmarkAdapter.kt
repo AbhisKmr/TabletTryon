@@ -43,7 +43,7 @@ class BookmarkAdapter : RecyclerView.Adapter<BookmarkAdapter.ViewHolder>() {
         Glide.with(ctx).load(url).into(holder.binding.glassImage)
         holder.binding.productName.text = list[position].brand
         holder.binding.productDetails.text = list[position].localItemCode
-        holder.binding.productDetails.text = "${list[position].priceDutyFree} ${list[position].currency}"
+        holder.binding.price.text = "${list[position].currency} ${list[position].priceDutyFree}"
 
         holder.binding.delete.setOnClickListener {
             Bookmarks.removeBookmark(list[position])
