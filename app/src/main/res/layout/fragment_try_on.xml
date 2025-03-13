@@ -26,6 +26,7 @@
         android:layout_height="0dp"
         android:layout_marginEnd="24dp"
         android:elevation="0dp"
+        android:visibility="invisible"
         app:cardBackgroundColor="@color/primery_purple"
         app:cardCornerRadius="255dp"
         app:cardElevation="0dp"
@@ -167,61 +168,63 @@
             tools:text="CHF 145.00" />
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="0dp"
+
+    <Button
+        android:id="@+id/details"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="30dp"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="@+id/cardView3"
-        app:layout_constraintEnd_toEndOf="@+id/cardView3"
-        app:layout_constraintWidth_percent=".5">
+        android:layout_marginEnd="12dp"
+        android:backgroundTint="@color/white"
+        android:fontFamily="@font/manrope_extra_bold"
+        android:maxLines="1"
+        android:paddingHorizontal="24dp"
+        android:paddingVertical="12dp"
+        android:text="See Details"
+        android:textColor="@color/text_black"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="@+id/email"
+        app:layout_constraintEnd_toStartOf="@+id/email"
+        app:layout_constraintTop_toTopOf="@+id/email" />
 
-        <Button
-            android:id="@+id/details"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="10dp"
-            android:backgroundTint="@color/white"
-            android:fontFamily="@font/manrope_extra_bold"
-            android:maxLines="1"
-            android:paddingHorizontal="24dp"
-            android:paddingVertical="12dp"
-            android:text="See Details"
-            android:textColor="@color/text_black"
-            android:textSize="14sp" />
+    <Button
+        android:id="@+id/email"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="12dp"
+        android:backgroundTint="@color/white"
+        android:drawableLeft="@drawable/ic_email"
+        android:fontFamily="@font/manrope_extra_bold"
+        android:maxWidth="1000dp"
+        android:maxLines="1"
+        android:paddingHorizontal="24dp"
+        android:paddingVertical="12dp"
+        android:text="Email"
+        android:textColor="@color/text_black"
+        android:textSize="14sp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/wishlist"
+        app:layout_constraintEnd_toStartOf="@+id/wishlist"
+        app:layout_constraintTop_toTopOf="@+id/wishlist" />
 
-        <Button
-            android:id="@+id/email"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="10dp"
-            android:backgroundTint="@color/white"
-            android:drawableLeft="@drawable/ic_email"
-            android:fontFamily="@font/manrope_extra_bold"
-            android:maxWidth="1000dp"
-            android:maxLines="1"
-            android:paddingHorizontal="24dp"
-            android:paddingVertical="12dp"
-            android:text="Email"
-            android:textColor="@color/text_black"
-            android:textSize="14sp" />
-
-        <Button
-            android:id="@+id/wishlist"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:backgroundTint="@color/white"
-            android:drawableLeft="@drawable/ic_heart_gray"
-            android:fontFamily="@font/manrope_extra_bold"
-            android:maxWidth="1000dp"
-            android:maxLines="1"
-            android:paddingHorizontal="24dp"
-            android:paddingVertical="12dp"
-            android:text="Wishlist"
-            android:textColor="@color/text_black"
-            android:textSize="14sp" />
-
-    </LinearLayout>
+    <Button
+        android:id="@+id/wishlist"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:layout_marginEnd="30dp"
+        android:backgroundTint="@color/white"
+        android:drawableLeft="@drawable/ic_heart_gray"
+        android:fontFamily="@font/manrope_extra_bold"
+        android:gravity="end"
+        android:maxWidth="1000dp"
+        android:maxLines="1"
+        android:paddingHorizontal="24dp"
+        android:paddingVertical="12dp"
+        android:text="Wishlist"
+        android:textColor="@color/text_black"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="@+id/linearLayout"
+        app:layout_constraintEnd_toEndOf="@+id/cardView3" />
 
     <ImageView
         android:id="@+id/imageView3"
