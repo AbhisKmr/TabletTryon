@@ -18,6 +18,7 @@ import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.ImageProxy
 import androidx.camera.core.Preview
+import androidx.camera.core.internal.utils.ImageUtil.rotateBitmap
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.core.content.ContextCompat
@@ -167,7 +168,7 @@ class CameraFragment : Fragment() {
                 override fun onCaptureSuccess(image: ImageProxy) {
                     super.onCaptureSuccess(image)
 
-                    val bitmap = rotateBitmap(imageProxyToBitmap(image), 270f)
+                    val bitmap = imageProxyToBitmap(image, rotationDegrees = 270f, flipHorizontal = true)
                     image.close()
                     AR_BITMAP = bitmap
                     findNavController().navigate(R.id.action_cameraFragment_to_cameraImagePreviewFragment4)
@@ -188,12 +189,30 @@ class CameraFragment : Fragment() {
         return Bitmap.createBitmap(source, 0, 0, source.width, source.height, matrix, true)
     }
 
-    private fun imageProxyToBitmap(image: ImageProxy): Bitmap {
+    private fun imageProxyToBitmap(
+        image: ImageProxy,
+        rotationDegrees: Float = 0f,
+        flipHorizontal: Boolean = false,
+        flipVertical: Boolean = false
+    ): Bitmap {
         val buffer = image.planes[0].buffer
         val bytes = ByteArray(buffer.remaining())
         buffer.get(bytes)
 
-        return BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+        val originalBitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+
+        val matrix = Matrix().apply {
+            // Apply rotation if needed
+            if (rotationDegrees != 0f) {
+                postRotate(rotationDegrees)
+            }
+            // Apply horizontal and/or vertical flip
+            val scaleX = if (flipHorizontal) -1f else 1f
+            val scaleY = if (flipVertical) -1f else 1f
+            postScale(scaleX, scaleY, originalBitmap.width / 2f, originalBitmap.height / 2f)
+        }
+
+        return Bitmap.createBitmap(originalBitmap, 0, 0, originalBitmap.width, originalBitmap.height, matrix, true)
     }
 
     private fun checkPermissions() {

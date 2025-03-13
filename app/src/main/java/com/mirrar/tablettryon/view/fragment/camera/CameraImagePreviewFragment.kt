@@ -37,7 +37,9 @@ class CameraImagePreviewFragment : Fragment() {
 
         binding.next.setOnClickListener {
             binding.progress.isVisible = true
-            ImageUploadForRecommendation().uploadBitmap(AR_BITMAP!!, requireContext()) {
+            val b = ImageUploadForRecommendation().resizeAndCompressBitmap(AR_BITMAP!!)
+            ImageUploadForRecommendation().uploadBitmap(b, requireContext()
+            ) {
                 recommendationModel = it
                 binding.progress.isVisible = false
                 findNavController().navigate(R.id.action_cameraImagePreviewFragment4_to_tryOnFragment)

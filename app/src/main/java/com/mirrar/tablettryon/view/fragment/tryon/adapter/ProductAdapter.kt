@@ -40,7 +40,7 @@ class ProductAdapter(private val clickListener: (Int, Product) -> Unit) :
 
         if (recommendationModel != null && recommendationModel!!.recommendations.isNotEmpty()) {
             holder.binding.recommendationTag.isVisible =
-                recommendationModel!!.recommendations.contains(list[position].name)
+                recommendationModel!!.recommendations.contains(list[position].objectID)
         } else {
             holder.binding.recommendationTag.isVisible = false
         }

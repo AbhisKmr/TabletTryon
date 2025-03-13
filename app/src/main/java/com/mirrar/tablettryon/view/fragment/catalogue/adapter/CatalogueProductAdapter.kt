@@ -54,12 +54,18 @@ class CatalogueProductAdapter(private val clickListener: (Int, Product) -> Unit)
         )*/
 
         if (recommendationModel != null && recommendationModel!!.recommendations.isNotEmpty()) {
-            holder.binding.tag.setImageDrawable(
-                ContextCompat.getDrawable(
-                    ctx,
-                    R.drawable.recommended_orange
+            if (recommendationModel!!.recommendations.contains(list[position].objectID)) {
+                holder.binding.tag.setImageDrawable(
+                    ContextCompat.getDrawable(
+                        ctx,
+                        R.drawable.recommended_orange
+                    )
                 )
-            )
+            } else {
+                holder.binding.tag.setImageDrawable(null)
+            }
+        } else {
+            holder.binding.tag.setImageDrawable(null)
         }
 
         updateHeartIcon(holder.binding.wishlist, p.isBookmarked)
