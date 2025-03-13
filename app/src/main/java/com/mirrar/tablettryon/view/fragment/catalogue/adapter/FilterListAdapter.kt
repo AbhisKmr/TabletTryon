@@ -27,8 +27,10 @@ class FilterListAdapter(private val lst: List<FilterDataModel>, val onSelect : (
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.binding.title.text = lst[position].value
+        holder.binding.title.isChecked = lst[position].isSelected
         holder.binding.root.setOnClickListener {
             lst[position].isSelected = !lst[position].isSelected
+            notifyItemChanged(position)
             onSelect()
         }
     }
