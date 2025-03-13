@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.mirrar.tablettryon.databinding.ProductCardBinding
 import com.mirrar.tablettryon.utility.AppConstraint.SELECTED_INDEX
+import com.mirrar.tablettryon.utility.AppConstraint.filterTryOn
 import com.mirrar.tablettryon.utility.AppConstraint.recommendationModel
 import com.mirrar.tablettryon.view.fragment.tryon.dataModel.Product
 
@@ -76,8 +77,16 @@ class ProductAdapter(private val clickListener: (Int, Product) -> Unit) :
         if (SELECTED_INDEX > list.size) {
             SELECTED_INDEX = -1
         }
+
         this.list.clear()
         this.list.addAll(list)
+        if (filterTryOn != null) {
+            if (this.list.contains(filterTryOn)) {
+                this.list.remove(filterTryOn)
+                this.list.add(0, filterTryOn!!)
+                SELECTED_INDEX = 0
+            }
+        }
         notifyDataSetChanged()
     }
 

@@ -106,7 +106,11 @@ class EmailFragment(private val p: Product, private val bitmap: Bitmap) : Dialog
                     if (it != null) {
                         val b = HelperFunctions.generateQRCode(it.url)
                         if (b != null) {
-                            binding.imageView4.setImageBitmap(b)
+                            lifecycleScope.launch {
+                                withContext(Dispatchers.Main) {
+                                    binding.imageView4.setImageBitmap(b)
+                                }
+                            }
                         }
                     }
                 }

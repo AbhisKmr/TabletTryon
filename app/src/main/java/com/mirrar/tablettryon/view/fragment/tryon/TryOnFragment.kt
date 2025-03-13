@@ -58,6 +58,7 @@ class TryOnFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        filterTryOn = null
         _binding = null
     }
 
@@ -143,11 +144,6 @@ class TryOnFragment : Fragment() {
         viewModel.product.observe(viewLifecycleOwner) {
             binding.productRecyclerLoader.isVisible = false
             adapter.updateData(it)
-
-            if (filterTryOn != null) {
-                adapter.setPreSelected(filterTryOn!!)
-                filterTryOn = null
-            }
             // remove this
             applyAR()
         }
