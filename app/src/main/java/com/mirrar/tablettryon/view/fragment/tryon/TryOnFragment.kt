@@ -7,6 +7,7 @@ import android.graphics.Canvas
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,7 +18,6 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.google.mlkit.vision.common.InputImage
@@ -27,10 +27,10 @@ import com.mirrar.tablettryon.tools.faceDetector.mlkit.FaceDetectionActivity
 import com.mirrar.tablettryon.utility.AppConstraint.AR_BITMAP
 import com.mirrar.tablettryon.utility.Bookmarks
 import com.mirrar.tablettryon.view.fragment.ClubAvoltaFragment
-import com.mirrar.tablettryon.view.fragment.DialogLikeFragment
-import com.mirrar.tablettryon.view.fragment.email.EmailFragment
 import com.mirrar.tablettryon.view.fragment.ProductDetailsFragment
 import com.mirrar.tablettryon.view.fragment.bookmark.YouBookmarkFragment
+import com.mirrar.tablettryon.view.fragment.email.EmailFragment
+import com.mirrar.tablettryon.view.fragment.selfie.SelfieFragment
 import com.mirrar.tablettryon.view.fragment.tryon.adapter.ProductAdapter
 import com.mirrar.tablettryon.view.fragment.tryon.dataModel.Product
 import com.mirrar.tablettryon.view.fragment.tryon.viewModel.AlgoliaViewModel
@@ -90,9 +90,22 @@ class TryOnFragment : Fragment() {
             }
         }
 
+        binding.next.setOnClickListener {
+            if (selectedProduct != null) {
+                openDialogFragment(
+                    SelfieFragment.newInstance(
+                        selectedProduct!!,
+                        viewToBitmap(binding.cardView3)!!
+                    )
+                )
+            }
+        }
+
         binding.cardView2.setOnClickListener {
             if (Bookmarks.getBookmarks().isEmpty()) {
-                Toast.makeText(requireContext(), "Wishlist is empty", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Wishlist is empty", Toast.LENGTH_SHORT).apply {
+                    setGravity(Gravity.TOP or Gravity.RIGHT, 200, 10)
+                }.show()
                 return@setOnClickListener
             }
             openDialogFragment(YouBookmarkFragment.newInstance())

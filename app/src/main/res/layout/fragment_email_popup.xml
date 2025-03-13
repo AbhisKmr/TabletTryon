@@ -47,7 +47,9 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center"
                 android:fontFamily="@font/manrope_extra_bold"
+                android:gravity="center"
                 android:text="Share an email to receive your favorite sunglasses in your inbox"
                 android:textColor="@color/black"
                 android:textSize="16sp" />
@@ -119,11 +121,11 @@
                 android:id="@+id/close"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center"
                 android:layout_marginTop="24dp"
                 android:fontFamily="@font/manrope_bold"
-                android:text="I’ll do this later"
-                android:layout_gravity="center"
                 android:gravity="center"
+                android:text="I’ll do this later"
                 android:textColor="@color/text_gray"
                 android:textSize="18sp" />
         </LinearLayout>
