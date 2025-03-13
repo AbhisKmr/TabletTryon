@@ -13,6 +13,7 @@ import com.mirrar.tablettryon.R
 import com.mirrar.tablettryon.databinding.FragmentCatalogueBinding
 import com.mirrar.tablettryon.utility.Bookmarks
 import com.mirrar.tablettryon.utility.HelperFunctions.rotateImage
+import com.mirrar.tablettryon.view.fragment.ProductDetailsFragment
 import com.mirrar.tablettryon.view.fragment.catalogue.adapter.CatalogueProductAdapter
 import com.mirrar.tablettryon.view.fragment.catalogue.adapter.FilterChipAdapter
 import com.mirrar.tablettryon.view.fragment.catalogue.adapter.FilterListAdapter
@@ -71,8 +72,8 @@ class CatalogueFragment : Fragment() {
         })
 
         binding.filterChipRecycler.adapter = FilterChipAdapter()
-        val adapter = CatalogueProductAdapter { i, p ->
-
+        val adapter = CatalogueProductAdapter { _, p ->
+            ProductDetailsFragment.newInstance(p).show(childFragmentManager, "ProductDetailsFragment")
         }
 
         binding.productRecycler.adapter = adapter
