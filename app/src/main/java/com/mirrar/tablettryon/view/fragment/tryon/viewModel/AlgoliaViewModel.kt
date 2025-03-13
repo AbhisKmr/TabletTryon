@@ -26,7 +26,7 @@ class AlgoliaViewModel : ViewModel() {
     private val searcher = HitsSearcher(
         applicationID = ApplicationID("V0MFZORLHS"),
         apiKey = APIKey("f9b905571a819c23a15b192b778e7b3a"),
-        indexName = IndexName("avolta-glasses")
+        indexName = IndexName("avolta-demo")
     )
 
 //    private val client = ClientSearch(
@@ -41,7 +41,7 @@ class AlgoliaViewModel : ViewModel() {
             APIKey("f9b905571a819c23a15b192b778e7b3a")
         )
     )
-    val index = client.initIndex(IndexName("avolta-glasses"))
+    val index = client.initIndex(IndexName("avolta-demo"))
 
     private val _products = MutableLiveData<List<Product>>()
     val product: LiveData<List<Product>> = _products
@@ -158,15 +158,15 @@ class AlgoliaViewModel : ViewModel() {
                     (
                     when (shortingIndex) {
                         0 -> {
-                            "avolta-glasses-asc"
+                            "avolta-demo-asc"
                         }
 
                         1 -> {
-                            "avolta-glasses-desc"
+                            "avolta-demo-desc"
                         }
 
                         else -> {
-                            "avolta-glasses"
+                            "avolta-demo"
                         }
 
                     }
