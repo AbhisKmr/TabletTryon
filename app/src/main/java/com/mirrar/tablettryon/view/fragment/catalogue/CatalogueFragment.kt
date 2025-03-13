@@ -1,10 +1,12 @@
 package com.mirrar.tablettryon.view.fragment.catalogue
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.view.GravityCompat
 import androidx.core.view.isVisible
 import androidx.drawerlayout.widget.DrawerLayout.DrawerListener
@@ -38,6 +40,7 @@ class CatalogueFragment : Fragment() {
         _binding = null
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -73,7 +76,8 @@ class CatalogueFragment : Fragment() {
 
         binding.filterChipRecycler.adapter = FilterChipAdapter()
         val adapter = CatalogueProductAdapter { _, p ->
-            ProductDetailsFragment.newInstance(p).show(childFragmentManager, "ProductDetailsFragment")
+            ProductDetailsFragment.newInstance(p)
+                .show(childFragmentManager, "ProductDetailsFragment")
         }
 
         binding.productRecycler.adapter = adapter
@@ -88,6 +92,19 @@ class CatalogueFragment : Fragment() {
         viewModel.filter.observe(viewLifecycleOwner) {
             if (!it.isNullOrEmpty()) {
 
+                binding.filterNavLayout.apply.setOnClickListener { v ->
+                    if (it.none { iii -> iii.isSelected }) {
+                        Toast.makeText(
+                            requireContext(),
+                            "Please select filter first",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        return@setOnClickListener
+                    }
+                    viewModel.fetchFilteredProducts(it)
+                    binding.drawerLayout.closeDrawers()
+                }
+
                 binding.filterNavLayout.recyclerDropdownBrand.dropArrow.setOnClickListener {
                     val vis = binding.filterNavLayout.recyclerDropdownBrand.optionParent.isVisible
                     binding.filterNavLayout.recyclerDropdownBrand.optionParent.isVisible = !vis
@@ -98,10 +115,18 @@ class CatalogueFragment : Fragment() {
                         0f,
                     )
                 }
-                binding.filterNavLayout.recyclerDropdownBrand.options.adapter =
-                    FilterListAdapter(it) {
-                        viewModel.fetchFilteredProducts(it)
-                    }
+                val ad = FilterListAdapter(it) {
+
+                }
+                binding.filterNavLayout.recyclerDropdownBrand.options.adapter = ad
+
+
+                binding.filterNavLayout.reset.setOnClickListener { v ->
+                    it.forEach { pp -> pp.isSelected = false }
+                    viewModel.fetchFilteredProducts(it)
+                    ad.notifyDataSetChanged()
+                }
+
             }
         }
 

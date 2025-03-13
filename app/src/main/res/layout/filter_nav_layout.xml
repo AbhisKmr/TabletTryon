@@ -60,6 +60,7 @@
             android:layout_marginEnd="12dp"
             android:layout_weight="1"
             android:backgroundTint="@color/text_black"
+            android:paddingVertical="12dp"
             android:text="Reset"
             android:textAllCaps="false"
             app:layout_constraintStart_toStartOf="parent" />
@@ -71,7 +72,8 @@
             android:layout_marginStart="12dp"
             android:layout_weight="1"
             android:backgroundTint="@color/primery_purple"
-            android:text="Reset"
+            android:paddingVertical="12dp"
+            android:text="Apply"
             android:textAllCaps="false"
             app:layout_constraintEnd_toEndOf="parent" />
     </LinearLayout>
