@@ -81,7 +81,7 @@ class CatalogueFragment : Fragment() {
                 filterTryOn = p
                 Handler().postDelayed({
                     requireActivity().onBackPressedDispatcher.onBackPressed()
-                }, 1000)
+                }, 500)
             }).show(childFragmentManager, "ProductDetailsFragment")
         }
 

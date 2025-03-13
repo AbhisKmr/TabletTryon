@@ -18,7 +18,7 @@ import com.mirrar.tablettryon.view.fragment.email.dataModel.emailApi.Object
 import com.mirrar.tablettryon.view.fragment.email.dataModel.emailApi.SendEmailApiRequest
 import com.mirrar.tablettryon.view.fragment.tryon.dataModel.Product
 
-class EmailPopupFragment : DialogFragment() {
+class EmailPopupFragment(val emailTag: String, val p: Product? = null) : DialogFragment() {
 
     private var _binding: FragmentEmailPopupBinding? = null
     private val binding get() = _binding!!
@@ -31,8 +31,7 @@ class EmailPopupFragment : DialogFragment() {
     override fun onStart() {
         super.onStart()
         dialog?.window?.setLayout(
-            ViewGroup.LayoutParams.MATCH_PARENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT
+            ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT
         )
     }
 
@@ -42,8 +41,7 @@ class EmailPopupFragment : DialogFragment() {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         _binding = FragmentEmailPopupBinding.inflate(inflater, container, false)
         return binding.root
@@ -79,33 +77,35 @@ class EmailPopupFragment : DialogFragment() {
                 return@setOnClickListener
             }
 
-            val objs = Bookmarks.getBookmarks().map {
-                Object(
-                    it.brand,
-                    it.imageUrlBase!!,
-                    it.priceDutyFree.toInt(),
-                    it.productUrl ?: "",
-                    ""
+            val objs = if (p == null) {
+                Bookmarks.getBookmarks().map {
+                    Object(
+                        it.brand,
+                        it.imageUrlBase!!,
+                        it.priceDutyFree.toInt(),
+                        it.productUrl ?: "",
+                        ""
+                    )
+                }
+            } else {
+                listOf(
+                    Object(
+                        p.brand, p.imageUrlBase!!, p.priceDutyFree.toInt(), p.productUrl ?: "", ""
+                    )
                 )
             }
 
-            EmailHelper.sendDynamicEmail(
-                SendEmailApiRequest(
-                    binding.email.text.toString(),
-                    binding.name.text.toString(),
-                    objs,
-                    "Wishlist"
-                ), {
-                    if (it != null) {
-                        dismissDialog()
-                    } else {
-                        Toast.makeText(
-                            requireContext(),
-                            "Failed to send email.",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                })
+            EmailHelper.sendDynamicEmail(SendEmailApiRequest(
+                binding.email.text.toString(), binding.name.text.toString(), objs, emailTag
+            ), {
+                if (it != null) {
+                    dismissDialog()
+                } else {
+                    Toast.makeText(
+                        requireContext(), "Failed to send email.", Toast.LENGTH_SHORT
+                    ).show()
+                }
+            })
 
 //            EmailHelper.sendDynamicEmail(
 //                context = requireContext(),
@@ -128,9 +128,7 @@ class EmailPopupFragment : DialogFragment() {
     private fun dismissDialog() {
         try {
             parentFragmentManager.beginTransaction()
-                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE)
-                .remove(this)
-                .commit()
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE).remove(this).commit()
         } catch (e: Exception) {
 
         }
@@ -139,6 +137,6 @@ class EmailPopupFragment : DialogFragment() {
 
     companion object {
         @JvmStatic
-        fun newInstance() = EmailPopupFragment()
+        fun newInstance(emailTag: String, p: Product? = null) = EmailPopupFragment(emailTag, p)
     }
 }

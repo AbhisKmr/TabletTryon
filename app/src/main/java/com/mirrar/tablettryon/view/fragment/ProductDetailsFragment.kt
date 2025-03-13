@@ -96,7 +96,7 @@ class ProductDetailsFragment(
         }
 
         binding.email.setOnClickListener {
-            openDialogFragment(EmailPopupFragment.newInstance())
+            openDialogFragment(EmailPopupFragment.newInstance("product-details", product))
         }
 
     }

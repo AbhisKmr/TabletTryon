@@ -64,7 +64,7 @@ class YouBookmarkFragment : DialogFragment() {
         binding.productRecycler.adapter = bookmarkAdapter
 
         binding.email.setOnClickListener {
-            openDialogFragment(EmailPopupFragment.newInstance())
+            openDialogFragment(EmailPopupFragment.newInstance("wishlist"))
         }
     }
 

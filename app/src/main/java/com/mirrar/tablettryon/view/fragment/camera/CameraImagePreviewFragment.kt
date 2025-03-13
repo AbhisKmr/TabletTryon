@@ -15,6 +15,10 @@ import com.mirrar.tablettryon.utility.AppConstraint.AR_BITMAP
 import com.mirrar.tablettryon.utility.AppConstraint.recommendationModel
 import com.mirrar.tablettryon.view.fragment.email.EmailPopupFragment
 import com.mirrar.tablettryon.view.fragment.email.EmailSavePopupFragment
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class CameraImagePreviewFragment : Fragment() {
 
@@ -51,7 +55,11 @@ class CameraImagePreviewFragment : Fragment() {
             ImageUploadForRecommendation().uploadBitmap(b, requireContext()
             ) {
                 recommendationModel = it
-                emailFragment.update()
+                GlobalScope.launch {
+                    withContext(Dispatchers.Main) {
+                        emailFragment.update()
+                    }
+                }
             }
         }
 
