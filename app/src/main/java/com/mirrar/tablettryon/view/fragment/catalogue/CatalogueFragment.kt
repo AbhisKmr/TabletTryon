@@ -86,6 +86,9 @@ class CatalogueFragment : Fragment() {
                 product.isBookmarked = Bookmarks.getBookmarks().contains(product)
             }
             adapter.updateData(products)
+
+            binding.filterNavLayout.applyProgress.isVisible = false
+            binding.filterNavLayout.apply.text = "Apply"
         }
 
         binding.filterNavLayout.sortbyDropdown.dropArrow.setOnClickListener {
@@ -114,6 +117,10 @@ class CatalogueFragment : Fragment() {
                         ).show()
                         return@setOnClickListener
                     }
+
+                    binding.filterNavLayout.applyProgress.isVisible = true
+                    binding.filterNavLayout.apply.text = ""
+
                     viewModel.fetchFilteredProducts(it, selectedIndex)
                     binding.drawerLayout.closeDrawers()
                 }
