@@ -30,6 +30,7 @@ class CameraImagePreviewFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.cameraPreview.setImageBitmap(AR_BITMAP)
+        binding.progress.isVisible = false
 
         binding.back.setOnClickListener {
             requireActivity().onBackPressedDispatcher.onBackPressed()
@@ -41,7 +42,7 @@ class CameraImagePreviewFragment : Fragment() {
             ImageUploadForRecommendation().uploadBitmap(b, requireContext()
             ) {
                 recommendationModel = it
-                binding.progress.isVisible = false
+
                 findNavController().navigate(R.id.action_cameraImagePreviewFragment4_to_tryOnFragment)
             }
         }

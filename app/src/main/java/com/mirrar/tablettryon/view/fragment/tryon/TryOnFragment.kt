@@ -104,9 +104,9 @@ class TryOnFragment : Fragment() {
             }
         }
 
-        binding.cardView3.setOnClickListener {
-            checkPermissionAndOpenGallery()
-        }
+//        binding.cardView3.setOnClickListener {
+//            checkPermissionAndOpenGallery()
+//        }
 
         binding.cardView4.setOnClickListener {
             openDialogFragment(ClubAvoltaFragment.newInstance())
