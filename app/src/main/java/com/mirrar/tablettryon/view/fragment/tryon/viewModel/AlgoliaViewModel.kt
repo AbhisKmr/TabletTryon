@@ -142,15 +142,15 @@ class AlgoliaViewModel : ViewModel() {
         }
     }
 
-    fun fetchFilteredProducts(selectedBrands: List<FilterDataModel>) {
+    fun fetchFilteredProducts(bs: List<FilterDataModel>) {
         return runBlocking {
-            val query = Query()
-            query.facets = selectedBrands.filter { it.isSelected }
-                .map {
-                    val brandValue = if (it.value.contains(" ")) "'${it.value}'" else it.value
-                    Attribute("brand:$brandValue")
-                }
-                .toSet()
+            val brd = bs.filter { it.isSelected }
+            val filterString = brd.joinToString(separator = " OR ") { brand -> "brand:\"${brand.value}\"" }
+            val query = Query(
+                query = "",
+                filters = filterString,
+                hitsPerPage = 500
+            )
 
             val response = index.search(query)
             val list = response.hits.map {

@@ -3,6 +3,7 @@ package com.mirrar.tablettryon.view.fragment.catalogue.adapter
 import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.core.content.ContextCompat
@@ -58,16 +59,8 @@ class CatalogueProductAdapter(private val clickListener: (Int, Product) -> Unit)
 //        } else {
 //            holder.binding.tag.setImageDrawable(null)
 //        }
-
-        holder.binding.tag.setImageDrawable(
-            if (list[position].isRecommended) {
-                ContextCompat.getDrawable(
-                    ctx,
-                    R.drawable.recommended_orange
-                )
-            } else null
-        )
-
+        holder.binding.tag.visibility =
+            if (list[position].isRecommended) View.VISIBLE else View.INVISIBLE
 
         updateHeartIcon(holder.binding.wishlist, p.isBookmarked)
 
