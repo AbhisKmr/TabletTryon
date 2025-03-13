@@ -139,7 +139,9 @@ class TryOnFragment : Fragment() {
 
         binding.productRecycler.adapter = adapter
 
+        binding.productRecyclerLoader.isVisible = true
         viewModel.product.observe(viewLifecycleOwner) {
+            binding.productRecyclerLoader.isVisible = false
             adapter.updateData(it)
 
             if (filterTryOn != null) {
