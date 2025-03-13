@@ -43,30 +43,31 @@ class CatalogueProductAdapter(private val clickListener: (Int, Product) -> Unit)
     override fun onBindViewHolder(holder: CatalogueProductAdapter.ViewHolder, position: Int) {
 
         val p = list[position]
-        /*holder.binding.tag.setImageDrawable(
-            if (position < 4) {
-                ContextCompat.getDrawable(ctx, R.drawable.recommended_orange)
-            } else if (position < 5) {
-                ContextCompat.getDrawable(ctx, R.drawable.new_tag)
-            } else {
-                null
-            }
-        )*/
 
-        if (recommendationModel != null && recommendationModel!!.recommendations.isNotEmpty()) {
-            if (recommendationModel!!.recommendations.contains(list[position].objectID)) {
-                holder.binding.tag.setImageDrawable(
-                    ContextCompat.getDrawable(
-                        ctx,
-                        R.drawable.recommended_orange
-                    )
+//        if (recommendationModel != null && recommendationModel!!.recommendations.isNotEmpty()) {
+//            if (recommendationModel!!.recommendations.contains(list[position].objectID)) {
+//                holder.binding.tag.setImageDrawable(
+//                    ContextCompat.getDrawable(
+//                        ctx,
+//                        R.drawable.recommended_orange
+//                    )
+//                )
+//            } else {
+//                holder.binding.tag.setImageDrawable(null)
+//            }
+//        } else {
+//            holder.binding.tag.setImageDrawable(null)
+//        }
+
+        holder.binding.tag.setImageDrawable(
+            if (list[position].isRecommended) {
+                ContextCompat.getDrawable(
+                    ctx,
+                    R.drawable.recommended_orange
                 )
-            } else {
-                holder.binding.tag.setImageDrawable(null)
-            }
-        } else {
-            holder.binding.tag.setImageDrawable(null)
-        }
+            } else null
+        )
+
 
         updateHeartIcon(holder.binding.wishlist, p.isBookmarked)
 

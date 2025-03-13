@@ -102,4 +102,5 @@ data class Product(
     val year: String
 ) {
     var isBookmarked = false
+    var isRecommended = false
 }

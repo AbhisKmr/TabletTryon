@@ -12,12 +12,14 @@ import com.algolia.search.model.APIKey
 import com.algolia.search.model.ApplicationID
 import com.algolia.search.model.Attribute
 import com.algolia.search.model.IndexName
+import com.algolia.search.model.ObjectID
 import com.google.gson.GsonBuilder
 import com.mirrar.tablettryon.view.fragment.tryon.dataModel.Product
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import com.algolia.search.model.search.Query
 import com.mirrar.tablettryon.tools.filter.FilterDataModel
+import com.mirrar.tablettryon.utility.AppConstraint.recommendationModel
 
 class AlgoliaViewModel : ViewModel() {
 
@@ -49,12 +51,83 @@ class AlgoliaViewModel : ViewModel() {
 
     fun getData() {
         viewModelScope.launch {
-            val list = searcher.search()?.hits?.map {
-                GsonBuilder().create().fromJson(it.json.toString(), Product::class.java)
+            try {
+                val objects =
+                    recommendationModel?.recommendations?.map { ObjectID(it) } ?: emptyList()
+                val recommendedObjects = index.getObjects(objects)
+
+                val additionalQuery: Query = when (recommendationModel?.gender?.lowercase()) {
+                    "male" -> Query(
+                        query = "",
+                        filters = "gender:\"For Him\" OR gender:\"Unisex\""
+                    )
+
+                    "female" -> Query(
+                        query = "",
+                        filters = "gender:\"For Her\" OR gender:\"Unisex\""
+                    )
+
+                    else -> Query(query = "", filters = "gender:\"Unisex\"")
+                }
+
+                val additionalProductsResponse = index.search(additionalQuery)
+
+
+                val lst = mutableListOf<Product>()
+
+                recommendedObjects.results.forEach {
+                    val p = GsonBuilder().create().fromJson(it.toString(), Product::class.java)
+                        .apply { isRecommended = true }
+
+                    lst.add(p)
+                }
+
+                additionalProductsResponse.hits.map {
+                    lst.add(
+                        GsonBuilder().create().fromJson(it.json.toString(), Product::class.java)
+                    )
+                }
+                _products.value = lst
+
+            } catch (e: Exception) {
+                Log.e("Algolia", "Error fetching products", e)
             }
-            _products.value = list ?: listOf()
         }
     }
+
+//    fun getData() {
+//        viewModelScope.launch {
+//            val recommendedProducts =
+//                index.getObjects(recommendationModel?.recommendations?.map { ObjectID(it) }
+//                    ?: emptyList())
+//
+//            val additionalQuery: Query = when (recommendationModel?.gender?.lowercase()) {
+//                "male" -> Query(
+//                    query = "",
+//                    filters = "gender:\"For Him\" OR gender:\"Unisex\""
+//                )
+//
+//                "female" -> Query(
+//                    query = "",
+//                    filters = "gender:\"For Her\" OR gender:\"Unisex\""
+//                )
+//
+//                else -> Query(query = "")
+//            }
+//
+//            val additionalProductsResponse = index.search(additionalQuery)
+//
+//            val combinedProducts = mutableListOf<Any>()
+//
+//            combinedProducts.addAll(recommendedProducts.hits)
+//            combinedProducts.addAll(additionalProductsResponse.hits)
+//
+////            val list = searcher.search()?.hits?.map {
+////                GsonBuilder().create().fromJson(it.json.toString(), Product::class.java)
+////            }
+////            _products.value = list ?: listOf()
+//        }
+//    }
 
     fun fetchAllBrands() {
         _filter.value = runBlocking {

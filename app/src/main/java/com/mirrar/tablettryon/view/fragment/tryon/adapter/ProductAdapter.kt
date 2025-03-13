@@ -38,12 +38,14 @@ class ProductAdapter(private val clickListener: (Int, Product) -> Unit) :
         @SuppressLint("RecyclerView") position: Int
     ) {
 
-        if (recommendationModel != null && recommendationModel!!.recommendations.isNotEmpty()) {
-            holder.binding.recommendationTag.isVisible =
-                recommendationModel!!.recommendations.contains(list[position].objectID)
-        } else {
-            holder.binding.recommendationTag.isVisible = false
-        }
+//        if (recommendationModel != null && recommendationModel!!.recommendations.isNotEmpty()) {
+//            holder.binding.recommendationTag.isVisible =
+//                recommendationModel!!.recommendations.contains(list[position].objectID)
+//        } else {
+//            holder.binding.recommendationTag.isVisible = false
+//        }
+
+        holder.binding.recommendationTag.isVisible = list[position].isRecommended
 
         holder.binding.selectorHighlight.isVisible = SELECTED_INDEX == position
 
