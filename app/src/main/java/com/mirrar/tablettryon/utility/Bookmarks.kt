@@ -26,6 +26,10 @@ object Bookmarks {
         }
     }
 
+    fun clearAll() {
+        _bookmarks.value = mutableListOf()
+    }
+
     fun getBookmarks(): List<Product> {
         return _bookmarks.value ?: emptyList()
     }

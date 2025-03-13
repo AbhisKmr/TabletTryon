@@ -10,8 +10,10 @@ import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import com.mirrar.tablettryon.R
 import com.mirrar.tablettryon.databinding.FragmentSelfieBinding
+import com.mirrar.tablettryon.utility.Bookmarks
 import com.mirrar.tablettryon.utility.HelperFunctions
 import com.mirrar.tablettryon.view.fragment.email.EmailHelper
 import com.mirrar.tablettryon.view.fragment.tryon.dataModel.Product
@@ -59,6 +61,11 @@ class SelfieFragment(private val p: Product, private val bitmap: Bitmap) : Dialo
 
         binding.imageView2.setOnClickListener {
             dismissDialog()
+        }
+
+        binding.finish.setOnClickListener {
+            Bookmarks.clearAll()
+            findNavController().popBackStack(R.id.homeFragment, false)
         }
 
         binding.modelPreview.setImageBitmap(bitmap)

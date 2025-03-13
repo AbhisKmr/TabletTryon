@@ -255,15 +255,42 @@
 
     </androidx.cardview.widget.CardView>
 
-    <ImageView
-        android:id="@+id/imageView2"
-        android:layout_width="84dp"
+    <LinearLayout
+        android:layout_width="wrap_content"
         android:layout_height="84dp"
         android:layout_marginBottom="80dp"
-        android:background="@drawable/close_small"
+        android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent">
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/imageView2"
+            android:layout_width="84dp"
+            android:layout_height="84dp"
+            app:cardBackgroundColor="@color/text_black"
+            app:cardCornerRadius="84dp">
+
+            <ImageView
+                android:layout_width="84dp"
+                android:layout_height="84dp"
+                android:padding="20dp"
+                android:scaleX="-1"
+                android:src="@drawable/baseline_exit_to_app_24" />
+
+        </androidx.cardview.widget.CardView>
+
+        <Button
+            android:id="@+id/finish"
+            android:layout_width="wrap_content"
+            android:layout_height="84dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="44dp"
+            android:backgroundTint="@color/text_black"
+            android:gravity="center_vertical"
+            android:paddingVertical="8dp"
+            android:text="End Journey" />
+    </LinearLayout>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
