@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.util.DisplayMetrics
 import android.util.TypedValue
 import com.google.zxing.BarcodeFormat
+import com.google.zxing.EncodeHintType
 import com.google.zxing.MultiFormatWriter
 import com.google.zxing.common.BitMatrix
 import com.journeyapps.barcodescanner.BarcodeEncoder
@@ -24,7 +25,10 @@ object HelperFunctions {
 
     fun generateQRCode(text: String, width: Int = 500, height: Int = 500): Bitmap? {
         return try {
-            val bitMatrix: BitMatrix = MultiFormatWriter().encode(text, BarcodeFormat.QR_CODE, width, height)
+            val hints = mapOf(EncodeHintType.MARGIN to 0)
+
+            val bitMatrix: BitMatrix = MultiFormatWriter().encode(text, BarcodeFormat.QR_CODE, width, height, hints)
+
             val barcodeEncoder = BarcodeEncoder()
             barcodeEncoder.createBitmap(bitMatrix) // Convert BitMatrix to Bitmap
         } catch (e: Exception) {
