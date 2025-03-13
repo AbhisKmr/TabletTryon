@@ -1,21 +1,19 @@
 package com.mirrar.tablettryon.view.fragment.email
 
-import android.graphics.Bitmap
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.view.isVisible
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentTransaction
 import com.mirrar.tablettryon.R
 import com.mirrar.tablettryon.databinding.FragmentEmailPopupBinding
 import com.mirrar.tablettryon.utility.AppConstraint.userEmail
 import com.mirrar.tablettryon.utility.AppConstraint.userName
-import com.mirrar.tablettryon.view.fragment.tryon.dataModel.Product
 
-class EmailPopupFragment : DialogFragment() {
+class EmailSavePopupFragment(val close: () -> Unit) : DialogFragment() {
 
     private var _binding: FragmentEmailPopupBinding? = null
     private val binding get() = _binding!!
@@ -49,15 +47,10 @@ class EmailPopupFragment : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        binding.saveProgress.isVisible = true
+        binding.sendTv.text = ""
+
         binding.close.setOnClickListener { dismissDialog() }
-
-        if (userEmail != null) {
-            binding.email.setText(userEmail)
-        }
-
-        if (userName != null) {
-            binding.name.setText(userName)
-        }
 
         binding.send.setOnClickListener {
 
@@ -76,21 +69,9 @@ class EmailPopupFragment : DialogFragment() {
                 return@setOnClickListener
             }
 
-            EmailHelper.sendDynamicEmail(
-                context = requireContext(),
-                recipientEmail = binding.email.text.toString(),
-                username = binding.name.text.toString(), {
-                    if (it) {
-                        dismissDialog()
-                    } else {
-                        Toast.makeText(
-                            requireContext(),
-                            "Failed to send email.",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                }
-            )
+            userEmail = binding.email.text.toString()
+            userName = binding.name.text.toString()
+            dismissDialog()
         }
     }
 
@@ -99,11 +80,16 @@ class EmailPopupFragment : DialogFragment() {
             .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE)
             .remove(this)
             .commit()
+        close()
     }
 
+    fun update() {
+        binding.saveProgress.isVisible = false
+        binding.sendTv.text = "Save"
+    }
 
     companion object {
         @JvmStatic
-        fun newInstance() = EmailPopupFragment()
+        fun newInstance(close: () -> Unit) = EmailSavePopupFragment(close)
     }
 }

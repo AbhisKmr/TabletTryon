@@ -50,7 +50,7 @@
                 android:layout_gravity="center"
                 android:fontFamily="@font/manrope_extra_bold"
                 android:gravity="center"
-                android:text="Share an email to receive your favorite sunglasses in your inbox"
+                android:text="We are finding recommendation based on your look"
                 android:textColor="@color/black"
                 android:textSize="16sp" />
 
@@ -107,6 +107,7 @@
                 app:cardElevation="0dp">
 
                 <TextView
+                    android:id="@+id/sendTv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
@@ -115,6 +116,14 @@
                     android:text="Send"
                     android:textColor="@color/white"
                     android:textSize="18sp" />
+
+                <ProgressBar
+                    android:id="@+id/saveProgress"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:indeterminateTint="@color/white"
+                    android:visibility="gone" />
             </androidx.cardview.widget.CardView>
 
             <TextView

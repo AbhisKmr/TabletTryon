@@ -19,4 +19,7 @@ object AppConstraint {
     var AR_BITMAP: Bitmap? = null
     var recommendationModel: FaceRecommendationModel? = null
     var filterTryOn: Product? = null
+
+    var userName: String? = null
+    var userEmail: String? = null
 }
