@@ -25,6 +25,7 @@ import com.mirrar.tablettryon.R
 import com.mirrar.tablettryon.databinding.FragmentTryOnBinding
 import com.mirrar.tablettryon.tools.faceDetector.mlkit.FaceDetectionActivity
 import com.mirrar.tablettryon.utility.AppConstraint.AR_BITMAP
+import com.mirrar.tablettryon.utility.AppConstraint.filterTryOn
 import com.mirrar.tablettryon.utility.Bookmarks
 import com.mirrar.tablettryon.view.fragment.ClubAvoltaFragment
 import com.mirrar.tablettryon.view.fragment.ProductDetailsFragment
@@ -75,7 +76,7 @@ class TryOnFragment : Fragment() {
 
         binding.details.setOnClickListener {
             if (selectedProduct != null) {
-                openDialogFragment(ProductDetailsFragment.newInstance(selectedProduct!!))
+                openDialogFragment(ProductDetailsFragment.newInstance(selectedProduct!!, {}))
             }
         }
 
@@ -141,6 +142,10 @@ class TryOnFragment : Fragment() {
         viewModel.product.observe(viewLifecycleOwner) {
             adapter.updateData(it)
 
+            if (filterTryOn != null) {
+                adapter.setPreSelected(filterTryOn!!)
+                filterTryOn = null
+            }
             // remove this
             applyAR()
         }

@@ -2,6 +2,7 @@ package com.mirrar.tablettryon.view.fragment.catalogue
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.os.Handler
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -13,6 +14,7 @@ import androidx.drawerlayout.widget.DrawerLayout.DrawerListener
 import androidx.lifecycle.ViewModelProvider
 import com.mirrar.tablettryon.R
 import com.mirrar.tablettryon.databinding.FragmentCatalogueBinding
+import com.mirrar.tablettryon.utility.AppConstraint.filterTryOn
 import com.mirrar.tablettryon.utility.Bookmarks
 import com.mirrar.tablettryon.utility.HelperFunctions.rotateImage
 import com.mirrar.tablettryon.view.fragment.ProductDetailsFragment
@@ -75,8 +77,12 @@ class CatalogueFragment : Fragment() {
 
         binding.filterChipRecycler.adapter = FilterChipAdapter()
         val adapter = CatalogueProductAdapter { _, p ->
-            ProductDetailsFragment.newInstance(p)
-                .show(childFragmentManager, "ProductDetailsFragment")
+            ProductDetailsFragment.newInstance(p, {
+                filterTryOn = p
+                Handler().postDelayed({
+                    requireActivity().onBackPressedDispatcher.onBackPressed()
+                }, 1000)
+            }).show(childFragmentManager, "ProductDetailsFragment")
         }
 
         binding.productRecycler.adapter = adapter

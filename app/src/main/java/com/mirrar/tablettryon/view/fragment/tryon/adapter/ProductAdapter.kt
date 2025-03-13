@@ -80,4 +80,14 @@ class ProductAdapter(private val clickListener: (Int, Product) -> Unit) :
         this.list.addAll(list)
         notifyDataSetChanged()
     }
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun setPreSelected(p: Product) {
+        if (list.contains(p)) {
+            list.remove(p)
+        }
+        list.add(0, p)
+        SELECTED_INDEX = 0
+        notifyDataSetChanged()
+    }
 }

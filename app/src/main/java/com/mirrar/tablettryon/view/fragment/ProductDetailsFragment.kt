@@ -18,7 +18,11 @@ import com.mirrar.tablettryon.utility.HelperFunctions.getImageUrlFromProduct
 import com.mirrar.tablettryon.view.fragment.email.EmailPopupFragment
 import com.mirrar.tablettryon.view.fragment.tryon.dataModel.Product
 
-class ProductDetailsFragment(private val product: Product) : DialogFragment() {
+class ProductDetailsFragment(
+    private val product: Product,
+    val onTryOn: () -> Unit
+) :
+    DialogFragment() {
 
     private var _binding: FragmentProductDetailsBinding? = null
     private val binding get() = _binding!!
@@ -61,6 +65,7 @@ class ProductDetailsFragment(private val product: Product) : DialogFragment() {
         }
 
         binding.tryOnBtn.setOnClickListener {
+            onTryOn()
             dismissDialog()
         }
 
@@ -73,7 +78,11 @@ class ProductDetailsFragment(private val product: Product) : DialogFragment() {
         binding.productDetailsLayout.productPrice.text =
             "${product.currency} ${product.priceDutyFree}"
 
-        setSeeMoreFunctionality(binding.productDetailsLayout.textView9, binding.productDetailsLayout.textView10, product.description)
+        setSeeMoreFunctionality(
+            binding.productDetailsLayout.textView9,
+            binding.productDetailsLayout.textView10,
+            product.description
+        )
 
         binding.productDetailsLayout.wishlist.setOnClickListener {
             Bookmarks.addToBookmark(product)
@@ -92,7 +101,11 @@ class ProductDetailsFragment(private val product: Product) : DialogFragment() {
 
     }
 
-    private fun setSeeMoreFunctionality(textView: TextView, seeMoreButton: TextView, fullText: String) {
+    private fun setSeeMoreFunctionality(
+        textView: TextView,
+        seeMoreButton: TextView,
+        fullText: String
+    ) {
 
         textView.text = fullText
 //        textView.maxLines = 3
@@ -148,7 +161,8 @@ class ProductDetailsFragment(private val product: Product) : DialogFragment() {
 
     companion object {
         @JvmStatic
-        fun newInstance(p: Product) = ProductDetailsFragment(p)
+        fun newInstance(p: Product, listener: () -> Unit) =
+            ProductDetailsFragment(p, listener)
     }
 
     private fun openDialogFragment(fragment: DialogFragment) {
