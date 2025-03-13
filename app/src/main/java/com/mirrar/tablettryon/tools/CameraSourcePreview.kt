@@ -12,17 +12,19 @@ class CameraSourcePreview(
 ) : ViewGroup(context, att) {
 
     @get:JvmName("getWidthProperty")
-    var width = 1516//IMAGE_RENDER_SIZE.width
+    var width = 1280//IMAGE_RENDER_SIZE.width
 
     @get:JvmName("getHeightProperty")
-    var height = 2332//IMAGE_RENDER_SIZE.height
+    var height = 720//IMAGE_RENDER_SIZE.height
+
+//    1280x720
 
     override fun onLayout(p0: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
-        if (isPortraitMode()) {
-            val tmp = width
-            width = height
-            height = tmp
-        }
+//        if (isPortraitMode()) {
+//            val tmp = width
+//            width = height
+//            height = tmp
+//        }
 
         val layoutWidth = right - left
         val layoutHeight = bottom - top
