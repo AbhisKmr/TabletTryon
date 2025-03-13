@@ -107,7 +107,7 @@ class CameraFragment : Fragment() {
             val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
 
             val preview = Preview.Builder()
-                .setTargetAspectRatio(AspectRatio.RATIO_16_9)
+                .setTargetAspectRatio(AspectRatio.RATIO_DEFAULT)
 //                .setTargetResolution(android.util.Size(1280, 720))
                 .build()
                 .also { it.surfaceProvider = binding.previewView.surfaceProvider }

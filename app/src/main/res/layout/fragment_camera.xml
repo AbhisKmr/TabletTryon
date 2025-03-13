@@ -57,8 +57,16 @@
             <androidx.camera.view.PreviewView
                 android:id="@+id/previewView"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                app:scaleType="fillCenter" />
         </com.mirrar.tablettryon.tools.CameraSourcePreview>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="140dp"
+            android:src="@drawable/screenshot_2025_03_13_at_10_03_04_am" />
 
     </androidx.cardview.widget.CardView>
 
