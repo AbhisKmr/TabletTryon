@@ -36,8 +36,8 @@
             android:orientation="vertical">
 
             <include
-                android:id="@+id/sortBy_dropdown"
-                layout="@layout/recycler_dropdown"
+                android:id="@+id/sortby_dropdown"
+                layout="@layout/sortby_dropdown"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
@@ -45,7 +45,8 @@
                 android:id="@+id/recycler_dropdown_brand"
                 layout="@layout/recycler_dropdown"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp" />
 
         </LinearLayout>
     </ScrollView>

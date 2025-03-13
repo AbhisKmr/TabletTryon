@@ -9,11 +9,10 @@
         android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:clickable="false"
         android:fontFamily="@font/manrope_regular"
         android:paddingLeft="8dp"
-        android:clickable="false"
         android:textColor="@color/text_black"
-        android:textSize="16sp"
         tools:text="Filter" />
 
 </LinearLayout>

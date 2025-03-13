@@ -47,12 +47,16 @@
             android:id="@+id/radioOption1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/manrope_regular"
+            android:paddingLeft="8dp"
             android:text="Price low to high" />
 
         <RadioButton
             android:id="@+id/radioOption2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/manrope_regular"
+            android:paddingLeft="8dp"
             android:text="Price high to low" />
     </RadioGroup>
 

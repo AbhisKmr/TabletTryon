@@ -39,8 +39,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
-        android:scrollbars="none"
         android:maxHeight="400dp"
+        android:scrollbars="none"
         app:layout_constraintTop_toBottomOf="@+id/view4">
 
         <androidx.constraintlayout.widget.ConstraintLayout

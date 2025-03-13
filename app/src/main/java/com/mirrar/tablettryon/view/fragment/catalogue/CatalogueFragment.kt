@@ -28,8 +28,7 @@ class CatalogueFragment : Fragment() {
     private val binding get() = _binding!!
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         _binding = FragmentCatalogueBinding.inflate(inflater, container, false)
         return binding.root
@@ -89,19 +88,33 @@ class CatalogueFragment : Fragment() {
             adapter.updateData(products)
         }
 
+        binding.filterNavLayout.sortbyDropdown.dropArrow.setOnClickListener {
+            val vis = binding.filterNavLayout.sortbyDropdown.radioGroup.isVisible
+            binding.filterNavLayout.sortbyDropdown.radioGroup.isVisible = !vis
+
+            rotateImage(
+                binding.filterNavLayout.sortbyDropdown.dropArrow,
+                if (!vis) 180f else 0f,
+                0f,
+            )
+        }
+
         viewModel.filter.observe(viewLifecycleOwner) {
             if (!it.isNullOrEmpty()) {
 
                 binding.filterNavLayout.apply.setOnClickListener { v ->
-                    if (it.none { iii -> iii.isSelected }) {
+                    val selectedIndex =
+                        binding.filterNavLayout.sortbyDropdown.radioGroup.indexOfChild(
+                            view.findViewById(binding.filterNavLayout.sortbyDropdown.radioGroup.checkedRadioButtonId)
+                        )
+
+                    if (it.none { iii -> iii.isSelected } && selectedIndex < 0) {
                         Toast.makeText(
-                            requireContext(),
-                            "Please select filter first",
-                            Toast.LENGTH_SHORT
+                            requireContext(), "Please select filter first", Toast.LENGTH_SHORT
                         ).show()
                         return@setOnClickListener
                     }
-                    viewModel.fetchFilteredProducts(it)
+                    viewModel.fetchFilteredProducts(it, selectedIndex)
                     binding.drawerLayout.closeDrawers()
                 }
 

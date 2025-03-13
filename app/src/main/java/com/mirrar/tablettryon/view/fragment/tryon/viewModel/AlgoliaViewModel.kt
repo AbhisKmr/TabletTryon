@@ -142,17 +142,38 @@ class AlgoliaViewModel : ViewModel() {
         }
     }
 
-    fun fetchFilteredProducts(bs: List<FilterDataModel>) {
+    fun fetchFilteredProducts(bs: List<FilterDataModel>, shortingIndex: Int = -1) {
         return runBlocking {
             val brd = bs.filter { it.isSelected }
-            val filterString = brd.joinToString(separator = " OR ") { brand -> "brand:\"${brand.value}\"" }
+            val filterString =
+                brd.joinToString(separator = " OR ") { brand -> "brand:\"${brand.value}\"" }
             val query = Query(
                 query = "",
                 filters = filterString,
                 hitsPerPage = 500
             )
 
-            val response = index.search(query)
+            val cc = client.initIndex(
+                IndexName
+                    (
+                    when (shortingIndex) {
+                        0 -> {
+                            "avolta-glasses-asc"
+                        }
+
+                        1 -> {
+                            "avolta-glasses-desc"
+                        }
+
+                        else -> {
+                            "avolta-glasses"
+                        }
+
+                    }
+                )
+            )
+
+            val response = cc.search(query)
             val list = response.hits.map {
                 GsonBuilder().create().fromJson(it.json.toString(), Product::class.java)
             }
