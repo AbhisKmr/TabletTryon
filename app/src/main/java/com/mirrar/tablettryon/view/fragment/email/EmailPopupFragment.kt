@@ -126,10 +126,14 @@ class EmailPopupFragment : DialogFragment() {
     }
 
     private fun dismissDialog() {
-        parentFragmentManager.beginTransaction()
-            .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE)
-            .remove(this)
-            .commit()
+        try {
+            parentFragmentManager.beginTransaction()
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE)
+                .remove(this)
+                .commit()
+        } catch (e: Exception) {
+
+        }
     }
 
 

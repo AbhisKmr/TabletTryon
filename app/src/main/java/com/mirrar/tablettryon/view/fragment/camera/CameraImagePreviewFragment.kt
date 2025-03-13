@@ -47,7 +47,6 @@ class CameraImagePreviewFragment : Fragment() {
 
         binding.next.setOnClickListener {
             emailFragment.show(childFragmentManager, emailFragment.tag)
-            binding.progress.isVisible = true
             val b = ImageUploadForRecommendation().resizeAndCompressBitmap(AR_BITMAP!!)
             ImageUploadForRecommendation().uploadBitmap(b, requireContext()
             ) {

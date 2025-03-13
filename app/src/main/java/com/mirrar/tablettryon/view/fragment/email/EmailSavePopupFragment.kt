@@ -1,6 +1,7 @@
 package com.mirrar.tablettryon.view.fragment.email
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -84,8 +85,13 @@ class EmailSavePopupFragment(val close: () -> Unit) : DialogFragment() {
     }
 
     fun update() {
-        binding.saveProgress.isVisible = false
-        binding.sendTv.text = "Save"
+        try {
+            binding.saveProgress.isVisible = false
+            binding.sendTv.text = "Save"
+        } catch (e: Exception){
+            e.message?.toString()?.let { Log.e("update", it) }
+        }
+
     }
 
     companion object {

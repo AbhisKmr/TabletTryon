@@ -22,6 +22,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import com.bumptech.glide.Glide
 import com.google.mlkit.vision.common.InputImage
 import com.mirrar.tablettryon.R
 import com.mirrar.tablettryon.databinding.FragmentTryOnBinding
@@ -163,7 +164,8 @@ class TryOnFragment : Fragment() {
                 "${p.currency} ${p.priceDutyFree}"
 
             updateHeartIcon(Bookmarks.getBookmarks())
-            binding.glassPreview.setImageDrawable(requireContext().resources.getDrawable(imageList[i % 2]))
+            Glide.with(requireContext()).load(p.imageFrontView).into(binding.glassPreview)
+//            binding.glassPreview.setImageDrawable(requireContext().resources.getDrawable(imageList[i % 2]))
         }
 
         binding.productRecycler.adapter = adapter
