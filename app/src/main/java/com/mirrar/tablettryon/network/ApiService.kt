@@ -5,6 +5,8 @@ import com.mirrar.tablettryon.view.fragment.email.dataModel.ImageUploadRequest
 import com.mirrar.tablettryon.view.fragment.email.dataModel.ImageUploadResponse
 import com.mirrar.tablettryon.view.fragment.email.dataModel.EmailRequest
 import com.mirrar.tablettryon.view.fragment.email.dataModel.EmailResponse
+import com.mirrar.tablettryon.view.fragment.email.dataModel.emailApi.SendEmailApiRequest
+import com.mirrar.tablettryon.view.fragment.email.dataModel.emailApi.SendEmailApiResponse
 import okhttp3.MultipartBody
 import okhttp3.ResponseBody
 import retrofit2.Call
@@ -23,6 +25,11 @@ interface ApiService {
         @Header("api-key") apiKey: String,
         @Body emailData: EmailRequest
     ): Call<EmailResponse>
+
+    @POST("send-email")
+    fun sendApiEmail(
+        @Body emailData: SendEmailApiRequest
+    ): Call<SendEmailApiResponse>
 
     @POST("api/v1/image/base64/upload")
     fun uploadImage(

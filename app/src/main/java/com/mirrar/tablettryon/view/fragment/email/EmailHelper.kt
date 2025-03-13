@@ -16,6 +16,8 @@ import com.mirrar.tablettryon.view.fragment.email.dataModel.ImageUploadRequest
 import com.mirrar.tablettryon.view.fragment.email.dataModel.ImageUploadResponse
 import com.mirrar.tablettryon.view.fragment.email.dataModel.Recipient
 import com.mirrar.tablettryon.view.fragment.email.dataModel.Sender
+import com.mirrar.tablettryon.view.fragment.email.dataModel.emailApi.SendEmailApiRequest
+import com.mirrar.tablettryon.view.fragment.email.dataModel.emailApi.SendEmailApiResponse
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -24,6 +26,22 @@ import java.io.ByteArrayOutputStream
 import java.io.InputStreamReader
 
 object EmailHelper {
+
+    fun sendDynamicEmail(body: SendEmailApiRequest, res: (SendEmailApiResponse?) -> Unit) {
+        RetrofitClient.getInstance("https://glass-tryon.mirrar.com").sendApiEmail(body)
+            .enqueue(object : Callback<SendEmailApiResponse> {
+                override fun onResponse(
+                    call: Call<SendEmailApiResponse>,
+                    response: Response<SendEmailApiResponse>
+                ) {
+                    res(response.body())
+                }
+
+                override fun onFailure(call: Call<SendEmailApiResponse>, t: Throwable) {
+                    res(null)
+                }
+            })
+    }
 
     fun sendDynamicEmail(
         context: Context,

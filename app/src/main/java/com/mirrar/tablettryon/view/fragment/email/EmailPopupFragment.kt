@@ -13,6 +13,9 @@ import com.mirrar.tablettryon.R
 import com.mirrar.tablettryon.databinding.FragmentEmailPopupBinding
 import com.mirrar.tablettryon.utility.AppConstraint.userEmail
 import com.mirrar.tablettryon.utility.AppConstraint.userName
+import com.mirrar.tablettryon.utility.Bookmarks
+import com.mirrar.tablettryon.view.fragment.email.dataModel.emailApi.Object
+import com.mirrar.tablettryon.view.fragment.email.dataModel.emailApi.SendEmailApiRequest
 import com.mirrar.tablettryon.view.fragment.tryon.dataModel.Product
 
 class EmailPopupFragment : DialogFragment() {
@@ -76,11 +79,24 @@ class EmailPopupFragment : DialogFragment() {
                 return@setOnClickListener
             }
 
+            val objs = Bookmarks.getBookmarks().map {
+                Object(
+                    it.brand,
+                    it.imageUrlBase!!,
+                    it.priceDutyFree.toInt(),
+                    it.productUrl ?: "",
+                    ""
+                )
+            }
+
             EmailHelper.sendDynamicEmail(
-                context = requireContext(),
-                recipientEmail = binding.email.text.toString(),
-                username = binding.name.text.toString(), {
-                    if (it) {
+                SendEmailApiRequest(
+                    binding.email.text.toString(),
+                    binding.name.text.toString(),
+                    objs,
+                    "Wishlist"
+                ), {
+                    if (it != null) {
                         dismissDialog()
                     } else {
                         Toast.makeText(
@@ -89,8 +105,23 @@ class EmailPopupFragment : DialogFragment() {
                             Toast.LENGTH_SHORT
                         ).show()
                     }
-                }
-            )
+                })
+
+//            EmailHelper.sendDynamicEmail(
+//                context = requireContext(),
+//                recipientEmail = binding.email.text.toString(),
+//                username = binding.name.text.toString(), {
+//                    if (it) {
+//                        dismissDialog()
+//                    } else {
+//                        Toast.makeText(
+//                            requireContext(),
+//                            "Failed to send email.",
+//                            Toast.LENGTH_SHORT
+//                        ).show()
+//                    }
+//                }
+//            )
         }
     }
 

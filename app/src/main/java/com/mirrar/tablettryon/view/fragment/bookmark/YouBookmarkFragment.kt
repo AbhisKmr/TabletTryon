@@ -11,6 +11,7 @@ import com.mirrar.tablettryon.R
 import com.mirrar.tablettryon.databinding.FragmentYouBookmarkBinding
 import com.mirrar.tablettryon.utility.Bookmarks
 import com.mirrar.tablettryon.view.fragment.bookmark.adapter.BookmarkAdapter
+import com.mirrar.tablettryon.view.fragment.email.EmailPopupFragment
 
 class YouBookmarkFragment : DialogFragment() {
 
@@ -61,6 +62,14 @@ class YouBookmarkFragment : DialogFragment() {
         }
 
         binding.productRecycler.adapter = bookmarkAdapter
+
+        binding.email.setOnClickListener {
+            openDialogFragment(EmailPopupFragment.newInstance())
+        }
+    }
+
+    private fun openDialogFragment(fragment: DialogFragment) {
+        fragment.show(childFragmentManager, fragment.tag)
     }
 
     private fun dismissDialog() {
