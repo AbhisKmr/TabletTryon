@@ -69,14 +69,23 @@ class AlgoliaViewModel : ViewModel() {
         }
     }
 
-//    fun fetchFilteredProducts(selectedBrands: List<String>): List<String> {
-//        return runBlocking {
-//            val filter = FacetFilters(selectedBrands.map { "brand:$it" }.or())
-//            val query = Query().setFacetFilters(filter)
-//            val response = searcher.search(query)
-//            response?.hits.map { it["name"].toString() }
-//        }
-//    }
+    fun fetchFilteredProducts(selectedBrands: List<FilterDataModel>) {
+        return runBlocking {
+            val query = Query()
+            query.facets = selectedBrands.filter { it.isSelected }
+                .map {
+                    val brandValue = if (it.value.contains(" ")) "'${it.value}'" else it.value
+                    Attribute("brand:$brandValue")
+                }
+                .toSet()
+
+            val response = index.search(query)
+            val list = response.hits.map {
+                GsonBuilder().create().fromJson(it.json.toString(), Product::class.java)
+            }
+            _products.value = list
+        }
+    }
 
     override fun onCleared() {
         super.onCleared()

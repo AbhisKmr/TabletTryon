@@ -98,7 +98,9 @@ class CatalogueFragment : Fragment() {
                     )
                 }
                 binding.filterNavLayout.recyclerDropdownBrand.options.adapter =
-                    FilterListAdapter(it)
+                    FilterListAdapter(it) {
+                        viewModel.fetchFilteredProducts(it)
+                    }
             }
         }
 

@@ -42,7 +42,7 @@
             android:layout_marginBottom="12dp"
             android:fontFamily="@font/manrope_bold"
             android:textColor="@color/black"
-            android:textSize="20sp"
+            android:textSize="16sp"
             app:layout_constraintBottom_toTopOf="@+id/productCode"
             app:layout_constraintStart_toStartOf="parent"
             tools:text="Ray-Ban" />
@@ -54,7 +54,7 @@
             android:layout_marginBottom="12dp"
             android:fontFamily="@font/manrope_regular"
             android:textColor="@color/black"
-            android:textSize="16sp"
+            android:textSize="12sp"
             app:layout_constraintBottom_toTopOf="@+id/productPrice"
             app:layout_constraintStart_toStartOf="parent"
             tools:text="0rb2180 49" />
@@ -65,7 +65,7 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/manrope_bold"
             android:textColor="@color/black"
-            android:textSize="20sp"
+            android:textSize="16sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             tools:text="CHF 145.00" />

@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.RecyclerView.Recycler
 import com.mirrar.tablettryon.databinding.FilterSelectItemBinding
 import com.mirrar.tablettryon.tools.filter.FilterDataModel
 
-class FilterListAdapter(private val lst: List<FilterDataModel>) :
+class FilterListAdapter(private val lst: List<FilterDataModel>, val onSelect : () -> Unit) :
     RecyclerView.Adapter<FilterListAdapter.ViewHolder>() {
 
     class ViewHolder(val binding: FilterSelectItemBinding) : RecyclerView.ViewHolder(binding.root)
@@ -27,6 +27,10 @@ class FilterListAdapter(private val lst: List<FilterDataModel>) :
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.binding.title.text = lst[position].value
+        holder.binding.root.setOnClickListener {
+            lst[position].isSelected = !lst[position].isSelected
+            onSelect()
+        }
     }
 
     override fun getItemCount(): Int = lst.size
