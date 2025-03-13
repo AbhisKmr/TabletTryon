@@ -284,12 +284,11 @@
             android:id="@+id/finish"
             android:layout_width="wrap_content"
             android:layout_height="84dp"
-            android:layout_gravity="center_vertical"
+            android:layout_gravity="center"
             android:layout_marginStart="44dp"
             android:backgroundTint="@color/text_black"
-            android:gravity="center_vertical"
-            android:paddingVertical="8dp"
-            android:text="End Journey" />
+            android:gravity="center"
+            android:text="Exit" />
     </LinearLayout>
 
 

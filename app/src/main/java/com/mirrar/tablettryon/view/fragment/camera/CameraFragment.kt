@@ -111,7 +111,14 @@ class CameraFragment : Fragment() {
                 .setTargetAspectRatio(AspectRatio.RATIO_DEFAULT)
 //                .setTargetResolution(android.util.Size(1280, 720))
                 .build()
-                .also { it.surfaceProvider = binding.previewView.surfaceProvider }
+                .also {
+                    try {
+                        it.surfaceProvider = binding.previewView.surfaceProvider
+
+                    } catch (e: Exception) {
+                        Log.e("surfaceProvider", e.localizedMessage?.toString() ?: "")
+                    }
+                }
 
             imageCapture = ImageCapture.Builder()
 //                .setTargetResolution(android.util.Size(1280, 720))
@@ -168,7 +175,8 @@ class CameraFragment : Fragment() {
                 override fun onCaptureSuccess(image: ImageProxy) {
                     super.onCaptureSuccess(image)
 
-                    val bitmap = imageProxyToBitmap(image, rotationDegrees = 270f, flipHorizontal = true)
+                    val bitmap =
+                        imageProxyToBitmap(image, rotationDegrees = 270f, flipHorizontal = true)
                     image.close()
                     AR_BITMAP = bitmap
                     findNavController().navigate(R.id.action_cameraFragment_to_cameraImagePreviewFragment4)
@@ -212,7 +220,15 @@ class CameraFragment : Fragment() {
             postScale(scaleX, scaleY, originalBitmap.width / 2f, originalBitmap.height / 2f)
         }
 
-        return Bitmap.createBitmap(originalBitmap, 0, 0, originalBitmap.width, originalBitmap.height, matrix, true)
+        return Bitmap.createBitmap(
+            originalBitmap,
+            0,
+            0,
+            originalBitmap.width,
+            originalBitmap.height,
+            matrix,
+            true
+        )
     }
 
     private fun checkPermissions() {

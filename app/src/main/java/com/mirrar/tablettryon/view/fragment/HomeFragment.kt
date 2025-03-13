@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
+import androidx.navigation.fragment.findNavController
 import com.mirrar.tablettryon.R
 import com.mirrar.tablettryon.databinding.FragmentHomeBinding
 import com.mirrar.tablettryon.utility.HelperFunctions.getActionBarSize
@@ -31,7 +32,10 @@ class HomeFragment : Fragment() {
         binding.button.setOnClickListener {
             val transaction = childFragmentManager.beginTransaction()
             transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_MATCH_ACTIVITY_OPEN)
-            transaction.add(R.id.container, DialogLikeFragment.newInstance())
+            transaction.add(R.id.container, DialogLikeFragment.newInstance({
+                requireActivity().onBackPressedDispatcher.onBackPressed()
+                findNavController().navigate(R.id.cameraFragment)
+            }))
             transaction.addToBackStack(null)
             transaction.commit()
         }

@@ -95,40 +95,6 @@ class AlgoliaViewModel : ViewModel() {
         }
     }
 
-//    fun getData() {
-//        viewModelScope.launch {
-//            val recommendedProducts =
-//                index.getObjects(recommendationModel?.recommendations?.map { ObjectID(it) }
-//                    ?: emptyList())
-//
-//            val additionalQuery: Query = when (recommendationModel?.gender?.lowercase()) {
-//                "male" -> Query(
-//                    query = "",
-//                    filters = "gender:\"For Him\" OR gender:\"Unisex\""
-//                )
-//
-//                "female" -> Query(
-//                    query = "",
-//                    filters = "gender:\"For Her\" OR gender:\"Unisex\""
-//                )
-//
-//                else -> Query(query = "")
-//            }
-//
-//            val additionalProductsResponse = index.search(additionalQuery)
-//
-//            val combinedProducts = mutableListOf<Any>()
-//
-//            combinedProducts.addAll(recommendedProducts.hits)
-//            combinedProducts.addAll(additionalProductsResponse.hits)
-//
-////            val list = searcher.search()?.hits?.map {
-////                GsonBuilder().create().fromJson(it.json.toString(), Product::class.java)
-////            }
-////            _products.value = list ?: listOf()
-//        }
-//    }
-
     fun fetchAllBrands() {
         _filter.value = runBlocking {
             val query = Query().apply {

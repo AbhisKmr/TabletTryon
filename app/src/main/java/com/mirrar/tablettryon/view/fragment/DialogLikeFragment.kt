@@ -14,7 +14,7 @@ import com.mirrar.tablettryon.databinding.CustomAlertLayoutBinding
 import com.mirrar.tablettryon.tools.FirebaseHelper
 
 
-class DialogLikeFragment : Fragment() {
+class DialogLikeFragment(val onNext : () -> Unit) : Fragment() {
 
     private var _binding: CustomAlertLayoutBinding? = null
     private val binding get() = _binding!!
@@ -63,7 +63,7 @@ class DialogLikeFragment : Fragment() {
                     return@setOnClickListener
                 }
 
-                findNavController().navigate(R.id.cameraFragment)
+                onNext()
             }
         }
     }
@@ -77,6 +77,6 @@ class DialogLikeFragment : Fragment() {
 
     companion object {
         @JvmStatic
-        fun newInstance() = DialogLikeFragment()
+        fun newInstance(o : () -> Unit) = DialogLikeFragment(o)
     }
 }
