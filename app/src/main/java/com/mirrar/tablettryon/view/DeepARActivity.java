@@ -37,6 +37,7 @@ import androidx.core.content.ContextCompat;
 import androidx.lifecycle.LifecycleOwner;
 
 import com.google.common.util.concurrent.ListenableFuture;
+import com.mirrar.tablettryon.R;
 import com.mirrar.tablettryon.databinding.ActivityDeepAractivityBinding;
 import com.mirrar.tablettryon.tools.deepAr.ARSurfaceProvider;
 
@@ -57,7 +58,7 @@ import ai.deepar.ar.CameraResolutionPreset;
 import ai.deepar.ar.DeepAR;
 import ai.deepar.ar.DeepARImageFormat;
 
-public class DeepARActivity extends AppCompatActivity  implements SurfaceHolder.Callback, AREventListener {
+public class DeepARActivity extends AppCompatActivity implements SurfaceHolder.Callback, AREventListener {
 
     private ActivityDeepAractivityBinding binding;
 
@@ -76,12 +77,12 @@ public class DeepARActivity extends AppCompatActivity  implements SurfaceHolder.
     private ListenableFuture<ProcessCameraProvider> cameraProviderFuture;
     private ByteBuffer[] buffers;
     private int currentBuffer = 0;
-    private static final int NUMBER_OF_BUFFERS=2;
+    private static final int NUMBER_OF_BUFFERS = 2;
     private static final boolean useExternalCameraTexture = false;
 
     private DeepAR deepAR;
 
-    private int currentEffect=0;
+    private int currentEffect = 0;
 
     private int screenOrientation;
 
@@ -100,7 +101,7 @@ public class DeepARActivity extends AppCompatActivity  implements SurfaceHolder.
     protected void onStart() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ||
                 ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{ Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO },
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO},
                     1);
         } else {
             // Permission has already been granted
@@ -110,7 +111,7 @@ public class DeepARActivity extends AppCompatActivity  implements SurfaceHolder.
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode,  String[] permissions, int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == 1 && grantResults.length > 0) {
             for (int grantResult : grantResults) {
@@ -154,10 +155,10 @@ public class DeepARActivity extends AppCompatActivity  implements SurfaceHolder.
 
     @SuppressLint("ClickableViewAccessibility")
     private void initalizeViews() {
-//        ImageButton previousMask = findViewById(R.id.previousMask);
-//        ImageButton nextMask = findViewById(R.id.nextMask);
+        ImageButton previousMask = findViewById(R.id.previousMask);
+        ImageButton nextMask = findViewById(R.id.nextMask);
 //
-        SurfaceView arView = binding.surfaceview;
+        SurfaceView arView = findViewById(R.id.surface);
 
         arView.setOnTouchListener((view, motionEvent) -> {
             switch (motionEvent.getAction()) {
@@ -180,121 +181,121 @@ public class DeepARActivity extends AppCompatActivity  implements SurfaceHolder.
         arView.setVisibility(View.GONE);
         arView.setVisibility(View.VISIBLE);
 
-//        final ImageButton screenshotBtn = findViewById(R.id.recordButton);
-//        screenshotBtn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                deepAR.takeScreenshot();
-//            }
-//        });
-//
-//        ImageButton switchCamera = findViewById(R.id.switchCamera);
-//        switchCamera.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                lensFacing = lensFacing ==  CameraSelector.LENS_FACING_FRONT ?  CameraSelector.LENS_FACING_BACK :  CameraSelector.LENS_FACING_FRONT ;
-//                //unbind immediately to avoid mirrored frame.
-//                ProcessCameraProvider cameraProvider = null;
-//                try {
-//                    cameraProvider = cameraProviderFuture.get();
-//                    cameraProvider.unbindAll();
-//                } catch (ExecutionException e) {
-//                    e.printStackTrace();
-//                } catch (InterruptedException e) {
-//                    e.printStackTrace();
-//                }
-//                setupCamera();
-//            }
-//        });
-//
-//        ImageButton openActivity = findViewById(R.id.openActivity);
-//        openActivity.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-////                Intent myIntent = new Intent(this, BasicActivity.class);
-////                MainActivity.this.startActivity(myIntent);
-//            }
-//        });
-//
-//
-//        final TextView screenShotModeButton = findViewById(R.id.screenshotModeButton);
-//        final TextView recordModeBtn = findViewById(R.id.recordModeButton);
-//
-//        recordModeBtn.getBackground().setAlpha(0x00);
-//        screenShotModeButton.getBackground().setAlpha(0xA0);
-//
-//        screenShotModeButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if(currentSwitchRecording) {
-//                    if(recording) {
-//                        Toast.makeText(getApplicationContext(), "Cannot switch to screenshots while recording!", Toast.LENGTH_SHORT).show();
-//                        return;
-//                    }
-//
-//                    recordModeBtn.getBackground().setAlpha(0x00);
-//                    screenShotModeButton.getBackground().setAlpha(0xA0);
-//                    screenshotBtn.setOnClickListener(new View.OnClickListener() {
-//                        @Override
-//                        public void onClick(View v) {
-//                            deepAR.takeScreenshot();
-//                        }
-//                    });
-//
-//                    currentSwitchRecording = !currentSwitchRecording;
-//                }
-//            }
-//        });
-//
-//
-//
-//        recordModeBtn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//
-//                if(!currentSwitchRecording) {
-//
-//                    recordModeBtn.getBackground().setAlpha(0xA0);
-//                    screenShotModeButton.getBackground().setAlpha(0x00);
-//                    screenshotBtn.setOnClickListener(new View.OnClickListener() {
-//                        @Override
-//                        public void onClick(View v) {
-//                            if(recording) {
-//                                deepAR.stopVideoRecording();
-//                                Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-//                                Uri contentUri = Uri.fromFile(videoFileName);
-//                                mediaScanIntent.setData(contentUri);
-//                                sendBroadcast(mediaScanIntent);
-//                                Toast.makeText(getApplicationContext(), "Recording " + videoFileName.getName() + " saved.", Toast.LENGTH_LONG).show();
-//                            } else {
-//                                videoFileName = new File(getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES), "video_" + new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss").format(new Date()) + ".mp4");
-//                                deepAR.startVideoRecording(videoFileName.toString(), width/2, height/2);
-//                                Toast.makeText(getApplicationContext(), "Recording started.", Toast.LENGTH_SHORT).show();
-//                            }
-//                            recording = !recording;
-//                        }
-//                    });
-//
-//                    currentSwitchRecording = !currentSwitchRecording;
-//                }
-//            }
-//        });
-//
-//        previousMask.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                gotoPrevious();
-//            }
-//        });
-//
-//        nextMask.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                gotoNext();
-//            }
-//        });
+        final ImageButton screenshotBtn = findViewById(R.id.recordButton);
+        screenshotBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                deepAR.takeScreenshot();
+            }
+        });
+
+        ImageButton switchCamera = findViewById(R.id.switchCamera);
+        switchCamera.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                lensFacing = lensFacing == CameraSelector.LENS_FACING_FRONT ? CameraSelector.LENS_FACING_BACK : CameraSelector.LENS_FACING_FRONT;
+                //unbind immediately to avoid mirrored frame.
+                ProcessCameraProvider cameraProvider = null;
+                try {
+                    cameraProvider = cameraProviderFuture.get();
+                    cameraProvider.unbindAll();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                setupCamera();
+            }
+        });
+
+        ImageButton openActivity = findViewById(R.id.openActivity);
+        openActivity.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                Intent myIntent = new Intent(this, BasicActivity.class);
+//                MainActivity.this.startActivity(myIntent);
+            }
+        });
+
+
+        final TextView screenShotModeButton = findViewById(R.id.screenshotModeButton);
+        final TextView recordModeBtn = findViewById(R.id.recordModeButton);
+
+        recordModeBtn.getBackground().setAlpha(0x00);
+        screenShotModeButton.getBackground().setAlpha(0xA0);
+
+        screenShotModeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (currentSwitchRecording) {
+                    if (recording) {
+                        Toast.makeText(getApplicationContext(), "Cannot switch to screenshots while recording!", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    recordModeBtn.getBackground().setAlpha(0x00);
+                    screenShotModeButton.getBackground().setAlpha(0xA0);
+                    screenshotBtn.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            deepAR.takeScreenshot();
+                        }
+                    });
+
+                    currentSwitchRecording = !currentSwitchRecording;
+                }
+            }
+        });
+
+
+        recordModeBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if (!currentSwitchRecording) {
+
+                    recordModeBtn.getBackground().setAlpha(0xA0);
+                    screenShotModeButton.getBackground().setAlpha(0x00);
+                    screenshotBtn.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if (recording) {
+                                deepAR.stopVideoRecording();
+                                Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+                                Uri contentUri = Uri.fromFile(videoFileName);
+                                mediaScanIntent.setData(contentUri);
+                                sendBroadcast(mediaScanIntent);
+                                Toast.makeText(getApplicationContext(), "Recording " + videoFileName.getName() + " saved.", Toast.LENGTH_LONG).show();
+                            } else {
+                                videoFileName = new File(getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES), "video_" + new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss").format(new Date()) + ".mp4");
+                                deepAR.startVideoRecording(videoFileName.toString(), width / 2, height / 2);
+                                Toast.makeText(getApplicationContext(), "Recording started.", Toast.LENGTH_SHORT).show();
+                            }
+                            recording = !recording;
+                        }
+                    });
+
+                    currentSwitchRecording = !currentSwitchRecording;
+                }
+            }
+        });
+
+        previousMask.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                gotoPrevious();
+            }
+        });
+
+        nextMask.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                gotoNext();
+            }
+        });
 
     }
+
     /*
             get interface orientation from
             https://stackoverflow.com/questions/10380989/how-do-i-get-the-current-orientation-activityinfo-screen-orientation-of-an-a/10383164
@@ -311,7 +312,7 @@ public class DeepARActivity extends AppCompatActivity  implements SurfaceHolder.
                 || rotation == Surface.ROTATION_180) && height > width ||
                 (rotation == Surface.ROTATION_90
                         || rotation == Surface.ROTATION_270) && width > height) {
-            switch(rotation) {
+            switch (rotation) {
                 case Surface.ROTATION_0:
                     orientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
                     break;
@@ -334,7 +335,7 @@ public class DeepARActivity extends AppCompatActivity  implements SurfaceHolder.
         // if the device's natural orientation is landscape or if the device
         // is square:
         else {
-            switch(rotation) {
+            switch (rotation) {
                 case Surface.ROTATION_0:
                     orientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
                     break;
@@ -357,6 +358,7 @@ public class DeepARActivity extends AppCompatActivity  implements SurfaceHolder.
 
         return orientation;
     }
+
     private void initializeDeepAR() {
         deepAR = new DeepAR(this);
         deepAR.setLicenseKey("6f05c281594d457e69cd5c05c06ff625eeed549a5c22e04f16079fac63cbf11053d00b854a856d04");
@@ -384,9 +386,9 @@ public class DeepARActivity extends AppCompatActivity  implements SurfaceHolder.
         int width;
         int height;
         int orientation = getScreenOrientation();
-        if (orientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE || orientation ==ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE){
+        if (orientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE || orientation == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
             width = cameraResolutionPreset.getWidth();
-            height =  cameraResolutionPreset.getHeight();
+            height = cameraResolutionPreset.getHeight();
         } else {
             width = cameraResolutionPreset.getHeight();
             height = cameraResolutionPreset.getWidth();
@@ -395,14 +397,14 @@ public class DeepARActivity extends AppCompatActivity  implements SurfaceHolder.
         Size cameraResolution = new Size(width, height);
         CameraSelector cameraSelector = new CameraSelector.Builder().requireLensFacing(lensFacing).build();
 
-        if(useExternalCameraTexture) {
+        if (useExternalCameraTexture) {
             Preview preview = new Preview.Builder()
                     .setTargetResolution(cameraResolution)
                     .build();
 
             cameraProvider.unbindAll();
-            cameraProvider.bindToLifecycle((LifecycleOwner)this, cameraSelector, preview);
-            if(surfaceProvider == null) {
+            cameraProvider.bindToLifecycle((LifecycleOwner) this, cameraSelector, preview);
+            if (surfaceProvider == null) {
                 surfaceProvider = new ARSurfaceProvider(this, deepAR);
             }
             preview.setSurfaceProvider(surfaceProvider);
@@ -422,7 +424,7 @@ public class DeepARActivity extends AppCompatActivity  implements SurfaceHolder.
                     .build();
             imageAnalysis.setAnalyzer(ContextCompat.getMainExecutor(this), imageAnalyzer);
             cameraProvider.unbindAll();
-            cameraProvider.bindToLifecycle((LifecycleOwner)this, cameraSelector, imageAnalysis);
+            cameraProvider.bindToLifecycle((LifecycleOwner) this, cameraSelector, imageAnalysis);
         }
     }
 
@@ -478,7 +480,7 @@ public class DeepARActivity extends AppCompatActivity  implements SurfaceHolder.
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        if(surfaceProvider != null) {
+        if (surfaceProvider != null) {
             surfaceProvider.stop();
             surfaceProvider = null;
         }
@@ -490,7 +492,7 @@ public class DeepARActivity extends AppCompatActivity  implements SurfaceHolder.
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if(surfaceProvider != null) {
+        if (surfaceProvider != null) {
             surfaceProvider.stop();
         }
         if (deepAR == null) {
