@@ -105,7 +105,7 @@ class TryOnFragment : Fragment() {
         }
 
         binding.switchMode.setOnClickListener {
-            findNavController().navigate(R.id.action_tryOnFragment_to_deepArFragment)
+            findNavController().navigate(R.id.action_tryOnFragment_to_deeARJavaFragment)
         }
 
         binding.details.setOnClickListener {
