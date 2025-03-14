@@ -13,13 +13,18 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.mirrar.tablettryon.R
 import com.mirrar.tablettryon.databinding.FragmentSelfieBinding
+import com.mirrar.tablettryon.utility.AppConstraint.userEmail
+import com.mirrar.tablettryon.utility.AppConstraint.userName
 import com.mirrar.tablettryon.utility.Bookmarks
 import com.mirrar.tablettryon.utility.HelperFunctions
 import com.mirrar.tablettryon.view.fragment.email.EmailHelper
+import com.mirrar.tablettryon.view.fragment.email.dataModel.emailApi.SendEmailApiRequest
 import com.mirrar.tablettryon.view.fragment.tryon.dataModel.Product
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import com.mirrar.tablettryon.view.fragment.email.dataModel.emailApi.Object
 
 class SelfieFragment(private val p: Product, private val bitmap: Bitmap) : DialogFragment() {
 
@@ -65,6 +70,8 @@ class SelfieFragment(private val p: Product, private val bitmap: Bitmap) : Dialo
 
         binding.finish.setOnClickListener {
             Bookmarks.clearAll()
+            userEmail = null
+            userName = null
             findNavController().popBackStack(R.id.homeFragment, false)
         }
 
@@ -74,6 +81,14 @@ class SelfieFragment(private val p: Product, private val bitmap: Bitmap) : Dialo
         binding.productCode.text = p.localItemCode
         binding.productPrice.text =
             "${p.currency} ${p.priceDutyFree}"
+
+        if (userEmail != null) {
+            binding.email.setText(userEmail)
+        }
+
+        if (userName != null) {
+            binding.name.setText(userName)
+        }
 
         binding.send.setOnClickListener {
 
@@ -92,21 +107,24 @@ class SelfieFragment(private val p: Product, private val bitmap: Bitmap) : Dialo
                 return@setOnClickListener
             }
 
-            EmailHelper.sendDynamicEmail(
-                context = requireContext(),
-                recipientEmail = binding.email.text.toString(),
-                username = binding.name.text.toString(), {
-                    if (it) {
-                        dismissDialog()
-                    } else {
-                        Toast.makeText(
-                            requireContext(),
-                            "Failed to send email.",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                }
+            val objs = listOf(
+                Object(
+                    p.brand, p.imageUrlBase!!, p.priceDutyFree.toInt(), p.productUrl ?: "", ""
+                )
             )
+
+            EmailHelper.sendDynamicEmail(
+                SendEmailApiRequest(
+                binding.email.text.toString(), binding.name.text.toString(), objs, "selfie"
+            ), {
+                if (it != null) {
+                    dismissDialog()
+                } else {
+                    Toast.makeText(
+                        requireContext(), "Failed to send email.", Toast.LENGTH_SHORT
+                    ).show()
+                }
+            })
         }
 
         lifecycleScope.launch {
@@ -116,7 +134,7 @@ class SelfieFragment(private val p: Product, private val bitmap: Bitmap) : Dialo
                     if (it != null) {
                         val b = HelperFunctions.generateQRCode(it.url)
                         if (b != null) {
-                            lifecycleScope.launch {
+                            GlobalScope.launch {
                                 withContext(Dispatchers.Main) {
                                     binding.imageView4.setImageBitmap(b)
                                 }
