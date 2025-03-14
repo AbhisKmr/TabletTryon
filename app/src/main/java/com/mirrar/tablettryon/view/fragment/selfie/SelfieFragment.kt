@@ -115,16 +115,16 @@ class SelfieFragment(private val p: Product, private val bitmap: Bitmap) : Dialo
 
             EmailHelper.sendDynamicEmail(
                 SendEmailApiRequest(
-                binding.email.text.toString(), binding.name.text.toString(), objs, "selfie"
-            ), {
-                if (it != null) {
-                    dismissDialog()
-                } else {
-                    Toast.makeText(
-                        requireContext(), "Failed to send email.", Toast.LENGTH_SHORT
-                    ).show()
-                }
-            })
+                    binding.email.text.toString(), binding.name.text.toString(), objs, "selfie"
+                ), {
+                    if (it != null) {
+                        dismissDialog()
+                    } else {
+                        Toast.makeText(
+                            requireContext(), "Failed to send email.", Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                })
         }
 
         lifecycleScope.launch {
@@ -136,7 +136,10 @@ class SelfieFragment(private val p: Product, private val bitmap: Bitmap) : Dialo
                         if (b != null) {
                             GlobalScope.launch {
                                 withContext(Dispatchers.Main) {
-                                    binding.imageView4.setImageBitmap(b)
+                                    try {
+                                        binding.imageView4.setImageBitmap(b)
+                                    } catch (e: Exception) {
+                                    }
                                 }
                             }
                         }

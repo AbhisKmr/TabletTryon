@@ -144,7 +144,8 @@
         <com.mirrar.tablettryon.tools.CanvasView
             android:id="@+id/canvasView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:visibility="gone" />
 
         <ImageView
             android:id="@+id/glassPreview"
