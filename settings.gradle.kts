@@ -10,6 +10,7 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        maven(url = "https://sdk.developer.deepar.ai/maven-android-repository/releases/")
     }
 }
 

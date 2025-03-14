@@ -104,6 +104,10 @@ class TryOnFragment : Fragment() {
             findNavController().navigate(R.id.action_tryOnFragment_to_catalogueFragment)
         }
 
+        binding.switchMode.setOnClickListener {
+            findNavController().navigate(R.id.action_tryOnFragment_to_deepArFragment)
+        }
+
         binding.details.setOnClickListener {
             if (selectedProduct != null) {
                 openDialogFragment(ProductDetailsFragment.newInstance(selectedProduct!!, {}))

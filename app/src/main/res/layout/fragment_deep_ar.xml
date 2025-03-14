@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/background"
-    tools:context=".view.fragment.tryon.TryOnFragment">
+    tools:context=".view.fragment.tryon.DeepArFragment">
+
 
     <ImageView
         android:id="@+id/imageView"
@@ -129,26 +130,8 @@
         app:layout_constraintHeight_percent=".7"
         app:layout_constraintTop_toBottomOf="@+id/cardView2">
 
-        <!--        <com.mirrar.tablettryon.tools.CameraSourcePreview-->
-        <!--            android:layout_width="match_parent"-->
-        <!--            android:layout_height="match_parent">-->
-
-        <!--        </com.mirrar.tablettryon.tools.CameraSourcePreview>-->
-        <ImageView
-            android:id="@+id/imagePreview"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scaleType="centerCrop"
-            android:src="@drawable/tryon_image" />
-
-        <com.mirrar.tablettryon.tools.CanvasView
-            android:id="@+id/canvasView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="gone" />
-
-        <ImageView
-            android:id="@+id/glassPreview"
+        <SurfaceView
+            android:id="@+id/surface"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
@@ -182,25 +165,25 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:background="@drawable/switch_txt_background"
                 android:fontFamily="@font/manrope_extra_bold"
                 android:gravity="center_vertical"
                 android:paddingHorizontal="12dp"
                 android:paddingVertical="4dp"
                 android:text="Live"
-                android:textColor="@color/black"
+                android:textColor="@color/white"
                 android:textSize="16sp" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:background="@drawable/switch_txt_background"
                 android:fontFamily="@font/manrope_extra_bold"
                 android:gravity="center_vertical"
                 android:paddingHorizontal="12dp"
                 android:paddingVertical="4dp"
                 android:text="Static"
-                android:textColor="@color/white"
+                android:textColor="@color/black"
                 android:textSize="16sp" />
         </LinearLayout>
     </androidx.cardview.widget.CardView>
