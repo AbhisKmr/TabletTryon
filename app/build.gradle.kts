@@ -77,10 +77,12 @@ dependencies {
 
     implementation("com.google.mlkit:face-detection:16.1.7")
 
-    implementation("androidx.camera:camera-core:1.4.1")
-    implementation("androidx.camera:camera-lifecycle:1.4.1")
-    implementation("androidx.camera:camera-view:1.4.1")
-    implementation("androidx.camera:camera-camera2:1.4.1")
+    val camerax_version = "1.2.3"
+
+    implementation("androidx.camera:camera-core:${camerax_version}")
+    implementation("androidx.camera:camera-lifecycle:${camerax_version}")
+    implementation("androidx.camera:camera-view:${camerax_version}")
+    implementation("androidx.camera:camera-camera2:${camerax_version}")
 
     implementation("com.facebook.shimmer:shimmer:0.5.0")
 
