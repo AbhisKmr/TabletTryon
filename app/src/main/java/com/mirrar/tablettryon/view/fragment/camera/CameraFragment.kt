@@ -79,28 +79,6 @@ class CameraFragment : Fragment() {
         _binding = null
     }
 
-    /*private fun startCamera() {
-        val cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
-
-        cameraProviderFuture.addListener({
-            val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
-
-            val preview = Preview.Builder().build().also {
-                it.surfaceProvider = previewView.surfaceProvider // FIXED: Now preview is initialized before use
-            }
-
-            imageCapture = ImageCapture.Builder().build()
-            val cameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA
-
-            try {
-                cameraProvider.unbindAll()
-                cameraProvider.bindToLifecycle(viewLifecycleOwner, cameraSelector, preview, imageCapture)
-            } catch (exc: Exception) {
-                Log.e(TAG, "Use Case Binding Failed", exc)
-            }
-        }, ContextCompat.getMainExecutor(requireContext()))
-    }*/
-
     private fun startCamera() {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
 
@@ -137,34 +115,6 @@ class CameraFragment : Fragment() {
             }
         }, ContextCompat.getMainExecutor(requireContext()))
     }
-    /*
-
-    private fun takePhoto() {
-        val imageCapture = imageCapture ?: return
-
-        val photoFile = File(
-            outputDirectory,
-            SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US)
-                .format(System.currentTimeMillis()) + ".jpg"
-        )
-
-        val outputOptions = ImageCapture.OutputFileOptions.Builder(photoFile).build()
-
-        imageCapture.takePicture(
-            outputOptions,
-            ContextCompat.getMainExecutor(requireContext()),
-            object : ImageCapture.OnImageSavedCallback {
-                override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
-                    val savedUri = Uri.fromFile(photoFile)
-                    Toast.makeText(requireContext(), "Photo Saved: $savedUri", Toast.LENGTH_SHORT).show()
-                }
-
-                override fun onError(exception: ImageCaptureException) {
-                    Log.e(TAG, "Photo Capture Failed: ${exception.message}", exception)
-                }
-            })
-    }
-    */
 
     private fun takePhoto() {
         val imageCapture = imageCapture ?: return

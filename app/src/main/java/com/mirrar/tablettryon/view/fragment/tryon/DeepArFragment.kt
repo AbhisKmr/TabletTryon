@@ -7,7 +7,6 @@ import ai.deepar.ar.ARTouchType
 import ai.deepar.ar.CameraResolutionPreset
 import ai.deepar.ar.DeepAR
 import ai.deepar.ar.DeepARImageFormat
-import ai.deepar.deepar_example.ARSurfaceProvider
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.pm.ActivityInfo
@@ -34,6 +33,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleOwner
 import com.google.common.util.concurrent.ListenableFuture
 import com.mirrar.tablettryon.databinding.FragmentDeepArBinding
+import com.mirrar.tablettryon.tools.deepAr.ARSurfaceProvider
 import java.io.File
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
@@ -215,7 +215,7 @@ class DeepArFragment : Fragment(), SurfaceHolder.Callback, AREventListener {
 
     private fun setupCamera() {
         cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
-        cameraProviderFuture!!.addListener(Runnable {
+        cameraProviderFuture!!.addListener({
             try {
                 val cameraProvider = cameraProviderFuture!!.get()
                 bindImageAnalysis(cameraProvider)
@@ -286,7 +286,7 @@ class DeepArFragment : Fragment(), SurfaceHolder.Callback, AREventListener {
                 surfaceProvider = ARSurfaceProvider(requireContext(), deepAR!!)
             }
             preview.surfaceProvider = surfaceProvider
-            surfaceProvider!!.isMirror(lensFacing == CameraSelector.LENS_FACING_FRONT)
+            surfaceProvider!!.isMirror = lensFacing == CameraSelector.LENS_FACING_FRONT
         } else {
             buffers =  Array(NUMBER_OF_BUFFERS) { ByteBuffer.allocate(0) }
             for (i in 0 until NUMBER_OF_BUFFERS) {
