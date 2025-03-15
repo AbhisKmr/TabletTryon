@@ -1,5 +1,6 @@
 package com.mirrar.tablettryon.view.fragment.camera
 
+import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import androidx.fragment.app.Fragment
@@ -8,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
+import com.mirrar.tablettryon.DeepARActivity
 import com.mirrar.tablettryon.R
 import com.mirrar.tablettryon.databinding.FragmentCameraImagePreviewBinding
 import com.mirrar.tablettryon.tools.model.FaceRecommendationModel
@@ -38,7 +40,8 @@ class CameraImagePreviewFragment : Fragment() {
 
         val emailFragment = EmailSavePopupFragment.newInstance {
             Handler().postDelayed({
-                findNavController().navigate(R.id.action_cameraImagePreviewFragment4_to_deepARFragment)
+                startActivity(Intent(requireActivity(), DeepARActivity::class.java))
+//                findNavController().navigate(R.id.action_cameraImagePreviewFragment4_to_deepARFragment)
             }, 500)
         }
 
@@ -52,7 +55,8 @@ class CameraImagePreviewFragment : Fragment() {
         binding.next.setOnClickListener {
             emailFragment.show(childFragmentManager, emailFragment.tag)
             val b = ImageUploadForRecommendation().resizeAndCompressBitmap(AR_BITMAP!!)
-            ImageUploadForRecommendation().uploadBitmap(b, requireContext()
+            ImageUploadForRecommendation().uploadBitmap(
+                b, requireContext()
             ) {
                 recommendationModel = it
                 GlobalScope.launch {
