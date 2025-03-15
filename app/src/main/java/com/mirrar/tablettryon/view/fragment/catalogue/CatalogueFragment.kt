@@ -3,7 +3,6 @@ package com.mirrar.tablettryon.view.fragment.catalogue
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.os.Handler
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,8 +10,8 @@ import android.widget.Toast
 import androidx.core.view.GravityCompat
 import androidx.core.view.isVisible
 import androidx.drawerlayout.widget.DrawerLayout.DrawerListener
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import com.mirrar.tablettryon.R
 import com.mirrar.tablettryon.databinding.FragmentCatalogueBinding
 import com.mirrar.tablettryon.utility.AppConstraint.filterTryOn
 import com.mirrar.tablettryon.utility.Bookmarks
@@ -158,5 +157,10 @@ class CatalogueFragment : Fragment() {
 
         viewModel.getData()
         viewModel.fetchAllBrands()
+    }
+
+    companion object {
+        @JvmStatic
+        fun newInstance() = CatalogueFragment()
     }
 }

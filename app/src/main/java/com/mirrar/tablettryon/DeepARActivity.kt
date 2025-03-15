@@ -44,6 +44,7 @@ import com.mirrar.tablettryon.LoadImageHandlerThread.LOAD_DEFAULT_IMAGE_TASK
 import com.mirrar.tablettryon.LoadImageHandlerThread.LOAD_IMAGE_FROM_GALLERY_TASK
 import com.mirrar.tablettryon.LoadImageHandlerThread.REFRESH_IMAGE_TASK
 import com.mirrar.tablettryon.databinding.ActivityDeepAractivityBinding
+import com.mirrar.tablettryon.tools.DeepARActivityHelper
 import com.mirrar.tablettryon.utility.AppConstraint.AR_BITMAP
 import java.io.File
 import java.io.FileOutputStream
@@ -58,7 +59,7 @@ import java.util.concurrent.ExecutionException
 class DeepARActivity : AppCompatActivity(), SurfaceHolder.Callback, AREventListener {
 
     private var _binding: ActivityDeepAractivityBinding? = null
-    private val binding get() = _binding!!
+    val binding get() = _binding!!
 
     private val defaultLensFacing = CameraSelector.LENS_FACING_FRONT
     private var surfaceProvider: ARSurfaceProvider? = null
@@ -87,6 +88,7 @@ class DeepARActivity : AppCompatActivity(), SurfaceHolder.Callback, AREventListe
     private val videoFileName: File? = null
 
     private lateinit var handlerThread: LoadImageHandlerThread
+    private lateinit var deepARActivityHelper: DeepARActivityHelper
 
     override fun onStart() {
         super.onStart()
@@ -372,6 +374,7 @@ class DeepARActivity : AppCompatActivity(), SurfaceHolder.Callback, AREventListe
         _binding = ActivityDeepAractivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        deepARActivityHelper = DeepARActivityHelper(this)
         handlerThread = LoadImageHandlerThread(this)
         handlerThread.start()
 
