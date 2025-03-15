@@ -134,17 +134,18 @@
             android:id="@+id/cameraSourcePreview"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+
             <SurfaceView
                 android:id="@+id/surface"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
-        </com.mirrar.tablettryon.tools.CameraSourcePreview>
 
-        <ImageView
-            android:id="@+id/preview"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="gone" />
+            <ImageView
+                android:id="@+id/preview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone" />
+        </com.mirrar.tablettryon.tools.CameraSourcePreview>
 
         <ImageView
             android:layout_width="match_parent"

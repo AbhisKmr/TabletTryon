@@ -16,6 +16,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.os.Environment.getExternalStoragePublicDirectory
+import android.os.Message
 import android.text.format.DateFormat
 import android.util.DisplayMetrics
 import android.util.Log
@@ -24,6 +25,7 @@ import android.view.MotionEvent
 import android.view.Surface
 import android.view.SurfaceHolder
 import android.view.View
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.CameraSelector
@@ -31,15 +33,25 @@ import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.createBitmap
+import androidx.core.view.isVisible
 import androidx.lifecycle.LifecycleOwner
 import com.google.common.util.concurrent.ListenableFuture
+import com.mirrar.tablettryon.LoadImageHandlerThread.LOAD_BITMAP
+import com.mirrar.tablettryon.LoadImageHandlerThread.LOAD_DEFAULT_IMAGE_TASK
+import com.mirrar.tablettryon.LoadImageHandlerThread.LOAD_IMAGE_FROM_GALLERY_TASK
+import com.mirrar.tablettryon.LoadImageHandlerThread.REFRESH_IMAGE_TASK
 import com.mirrar.tablettryon.databinding.ActivityDeepAractivityBinding
+import com.mirrar.tablettryon.utility.AppConstraint.AR_BITMAP
 import java.io.File
 import java.io.FileOutputStream
+import java.io.IOException
+import java.nio.Buffer
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.util.Date
 import java.util.concurrent.ExecutionException
+
 
 class DeepARActivity : AppCompatActivity(), SurfaceHolder.Callback, AREventListener {
 
@@ -65,22 +77,52 @@ class DeepARActivity : AppCompatActivity(), SurfaceHolder.Callback, AREventListe
 
     private var recording = false
     private var currentSwitchRecording = false
+    private var isCurrentModeCamera = true
 
     private var width = 0
     private var height = 0
 
     private val videoFileName: File? = null
 
+    private lateinit var handlerThread: LoadImageHandlerThread
+
     override fun onStart() {
         super.onStart()
+        width = AR_BITMAP?.width ?: 0
+        height = AR_BITMAP?.height ?: 0
         initialize()
     }
-
 
     private fun initialize() {
         initializeDeepAR()
         initializeFilters()
         initalizeViews()
+    }
+
+    private fun printInitialImage() {
+        val msg = Message.obtain(handlerThread.handler)
+        msg.what = LOAD_BITMAP
+        msg.obj = AR_BITMAP
+        msg.sendToTarget()
+    }
+
+    private fun saveBitmapToCache(bitmap: Bitmap): Uri? {
+        val cacheDir: File = getCacheDir()
+        val imageFile = File(
+            cacheDir,
+            "image_" + System.currentTimeMillis() + ".jpg"
+        )
+
+        try {
+            FileOutputStream(imageFile).use { fos ->
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos) // Compress and write bitmap
+                fos.flush()
+                return Uri.fromFile(imageFile) // Return local URI
+            }
+        } catch (e: IOException) {
+            e.printStackTrace()
+            return null
+        }
     }
 
     private fun initializeFilters() {
@@ -173,7 +215,15 @@ class DeepARActivity : AppCompatActivity(), SurfaceHolder.Callback, AREventListe
         deepAR = DeepAR(this)
         deepAR!!.setLicenseKey("cc16573f53818d7fa2aa31a48ceb013150e01360d5726afb536c6885ae2cf4fa071952baef77e7b5")
         deepAR!!.initialize(this, this)
+
+        deepAR!!.changeLiveMode(true)
         setupCamera()
+    }
+
+    private fun refreshImage() {
+        val msg: Message = Message.obtain(handlerThread.handler)
+        msg.what = REFRESH_IMAGE_TASK
+        msg.sendToTarget()
     }
 
     private fun setupCamera() {
@@ -189,7 +239,6 @@ class DeepARActivity : AppCompatActivity(), SurfaceHolder.Callback, AREventListe
         }, ContextCompat.getMainExecutor(this))
 
     }
-
 
     private fun bindImageAnalysis(cameraProvider: ProcessCameraProvider) {
         val cameraResolutionPreset = CameraResolutionPreset.P1920x1080
@@ -321,8 +370,25 @@ class DeepARActivity : AppCompatActivity(), SurfaceHolder.Callback, AREventListe
         _binding = ActivityDeepAractivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        handlerThread = LoadImageHandlerThread(this)
+        handlerThread.start()
+
         binding.switchMode.setOnClickListener {
-            gotoNext()
+            if (!isCurrentModeCamera) {
+                deepAR!!.changeLiveMode(true)
+                setupCamera()
+            } else {
+                deepAR!!.changeLiveMode(false)
+                deepAR!!.setOffscreenRendering(width, height)
+            }
+            isCurrentModeCamera = !isCurrentModeCamera
+
+            binding.preview.isVisible = !isCurrentModeCamera
+//            gotoNext()
+        }
+
+        binding.details.setOnClickListener {
+            printInitialImage()
         }
     }
 
@@ -387,7 +453,16 @@ class DeepARActivity : AppCompatActivity(), SurfaceHolder.Callback, AREventListe
     }
 
     override fun initialized() {
-        deepAR!!.switchEffect("effect", getFilterPath(effects!!.get(currentEffect)));
+        if (deepAR != null && !isCurrentModeCamera) {
+            handlerThread.setImageReceiver(deepAR)
+            // Load default image
+            val msg = Message.obtain(handlerThread.handler)
+            msg.what = LOAD_DEFAULT_IMAGE_TASK
+            msg.sendToTarget()
+            refreshImage()
+        }
+        //jumpstart masks
+        deepAR!!.switchEffect("effect", getFilterPath(effects!!.get(currentEffect)))
 
     }
 
@@ -399,8 +474,17 @@ class DeepARActivity : AppCompatActivity(), SurfaceHolder.Callback, AREventListe
 
     }
 
-    override fun frameAvailable(p0: Image?) {
-
+    override fun frameAvailable(frame: Image?) {
+        if (frame != null) {
+            val planes: Array<Image.Plane> = frame.getPlanes()
+            val buffer: Buffer = planes[0].buffer.rewind()
+            val pixelStride = planes[0].pixelStride
+            val rowStride = planes[0].rowStride
+            val rowPadding = rowStride - pixelStride * width
+            val bitmap = createBitmap(width + rowPadding / pixelStride, height)
+            bitmap.copyPixelsFromBuffer(buffer)
+            binding.preview.setImageBitmap(bitmap)
+        }
     }
 
     override fun error(p0: ARErrorType?, p1: String?) {

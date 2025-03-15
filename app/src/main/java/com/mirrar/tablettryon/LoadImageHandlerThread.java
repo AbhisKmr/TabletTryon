@@ -32,6 +32,7 @@ public class LoadImageHandlerThread extends HandlerThread {
     public static final int LOAD_IMAGE_FROM_GALLERY_TASK = 1;
     public static final int LOAD_DEFAULT_IMAGE_TASK = 2;
     public static final int REFRESH_IMAGE_TASK = 3;
+    public static final int LOAD_BITMAP = 4;
 
     private Handler handler;
     private DeepAR imageReceiver;
@@ -46,7 +47,8 @@ public class LoadImageHandlerThread extends HandlerThread {
 
     public LoadImageHandlerThread(ContextWrapper context) {
         super("ExampleHandlerThread", Process.THREAD_PRIORITY_BACKGROUND);
-        this.mContext = new WeakReference<ContextWrapper>(context);;
+        this.mContext = new WeakReference<ContextWrapper>(context);
+        ;
 
     }
 
@@ -67,7 +69,11 @@ public class LoadImageHandlerThread extends HandlerThread {
                 switch (msg.what) {
                     case LOAD_IMAGE_FROM_GALLERY_TASK:
                         Log.d(TAG, "Load Image from Gallery Task, obj: " + msg.obj);
-                        loadBitmapFromGallery((Uri)msg.obj);
+                        loadBitmapFromGallery((Uri) msg.obj);
+                        break;
+                    case LOAD_BITMAP:
+                        Log.d(TAG, "Load Image from Gallery Task, obj: " + msg.obj);
+                        loadBitmap((Bitmap) msg.obj);
                         break;
 
                     case LOAD_DEFAULT_IMAGE_TASK:
@@ -83,7 +89,7 @@ public class LoadImageHandlerThread extends HandlerThread {
     }
 
     void loadDefaultBitmap() {
-        Bitmap defaultImage = ((BitmapDrawable) mContext.get().getResources()
+        @SuppressLint("UseCompatLoadingForDrawables") Bitmap defaultImage = ((BitmapDrawable) mContext.get().getResources()
                 .getDrawable(R.drawable.email_model)).getBitmap();
         lastImage = defaultImage;
         lastRotate = true;
@@ -93,6 +99,15 @@ public class LoadImageHandlerThread extends HandlerThread {
     void refreshBitmap() {
         if (lastImage != null) {
             uploadBitmapToDeepAR(lastImage, lastRotate);
+        }
+    }
+
+    void loadBitmap(Bitmap selectedImage) {
+
+        lastImage = selectedImage;
+        if (lastImage != null) {
+            lastRotate = false;
+            uploadBitmapToDeepAR(selectedImage, false);
         }
     }
 
@@ -119,11 +134,10 @@ public class LoadImageHandlerThread extends HandlerThread {
         // then rotate it and feed as such to DeepAR.
         final Bitmap resizedBitmap;
         final Bitmap rotatedBitmap;
-        if (rotate){
+        if (rotate) {
             resizedBitmap = scaleCenterCrop(selectedImage, 1280, 720);
             rotatedBitmap = rotateBitmap(resizedBitmap, 90);
-        }
-        else {
+        } else {
             resizedBitmap = scaleCenterCrop(selectedImage, 720, 1280);
             rotatedBitmap = rotateBitmap(resizedBitmap, 180);
         }
@@ -147,18 +161,17 @@ public class LoadImageHandlerThread extends HandlerThread {
         // the final output by another 270 degrees to output a portrait image
         imageReceiver.receiveFrame(nv21bb, width, height, 270, false, DeepARImageFormat.YUV_NV21, 1);
         SystemClock.sleep(100);
-        imageReceiver.receiveFrame(nv21bb, width, height, 270, false, DeepARImageFormat.YUV_NV21, 1 );
-
+        imageReceiver.receiveFrame(nv21bb, width, height, 270, false, DeepARImageFormat.YUV_NV21, 1);
     }
 
     // https://stackoverflow.com/questions/5960247/convert-bitmap-array-to-yuv-ycbcr-nv21
-    byte [] getNV21(int inputWidth, int inputHeight, Bitmap scaled) {
+    byte[] getNV21(int inputWidth, int inputHeight, Bitmap scaled) {
 
-        int [] argb = new int[inputWidth * inputHeight];
+        int[] argb = new int[inputWidth * inputHeight];
 
         scaled.getPixels(argb, 0, inputWidth, 0, 0, inputWidth, inputHeight);
 
-        byte [] yuv = new byte[inputWidth*inputHeight*3/2];
+        byte[] yuv = new byte[inputWidth * inputHeight * 3 / 2];
         encodeYUV420SP(yuv, argb, inputWidth, inputHeight);
 
         scaled.recycle();
@@ -183,20 +196,20 @@ public class LoadImageHandlerThread extends HandlerThread {
                 B = (argb[index] & 0xff) >> 0;
 
                 // well known RGB to YUV algorithm
-                Y = ( (  66 * R + 129 * G +  25 * B + 128) >> 8) +  16;
-                U = ( ( -38 * R -  74 * G + 112 * B + 128) >> 8) + 128;
-                V = ( ( 112 * R -  94 * G -  18 * B + 128) >> 8) + 128;
+                Y = ((66 * R + 129 * G + 25 * B + 128) >> 8) + 16;
+                U = ((-38 * R - 74 * G + 112 * B + 128) >> 8) + 128;
+                V = ((112 * R - 94 * G - 18 * B + 128) >> 8) + 128;
 
                 // NV21 has a plane of Y and interleaved planes of VU each sampled by a factor of 2
                 //    meaning for every 4 Y pixels there are 1 V and 1 U.  Note the sampling is every other
                 //    pixel AND every other scanline.
                 yuv420sp[yIndex++] = (byte) ((Y < 0) ? 0 : ((Y > 255) ? 255 : Y));
                 if (j % 2 == 0 && index % 2 == 0) {
-                    yuv420sp[uvIndex++] = (byte)((V<0) ? 0 : ((V > 255) ? 255 : V));
-                    yuv420sp[uvIndex++] = (byte)((U<0) ? 0 : ((U > 255) ? 255 : U));
+                    yuv420sp[uvIndex++] = (byte) ((V < 0) ? 0 : ((V > 255) ? 255 : V));
+                    yuv420sp[uvIndex++] = (byte) ((U < 0) ? 0 : ((U > 255) ? 255 : U));
                 }
 
-                index ++;
+                index++;
             }
         }
     }
@@ -227,16 +240,14 @@ public class LoadImageHandlerThread extends HandlerThread {
     }
 
 
-
-    public static Bitmap rotateBitmap(Bitmap source, float angle)
-    {
+    public static Bitmap rotateBitmap(Bitmap source, float angle) {
         Matrix matrix = new Matrix();
         matrix.postRotate(angle);
         return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(), matrix, true);
     }
 
-    private void saveBitmapToGallery(Bitmap bitmap){
-        String filename = "rotated"+System.currentTimeMillis()+".png";
-        MediaStore.Images.Media.insertImage(mContext.get().getContentResolver(), bitmap, filename , "Description.");
+    private void saveBitmapToGallery(Bitmap bitmap) {
+        String filename = "rotated" + System.currentTimeMillis() + ".png";
+        MediaStore.Images.Media.insertImage(mContext.get().getContentResolver(), bitmap, filename, "Description.");
     }
 }
