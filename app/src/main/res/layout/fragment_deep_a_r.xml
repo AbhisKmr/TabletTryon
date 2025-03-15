@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/background"
-    tools:context=".view.fragment.tryon.TryOnFragment">
+    tools:context=".DeepARFragment">
 
     <ImageView
         android:id="@+id/imageView"
@@ -46,7 +46,6 @@
         </com.google.android.material.navigation.NavigationView>
 
     </androidx.drawerlayout.widget.DrawerLayout>
-
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardView4"
@@ -129,28 +128,16 @@
         app:layout_constraintHeight_percent=".7"
         app:layout_constraintTop_toBottomOf="@+id/cardView2">
 
-        <!--        <com.mirrar.tablettryon.tools.CameraSourcePreview-->
-        <!--            android:layout_width="match_parent"-->
-        <!--            android:layout_height="match_parent">-->
-
-        <!--        </com.mirrar.tablettryon.tools.CameraSourcePreview>-->
-        <ImageView
-            android:id="@+id/imagePreview"
+        <SurfaceView
+            android:id="@+id/surface"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scaleType="centerCrop"
-            android:src="@drawable/tryon_image" />
+            android:layout_height="match_parent" />
 
-        <com.mirrar.tablettryon.tools.CanvasView
-            android:id="@+id/canvasView"
+        <ImageView
+            android:id="@+id/preview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:visibility="gone" />
-
-        <ImageView
-            android:id="@+id/glassPreview"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
 
         <ImageView
             android:layout_width="match_parent"

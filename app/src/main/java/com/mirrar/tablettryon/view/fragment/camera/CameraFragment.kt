@@ -205,6 +205,6 @@ class CameraFragment : Fragment() {
 
     companion object {
         private const val TAG = "CameraXExample"
-        private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.CAMERA)
+        private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO)
     }
 }
