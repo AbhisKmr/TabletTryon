@@ -1,4 +1,4 @@
-package com.mirrar.tablettryon.view.fragment.tryon
+package com.mirrar.tablettryon
 
 import android.Manifest
 import android.content.pm.PackageManager
@@ -24,7 +24,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.google.mlkit.vision.common.InputImage
-import com.mirrar.tablettryon.R
 import com.mirrar.tablettryon.databinding.FragmentTryOnBinding
 import com.mirrar.tablettryon.tools.faceDetector.mlkit.FaceDetectionActivity
 import com.mirrar.tablettryon.utility.AppConstraint.AR_BITMAP
@@ -105,7 +104,6 @@ class TryOnFragment : Fragment() {
         }
 
         binding.switchMode.setOnClickListener {
-            findNavController().navigate(R.id.action_tryOnFragment_to_deeARJavaFragment)
         }
 
         binding.details.setOnClickListener {

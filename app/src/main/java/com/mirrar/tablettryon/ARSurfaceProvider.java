@@ -1,4 +1,4 @@
-package com.mirrar.tablettryon.tools.deepAr;
+package com.mirrar.tablettryon;
 
 import android.app.Activity;
 import android.content.Context;

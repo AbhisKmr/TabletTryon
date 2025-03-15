@@ -77,7 +77,7 @@ dependencies {
 
     implementation("com.google.mlkit:face-detection:16.1.7")
 
-    val camerax_version = "1.2.3"
+    val camerax_version = "1.4.1"
 
     implementation("androidx.camera:camera-core:${camerax_version}")
     implementation("androidx.camera:camera-lifecycle:${camerax_version}")
@@ -86,5 +86,5 @@ dependencies {
 
     implementation("com.facebook.shimmer:shimmer:0.5.0")
 
-    implementation("ai.deepar.ar:DeepAR:5.4.4")
+    implementation("ai.deepar.ar:DeepAR:5.6.17")
 }
