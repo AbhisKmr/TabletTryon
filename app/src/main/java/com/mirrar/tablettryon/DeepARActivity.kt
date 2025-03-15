@@ -26,6 +26,7 @@ import android.view.Surface
 import android.view.SurfaceHolder
 import android.view.View
 import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.CameraSelector
@@ -37,6 +38,7 @@ import androidx.core.graphics.createBitmap
 import androidx.core.view.isVisible
 import androidx.lifecycle.LifecycleOwner
 import com.google.common.util.concurrent.ListenableFuture
+import com.google.firebase.annotations.concurrent.Background
 import com.mirrar.tablettryon.LoadImageHandlerThread.LOAD_BITMAP
 import com.mirrar.tablettryon.LoadImageHandlerThread.LOAD_DEFAULT_IMAGE_TASK
 import com.mirrar.tablettryon.LoadImageHandlerThread.LOAD_IMAGE_FROM_GALLERY_TASK
@@ -352,6 +354,7 @@ class DeepARActivity : AppCompatActivity(), SurfaceHolder.Callback, AREventListe
     }
 
     override fun onDestroy() {
+        super.onDestroy()
         if (surfaceProvider != null) {
             surfaceProvider!!.stop()
         }
@@ -362,7 +365,6 @@ class DeepARActivity : AppCompatActivity(), SurfaceHolder.Callback, AREventListe
         deepAR!!.release()
         deepAR = null
         _binding = null
-        super.onDestroy()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -377,19 +379,33 @@ class DeepARActivity : AppCompatActivity(), SurfaceHolder.Callback, AREventListe
             if (!isCurrentModeCamera) {
                 deepAR!!.changeLiveMode(true)
                 setupCamera()
+                setColorAndBackgroundTextView(
+                    binding.liveTxt,
+                    R.color.white,
+                    R.drawable.switch_txt_background
+                )
+                binding.preview.isVisible = false
+
+                setColorAndBackgroundTextView(binding.staticTxt, R.color.black, 0)
             } else {
                 deepAR!!.changeLiveMode(false)
                 deepAR!!.setOffscreenRendering(width, height)
+                setColorAndBackgroundTextView(binding.liveTxt, R.color.black, 0)
+                setColorAndBackgroundTextView(
+                    binding.staticTxt,
+                    R.color.white,
+                    R.drawable.switch_txt_background
+                )
+                binding.staticTxt.setBackgroundResource(R.drawable.switch_txt_background)
+                binding.preview.isVisible = true
             }
             isCurrentModeCamera = !isCurrentModeCamera
-
-            binding.preview.isVisible = !isCurrentModeCamera
-//            gotoNext()
         }
+    }
 
-        binding.details.setOnClickListener {
-            printInitialImage()
-        }
+    private fun setColorAndBackgroundTextView(tv: TextView, color: Int, background: Int) {
+        tv.setTextColor(ContextCompat.getColor(this, color))
+        tv.setBackgroundResource(background)
     }
 
     override fun surfaceCreated(p0: SurfaceHolder) {
