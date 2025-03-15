@@ -38,7 +38,7 @@ class CameraImagePreviewFragment : Fragment() {
 
         val emailFragment = EmailSavePopupFragment.newInstance {
             Handler().postDelayed({
-                findNavController().navigate(R.id.action_cameraImagePreviewFragment4_to_tryOnFragment)
+                findNavController().navigate(R.id.action_cameraImagePreviewFragment4_to_deepARFragment)
             }, 500)
         }
 

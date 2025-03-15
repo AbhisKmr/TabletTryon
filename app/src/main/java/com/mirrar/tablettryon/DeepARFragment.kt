@@ -17,6 +17,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.os.Environment.getExternalStoragePublicDirectory
+import android.os.Handler
 import android.text.format.DateFormat
 import android.util.DisplayMetrics
 import android.util.Log
@@ -78,6 +79,9 @@ class DeepARFragment : Fragment(), SurfaceHolder.Callback, AREventListener {
     override fun onStart() {
         super.onStart()
         initialize()
+        Handler().postDelayed({
+
+        }, 1000)
     }
 
     private fun initialize() {
@@ -200,7 +204,7 @@ class DeepARFragment : Fragment(), SurfaceHolder.Callback, AREventListener {
     private fun setupCamera() {
         cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
 
-        cameraProviderFuture!!.addListener(Runnable {
+        cameraProviderFuture!!.addListener({
             try {
                 val cameraProvider = cameraProviderFuture!!.get()
                 bindImageAnalysis(cameraProvider)

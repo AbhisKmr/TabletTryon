@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_navigation"
-    app:startDestination="@id/deepARFragment">
+    app:startDestination="@id/homeFragment">
 
     <fragment
         android:id="@+id/homeFragment"
@@ -35,6 +35,9 @@
         <action
             android:id="@+id/action_cameraImagePreviewFragment4_to_tryOnFragment"
             app:destination="@id/tryOnFragment" />
+        <action
+            android:id="@+id/action_cameraImagePreviewFragment4_to_deepARFragment"
+            app:destination="@id/deepARFragment" />
     </fragment>
     <fragment
         android:id="@+id/tryOnFragment"
@@ -54,5 +57,9 @@
         android:id="@+id/deepARFragment"
         android:name="com.mirrar.tablettryon.DeepARFragment"
         android:label="fragment_deep_a_r"
-        tools:layout="@layout/fragment_deep_a_r" />
+        tools:layout="@layout/fragment_deep_a_r" >
+        <action
+            android:id="@+id/action_deepARFragment_to_catalogueFragment"
+            app:destination="@id/catalogueFragment" />
+    </fragment>
 </navigation>
