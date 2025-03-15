@@ -137,15 +137,19 @@ class DeepARActivityHelper(
             binding.productPrice.text =
                 "${p.currency} ${p.priceDutyFree}"
 
-            deepARActivity.lifecycleScope.launch {
-                val path = withContext(Dispatchers.IO) {
-                    val name = p.localItemCode.trim().replace(" ", "_")
-                    downloadAndSaveFile(
-                        "https://github.com/AbhisKmr/alpha/raw/refs/heads/master/glass.deepar",
-                        "$name.deepar"
-                    )
+            if (i % 2 == 0) {
+                deepARActivity.lifecycleScope.launch {
+                    val path = withContext(Dispatchers.IO) {
+                        val name = p.localItemCode.trim().replace(" ", "_")
+                        downloadAndSaveFile(
+                            "https://github.com/AbhisKmr/alpha/raw/refs/heads/master/glass.deepar",
+                            "$name.deepar"
+                        )
+                    }
+                    applyEffect(path!!)
                 }
-                applyEffect(path!!)
+            } else {
+                applyEffect("none")
             }
             updateHeartIcon(Bookmarks.getBookmarks())
         }
