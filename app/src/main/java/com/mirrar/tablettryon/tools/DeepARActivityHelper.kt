@@ -24,7 +24,10 @@ import com.mirrar.tablettryon.view.fragment.tryon.adapter.ProductAdapter
 import com.mirrar.tablettryon.view.fragment.tryon.dataModel.Product
 import com.mirrar.tablettryon.view.fragment.tryon.viewModel.AlgoliaViewModel
 
-class DeepARActivityHelper(private val deepARActivity: DeepARActivity) {
+class DeepARActivityHelper(
+    private val deepARActivity: DeepARActivity,
+    private val onScreenshot: (SCREENSHOT, Product) -> Unit
+) {
 
     private var binding: ActivityDeepAractivityBinding = deepARActivity.binding
     private var selectedProduct: Product? = null
@@ -74,6 +77,7 @@ class DeepARActivityHelper(private val deepARActivity: DeepARActivity) {
 
         binding.email.setOnClickListener {
             if (selectedProduct != null) {
+//                deepAR.takeScreenshot()
                 // **Bitmap
 //                openDialogFragment(
 //                    EmailFragment.newInstance(
@@ -86,13 +90,7 @@ class DeepARActivityHelper(private val deepARActivity: DeepARActivity) {
 
         binding.next.setOnClickListener {
             if (selectedProduct != null) {
-                // **Bitmap
-                /*openDialogFragment(
-                    SelfieFragment.newInstance(
-                        selectedProduct!!,
-                        viewToBitmap(binding.cardView3)!!
-                    )
-                )*/
+                onScreenshot(SCREENSHOT.SELFIE, selectedProduct!!)
             }
         }
 
@@ -225,5 +223,9 @@ class DeepARActivityHelper(private val deepARActivity: DeepARActivity) {
         }
 
         binding.wishlist.setCompoundDrawablesWithIntrinsicBounds(drawable, null, null, null)
+    }
+
+    enum class SCREENSHOT {
+        EMAIL, SELFIE
     }
 }

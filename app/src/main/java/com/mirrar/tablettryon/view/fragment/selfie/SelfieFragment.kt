@@ -1,5 +1,6 @@
 package com.mirrar.tablettryon.view.fragment.selfie
 
+import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -17,6 +18,7 @@ import com.mirrar.tablettryon.utility.AppConstraint.userEmail
 import com.mirrar.tablettryon.utility.AppConstraint.userName
 import com.mirrar.tablettryon.utility.Bookmarks
 import com.mirrar.tablettryon.utility.HelperFunctions
+import com.mirrar.tablettryon.view.activity.MainActivity
 import com.mirrar.tablettryon.view.fragment.email.EmailHelper
 import com.mirrar.tablettryon.view.fragment.email.dataModel.emailApi.SendEmailApiRequest
 import com.mirrar.tablettryon.view.fragment.tryon.dataModel.Product
@@ -72,7 +74,9 @@ class SelfieFragment(private val p: Product, private val bitmap: Bitmap) : Dialo
             Bookmarks.clearAll()
             userEmail = null
             userName = null
-            findNavController().popBackStack(R.id.homeFragment, false)
+            startActivity(Intent(requireActivity(), MainActivity::class.java))
+            requireActivity().finish()
+//            findNavController().popBackStack(R.id.homeFragment, false)
         }
 
         binding.modelPreview.setImageBitmap(bitmap)

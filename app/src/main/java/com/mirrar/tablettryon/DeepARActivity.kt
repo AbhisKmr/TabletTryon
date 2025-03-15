@@ -36,6 +36,7 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.createBitmap
 import androidx.core.view.isVisible
+import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.LifecycleOwner
 import com.google.common.util.concurrent.ListenableFuture
 import com.google.firebase.annotations.concurrent.Background
@@ -46,6 +47,8 @@ import com.mirrar.tablettryon.LoadImageHandlerThread.REFRESH_IMAGE_TASK
 import com.mirrar.tablettryon.databinding.ActivityDeepAractivityBinding
 import com.mirrar.tablettryon.tools.DeepARActivityHelper
 import com.mirrar.tablettryon.utility.AppConstraint.AR_BITMAP
+import com.mirrar.tablettryon.view.fragment.selfie.SelfieFragment
+import com.mirrar.tablettryon.view.fragment.tryon.dataModel.Product
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -77,6 +80,8 @@ class DeepARActivity : AppCompatActivity(), SurfaceHolder.Callback, AREventListe
     private val screenOrientation = 0
 
     private var effects: ArrayList<String>? = null
+    private var selectedProduct: Product? = null
+    private var screenshot = DeepARActivityHelper.SCREENSHOT.SELFIE
 
     private var recording = false
     private var currentSwitchRecording = false
@@ -374,7 +379,11 @@ class DeepARActivity : AppCompatActivity(), SurfaceHolder.Callback, AREventListe
         _binding = ActivityDeepAractivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        deepARActivityHelper = DeepARActivityHelper(this)
+        deepARActivityHelper = DeepARActivityHelper(this) { s, p ->
+            screenshot = s
+            selectedProduct = p
+            deepAR?.takeScreenshot()
+        }
         handlerThread = LoadImageHandlerThread(this)
         handlerThread.start()
 
@@ -425,30 +434,41 @@ class DeepARActivity : AppCompatActivity(), SurfaceHolder.Callback, AREventListe
         }
     }
 
+    private fun openDialogFragment(fragment: DialogFragment) {
+        fragment.show(supportFragmentManager, fragment.tag)
+    }
+
     override fun screenshotTaken(p0: Bitmap?) {
-        val now: CharSequence = DateFormat.format("yyyy_MM_dd_hh_mm_ss", Date())
-        try {
-            val imageFile = File(
-                getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
-                "image_$now.jpg"
+        if (screenshot == DeepARActivityHelper.SCREENSHOT.SELFIE) {
+            openDialogFragment(
+                SelfieFragment.newInstance(
+                    selectedProduct!!, p0!!
+                )
             )
-            val outputStream = FileOutputStream(imageFile)
-            val quality = 100
-            p0!!.compress(Bitmap.CompressFormat.JPEG, quality, outputStream)
-            outputStream.flush()
-            outputStream.close()
-            val mediaScanIntent = Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE)
-            val contentUri = Uri.fromFile(imageFile)
-            mediaScanIntent.setData(contentUri)
-            sendBroadcast(mediaScanIntent)
-            Toast.makeText(
-                this,
-                "Screenshot " + imageFile.name + " saved.",
-                Toast.LENGTH_SHORT
-            ).show()
-        } catch (e: Throwable) {
-            e.printStackTrace()
         }
+//        val now: CharSequence = DateFormat.format("yyyy_MM_dd_hh_mm_ss", Date())
+//        try {
+//            val imageFile = File(
+//                getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
+//                "image_$now.jpg"
+//            )
+//            val outputStream = FileOutputStream(imageFile)
+//            val quality = 100
+//            p0!!.compress(Bitmap.CompressFormat.JPEG, quality, outputStream)
+//            outputStream.flush()
+//            outputStream.close()
+//            val mediaScanIntent = Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE)
+//            val contentUri = Uri.fromFile(imageFile)
+//            mediaScanIntent.setData(contentUri)
+//            sendBroadcast(mediaScanIntent)
+//            Toast.makeText(
+//                this,
+//                "Screenshot " + imageFile.name + " saved.",
+//                Toast.LENGTH_SHORT
+//            ).show()
+//        } catch (e: Throwable) {
+//            e.printStackTrace()
+//        }
     }
 
     override fun videoRecordingStarted() {
