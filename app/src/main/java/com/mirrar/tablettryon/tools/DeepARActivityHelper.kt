@@ -139,7 +139,7 @@ class DeepARActivityHelper(
 
             deepARActivity.lifecycleScope.launch {
                 val path = withContext(Dispatchers.IO) {
-                    val name = p.name.trim().replace(" ", "_")
+                    val name = p.localItemCode.trim().replace(" ", "_")
                     downloadAndSaveFile(
                         "https://github.com/AbhisKmr/alpha/raw/refs/heads/master/glass.deepar",
                         "$name.deepar"
