@@ -61,13 +61,15 @@ class ProductAdapter(private val clickListener: (Int, Product) -> Unit) :
         Glide.with(ctx).load(url).into(holder.binding.thumb)
         holder.binding.root.setOnClickListener {
             clickListener(position, list[position])
+            val oldPos = SELECTED_INDEX
             SELECTED_INDEX = position
-            notifyDataSetChanged()
+            notifyItemChanged(oldPos)
+            notifyItemChanged(SELECTED_INDEX)
         }
 
-        if (SELECTED_INDEX != -1 && SELECTED_INDEX < list.size) {
-            clickListener(SELECTED_INDEX, list[SELECTED_INDEX])
-        }
+//        if (SELECTED_INDEX != -1 && SELECTED_INDEX < list.size) {
+//            clickListener(SELECTED_INDEX, list[SELECTED_INDEX])
+//        }
     }
 
     override fun getItemCount(): Int = list.size

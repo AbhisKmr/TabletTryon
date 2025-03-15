@@ -379,11 +379,13 @@ class DeepARActivity : AppCompatActivity(), SurfaceHolder.Callback, AREventListe
         _binding = ActivityDeepAractivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        deepARActivityHelper = DeepARActivityHelper(this) { s, p ->
+        deepARActivityHelper = DeepARActivityHelper(this, {
+            deepAR!!.switchEffect("effect", it)
+        }, { s, p ->
             screenshot = s
             selectedProduct = p
             deepAR?.takeScreenshot()
-        }
+        })
         handlerThread = LoadImageHandlerThread(this)
         handlerThread.start()
 

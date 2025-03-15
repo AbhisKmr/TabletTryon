@@ -1,5 +1,6 @@
 package com.mirrar.tablettryon.tools
 
+import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.widget.Toast
@@ -10,6 +11,7 @@ import androidx.drawerlayout.widget.DrawerLayout.DrawerListener
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.mirrar.tablettryon.DeepARActivity
 import com.mirrar.tablettryon.R
 import com.mirrar.tablettryon.databinding.ActivityDeepAractivityBinding
@@ -23,9 +25,19 @@ import com.mirrar.tablettryon.view.fragment.catalogue.adapter.FilterListAdapter
 import com.mirrar.tablettryon.view.fragment.tryon.adapter.ProductAdapter
 import com.mirrar.tablettryon.view.fragment.tryon.dataModel.Product
 import com.mirrar.tablettryon.view.fragment.tryon.viewModel.AlgoliaViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import java.io.File
+import java.io.FileOutputStream
+import java.io.InputStream
 
 class DeepARActivityHelper(
     private val deepARActivity: DeepARActivity,
+    private val applyEffect: (String) -> Unit,
     private val onScreenshot: (SCREENSHOT, Product) -> Unit
 ) {
 
@@ -125,6 +137,16 @@ class DeepARActivityHelper(
             binding.productPrice.text =
                 "${p.currency} ${p.priceDutyFree}"
 
+            deepARActivity.lifecycleScope.launch {
+                val path = withContext(Dispatchers.IO) {
+                    val name = p.name.trim().replace(" ", "_")
+                    downloadAndSaveFile(
+                        "https://github.com/AbhisKmr/alpha/raw/refs/heads/master/glass.deepar",
+                        "$name.deepar"
+                    )
+                }
+                applyEffect(path!!)
+            }
             updateHeartIcon(Bookmarks.getBookmarks())
         }
 
@@ -223,6 +245,42 @@ class DeepARActivityHelper(
         }
 
         binding.wishlist.setCompoundDrawablesWithIntrinsicBounds(drawable, null, null, null)
+    }
+
+    private fun downloadAndSaveFile(fileUrl: String, fileName: String): String? {
+        return try {
+            val directory = deepARActivity.cacheDir
+            val file = File(directory, fileName)
+
+            if (file.exists()) {
+                Log.d("Download", "File already exists: ${file.absolutePath}")
+                return file.absolutePath
+            }
+
+            val client = OkHttpClient()
+            val request = Request.Builder().url(fileUrl).build()
+            val response = client.newCall(request).execute()
+
+            if (!response.isSuccessful) {
+                Log.e("Download", "Failed to download file: ${response.message}")
+                return null
+            }
+
+            val inputStream: InputStream? = response.body?.byteStream()
+            val outputStream = FileOutputStream(file)
+            inputStream?.copyTo(outputStream)
+
+            outputStream.flush()
+            outputStream.close()
+            inputStream?.close()
+
+            Log.d("Download", "File saved: ${file.absolutePath}")
+            file.absolutePath
+
+        } catch (e: Exception) {
+            Log.e("Download", "Error: ${e.message}")
+            null
+        }
     }
 
     enum class SCREENSHOT {
