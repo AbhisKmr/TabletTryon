@@ -75,6 +75,20 @@ class AlgoliaViewModel : ViewModel() {
                     hitsPerPage = 500
                 }
 
+                val exclusionFilter = objects.joinToString(" AND ") { "NOT objectID:$it" }
+
+                additionalQuery.apply {
+                    filters = if (filters.isNullOrBlank()) exclusionFilter else "$filters AND $exclusionFilter"
+                }
+//                val exclusionFilter = " ${
+//                    objects.map {
+//                        " AND NOT objectID:${it} "
+//                    }
+//                }".replace (",", "").replace("[","").replace("]","")
+//
+//                additionalQuery.apply {
+//                    filters = additionalQuery.filters + exclusionFilter
+//                }
                 val additionalProductsResponse = index.search(additionalQuery)
 
 
@@ -129,11 +143,11 @@ class AlgoliaViewModel : ViewModel() {
                     (
                     when (shortingIndex) {
                         0 -> {
-                            AppConstraint.ALGOLIA_INDEX+"-asc"
+                            AppConstraint.ALGOLIA_INDEX + "-asc"
                         }
 
                         1 -> {
-                            AppConstraint.ALGOLIA_INDEX+"-desc"
+                            AppConstraint.ALGOLIA_INDEX + "-desc"
                         }
 
                         else -> {
