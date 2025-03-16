@@ -77,6 +77,9 @@ class ProductAdapter(private val clickListener: (Int, Product) -> Unit) :
     fun updateData(list: List<Product>) {
         if (selectedIndex > list.size) {
             selectedIndex = -1
+        } else if (!list.isEmpty()) {
+            selectedIndex = 0
+            clickListener(selectedIndex, list[selectedIndex])
         }
 
         this.list.clear()

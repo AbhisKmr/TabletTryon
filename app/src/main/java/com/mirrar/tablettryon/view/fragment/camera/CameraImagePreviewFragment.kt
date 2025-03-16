@@ -42,7 +42,7 @@ class CameraImagePreviewFragment : Fragment() {
             Handler().postDelayed({
                 startActivity(Intent(requireActivity(), DeepARActivity::class.java))
 //                findNavController().navigate(R.id.action_cameraImagePreviewFragment4_to_deepARFragment)
-            }, 500)
+            }, 100)
         }
 
         binding.cameraPreview.setImageBitmap(AR_BITMAP)
