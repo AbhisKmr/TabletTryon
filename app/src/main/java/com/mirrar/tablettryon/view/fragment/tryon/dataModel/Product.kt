@@ -101,7 +101,8 @@ data class Product(
     val wineRegion: Any,
     val year: String,
     val productUrl: String?,
-    val imageFrontView: String?
+    val imageFrontView: String?,
+    val asset3DUrl: String?
 ) {
     var isBookmarked = false
     var isRecommended = false

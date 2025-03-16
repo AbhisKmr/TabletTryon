@@ -155,12 +155,9 @@ class DeepARActivityHelper(
             deepARActivity.lifecycleScope.launch {
                 val path = withContext(Dispatchers.IO) {
                     val name = p.localItemCode.trim().replace(" ", "_")
-                    downloadAndSaveFile(
-                        assetsUrl[i%assetsUrl.size],
-                        "$name.deepar"
-                    )
+                    downloadAndSaveFile(p.asset3DUrl?:"none", "$name.deepar")
                 }
-                applyEffect(path?:"none")
+                applyEffect(path ?: "none")
             }
             updateHeartIcon(Bookmarks.getBookmarks())
         }
