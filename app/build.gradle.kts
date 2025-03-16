@@ -21,13 +21,24 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
         }
     }
+
+    signingConfigs {
+        create("release") {
+            storeFile = file("../mirrarykey")
+            storePassword = "8xDAv9DPGqFr6mkV"
+            keyAlias = "key0"
+            keyPassword = "8xDAv9DPGqFr6mkV"
+        }
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
