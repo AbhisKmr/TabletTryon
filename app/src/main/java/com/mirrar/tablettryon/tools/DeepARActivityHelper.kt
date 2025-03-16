@@ -145,6 +145,7 @@ class DeepARActivityHelper(
         }
 
         adapter = ProductAdapter { i, p ->
+            applyEffect("none")
             selectedProduct = p
             binding.brand.text = p.brand
             binding.productCode.text = p.localItemCode
