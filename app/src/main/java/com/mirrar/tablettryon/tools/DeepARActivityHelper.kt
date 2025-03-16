@@ -45,6 +45,19 @@ class DeepARActivityHelper(
     private var selectedProduct: Product? = null
     private var adapter: ProductAdapter? = null
 
+    private val assetsUrl = arrayOf(
+        "https://github.com/AbhisKmr/alpha/raw/refs/heads/master/glass.deepar",
+        "https://github.com/AbhisKmr/alpha/raw/refs/heads/master/glass2.deepar",
+        "https://github.com/AbhisKmr/alpha/raw/refs/heads/master/glass3.deepar",
+        "https://github.com/AbhisKmr/alpha/raw/refs/heads/master/glass4.deepar",
+        "https://github.com/AbhisKmr/alpha/raw/refs/heads/master/glass5.deepar",
+        "https://github.com/AbhisKmr/alpha/raw/refs/heads/master/glass6.deepar",
+        "https://github.com/AbhisKmr/alpha/raw/refs/heads/master/glass7.deepar",
+        "https://github.com/AbhisKmr/alpha/raw/refs/heads/master/glass8.deepar",
+        "https://github.com/AbhisKmr/alpha/raw/refs/heads/master/glass9.deepar",
+        "https://github.com/AbhisKmr/alpha/raw/refs/heads/master/glass10.deepar",
+    )
+
     init {
         binding.catalogue.setOnClickListener {
             val transaction = deepARActivity.supportFragmentManager.beginTransaction()
@@ -138,19 +151,15 @@ class DeepARActivityHelper(
             binding.productPrice.text =
                 "${p.currency} ${p.priceDutyFree}"
 
-            if (i % 2 == 0) {
-                deepARActivity.lifecycleScope.launch {
-                    val path = withContext(Dispatchers.IO) {
-                        val name = p.localItemCode.trim().replace(" ", "_")
-                        downloadAndSaveFile(
-                            "https://github.com/AbhisKmr/alpha/raw/refs/heads/master/glass.deepar",
-                            "$name.deepar"
-                        )
-                    }
-                    applyEffect(path!!)
+            deepARActivity.lifecycleScope.launch {
+                val path = withContext(Dispatchers.IO) {
+                    val name = p.localItemCode.trim().replace(" ", "_")
+                    downloadAndSaveFile(
+                        assetsUrl[i%assetsUrl.size],
+                        "$name.deepar"
+                    )
                 }
-            } else {
-                applyEffect("none")
+                applyEffect(path?:"none")
             }
             updateHeartIcon(Bookmarks.getBookmarks())
         }
