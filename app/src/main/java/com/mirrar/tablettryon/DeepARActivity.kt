@@ -39,6 +39,7 @@ import com.mirrar.tablettryon.LoadImageHandlerThread.REFRESH_IMAGE_TASK
 import com.mirrar.tablettryon.databinding.ActivityDeepAractivityBinding
 import com.mirrar.tablettryon.tools.DeepARActivityHelper
 import com.mirrar.tablettryon.utility.AppConstraint.AR_BITMAP
+import com.mirrar.tablettryon.utility.HelperFunctions.getNavigationBarHeight
 import com.mirrar.tablettryon.view.fragment.selfie.SelfieFragment
 import com.mirrar.tablettryon.view.fragment.tryon.dataModel.Product
 import java.io.File
@@ -88,9 +89,29 @@ class DeepARActivity : AppCompatActivity(), SurfaceHolder.Callback, AREventListe
 
     override fun onStart() {
         super.onStart()
+        val cameraResolutionPreset = CameraResolutionPreset.P1920x1080
+        val nav = getNavigationBarHeight(this)
+
+        binding.cameraSourcePreview.width = cameraResolutionPreset.height
+        binding.cameraSourcePreview.height = cameraResolutionPreset.width - nav
+        binding.cameraSourcePreview.invalidate()
         width = AR_BITMAP?.width ?: 0
         height = AR_BITMAP?.height ?: 0
         initialize()
+    }
+
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        super.onWindowFocusChanged(hasFocus)
+
+        val decorView = window.decorView
+        if (hasFocus) {
+            decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                    or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                    or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                    or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                    or View.SYSTEM_UI_FLAG_FULLSCREEN
+                    or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY)
+        }
     }
 
     override fun onResume() {
@@ -251,9 +272,7 @@ class DeepARActivity : AppCompatActivity(), SurfaceHolder.Callback, AREventListe
         val cameraResolutionPreset = CameraResolutionPreset.P1920x1080
         val width: Int ///= binding.surface.width
         val height: Int// = binding.surface.height
-        binding.cameraSourcePreview.width = cameraResolutionPreset.height
-        binding.cameraSourcePreview.height = cameraResolutionPreset.width
-        val orientation = getScreenOrientation()
+       val orientation = getScreenOrientation()
         if (orientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE || orientation == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
             width = cameraResolutionPreset.width
             height = cameraResolutionPreset.height
