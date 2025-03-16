@@ -8,16 +8,12 @@ import ai.deepar.ar.CameraResolutionPreset
 import ai.deepar.ar.DeepAR
 import ai.deepar.ar.DeepARImageFormat
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.graphics.Bitmap
 import android.media.Image
 import android.net.Uri
 import android.os.Bundle
-import android.os.Environment
-import android.os.Environment.getExternalStoragePublicDirectory
 import android.os.Message
-import android.text.format.DateFormat
 import android.util.DisplayMetrics
 import android.util.Log
 import android.util.Size
@@ -25,9 +21,7 @@ import android.view.MotionEvent
 import android.view.Surface
 import android.view.SurfaceHolder
 import android.view.View
-import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
@@ -39,10 +33,8 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.LifecycleOwner
 import com.google.common.util.concurrent.ListenableFuture
-import com.google.firebase.annotations.concurrent.Background
 import com.mirrar.tablettryon.LoadImageHandlerThread.LOAD_BITMAP
 import com.mirrar.tablettryon.LoadImageHandlerThread.LOAD_DEFAULT_IMAGE_TASK
-import com.mirrar.tablettryon.LoadImageHandlerThread.LOAD_IMAGE_FROM_GALLERY_TASK
 import com.mirrar.tablettryon.LoadImageHandlerThread.REFRESH_IMAGE_TASK
 import com.mirrar.tablettryon.databinding.ActivityDeepAractivityBinding
 import com.mirrar.tablettryon.tools.DeepARActivityHelper
@@ -55,7 +47,6 @@ import java.io.IOException
 import java.nio.Buffer
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
-import java.util.Date
 import java.util.concurrent.ExecutionException
 
 
@@ -100,6 +91,13 @@ class DeepARActivity : AppCompatActivity(), SurfaceHolder.Callback, AREventListe
         width = AR_BITMAP?.width ?: 0
         height = AR_BITMAP?.height ?: 0
         initialize()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (this::deepARActivityHelper.isInitialized) {
+            deepARActivityHelper.onResume()
+        }
     }
 
     private fun initialize() {

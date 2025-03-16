@@ -43,6 +43,7 @@ class DeepARActivityHelper(
 
     private var binding: ActivityDeepAractivityBinding = deepARActivity.binding
     private var selectedProduct: Product? = null
+    private var adapter: ProductAdapter? = null
 
     init {
         binding.catalogue.setOnClickListener {
@@ -130,7 +131,7 @@ class DeepARActivityHelper(
             openDialogFragment(ClubAvoltaFragment.newInstance())
         }
 
-        val adapter = ProductAdapter { i, p ->
+        adapter = ProductAdapter { i, p ->
             selectedProduct = p
             binding.brand.text = p.brand
             binding.productCode.text = p.localItemCode
@@ -159,7 +160,7 @@ class DeepARActivityHelper(
         binding.productRecyclerLoader.isVisible = true
         viewModel.product.observe(deepARActivity) {
             binding.productRecyclerLoader.isVisible = false
-            adapter.updateData(it)
+            adapter!!.updateData(it)
             // remove this
             binding.filterNavLayout.applyProgress.isVisible = false
             binding.filterNavLayout.apply.text = "Apply"
@@ -249,6 +250,12 @@ class DeepARActivityHelper(
         }
 
         binding.wishlist.setCompoundDrawablesWithIntrinsicBounds(drawable, null, null, null)
+    }
+
+    fun onResume() {
+        if (adapter != null) {
+            adapter!!.applyFilteredTryon()
+        }
     }
 
     private fun downloadAndSaveFile(fileUrl: String, fileName: String): String? {

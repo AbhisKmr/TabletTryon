@@ -8,9 +8,7 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.mirrar.tablettryon.databinding.ProductCardBinding
-import com.mirrar.tablettryon.utility.AppConstraint.SELECTED_INDEX
 import com.mirrar.tablettryon.utility.AppConstraint.filterTryOn
-import com.mirrar.tablettryon.utility.AppConstraint.recommendationModel
 import com.mirrar.tablettryon.view.fragment.tryon.dataModel.Product
 
 class ProductAdapter(private val clickListener: (Int, Product) -> Unit) :
@@ -21,6 +19,7 @@ class ProductAdapter(private val clickListener: (Int, Product) -> Unit) :
     private lateinit var ctx: Context
 
     private val list = mutableListOf<Product>()
+    private var selectedIndex = -1
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProductAdapter.ViewHolder {
         this.ctx = parent.context
@@ -48,7 +47,7 @@ class ProductAdapter(private val clickListener: (Int, Product) -> Unit) :
 
         holder.binding.recommendationTag.isVisible = list[position].isRecommended
 
-        holder.binding.selectorHighlight.isVisible = SELECTED_INDEX == position
+        holder.binding.selectorHighlight.isVisible = selectedIndex == position
 
         val url = if (!list[position].imageSmall.isNullOrBlank()) {
             list[position].imageSmall
@@ -61,14 +60,14 @@ class ProductAdapter(private val clickListener: (Int, Product) -> Unit) :
         Glide.with(ctx).load(url).into(holder.binding.thumb)
         holder.binding.root.setOnClickListener {
             clickListener(position, list[position])
-            val oldPos = SELECTED_INDEX
-            SELECTED_INDEX = position
+            val oldPos = selectedIndex
+            selectedIndex = position
             notifyItemChanged(oldPos)
-            notifyItemChanged(SELECTED_INDEX)
+            notifyItemChanged(selectedIndex)
         }
 
-//        if (SELECTED_INDEX != -1 && SELECTED_INDEX < list.size) {
-//            clickListener(SELECTED_INDEX, list[SELECTED_INDEX])
+//        if (selectedIndex != -1 && selectedIndex < list.size) {
+//            clickListener(selectedIndex, list[selectedIndex])
 //        }
     }
 
@@ -76,8 +75,8 @@ class ProductAdapter(private val clickListener: (Int, Product) -> Unit) :
 
     @SuppressLint("NotifyDataSetChanged")
     fun updateData(list: List<Product>) {
-        if (SELECTED_INDEX > list.size) {
-            SELECTED_INDEX = -1
+        if (selectedIndex > list.size) {
+            selectedIndex = -1
         }
 
         this.list.clear()
@@ -85,11 +84,28 @@ class ProductAdapter(private val clickListener: (Int, Product) -> Unit) :
         if (filterTryOn != null) {
             if (this.list.contains(filterTryOn)) {
                 this.list.remove(filterTryOn)
-                this.list.add(0, filterTryOn!!)
-                SELECTED_INDEX = 0
             }
+            this.list.add(0, filterTryOn!!)
+            filterTryOn = null
+            selectedIndex = 0
         }
         notifyDataSetChanged()
+    }
+
+    fun applyFilteredTryon() {
+        if (filterTryOn != null) {
+            if (this.list.contains(filterTryOn)) {
+                this.list.remove(filterTryOn)
+            }
+            this.list.add(0, filterTryOn!!)
+            filterTryOn = null
+
+            clickListener(0, list[0])
+            val oldPos = selectedIndex
+            selectedIndex = 0
+            notifyItemChanged(oldPos)
+            notifyItemChanged(selectedIndex)
+        }
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -98,7 +114,7 @@ class ProductAdapter(private val clickListener: (Int, Product) -> Unit) :
             list.remove(p)
         }
         list.add(0, p)
-        SELECTED_INDEX = 0
+        selectedIndex = 0
         notifyDataSetChanged()
     }
 }
