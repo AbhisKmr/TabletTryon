@@ -241,7 +241,8 @@ class DeepARActivity : AppCompatActivity(), SurfaceHolder.Callback, AREventListe
 
     private fun initializeDeepAR() {
         deepAR = DeepAR(this)
-        deepAR!!.setLicenseKey("cc16573f53818d7fa2aa31a48ceb013150e01360d5726afb536c6885ae2cf4fa071952baef77e7b5")
+        deepAR!!.setLicenseKey("481d108d9fd5fb5b79df82672e8dbda5b6cda17b51792d499f381ea175594739a57fee2e095a55ae")
+//        deepAR!!.setLicenseKey("cc16573f53818d7fa2aa31a48ceb013150e01360d5726afb536c6885ae2cf4fa071952baef77e7b5")
         deepAR!!.initialize(this, this)
 
         deepAR!!.changeLiveMode(true)

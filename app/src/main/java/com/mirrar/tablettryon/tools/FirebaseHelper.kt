@@ -28,6 +28,7 @@ class FirebaseHelper {
                 AppConstraint.SENDER_EMAIL = snapshot.child("senderEmail").getValue<String>() ?: ""
                 AppConstraint.WELCOME_MESSAGE = snapshot.child("welcomeMsg").getValue<String>() ?: ""
                 AppConstraint.CLUB_AVOLTA = snapshot.child("clubAvoltaUrl").getValue<String>() ?: ""
+                AppConstraint.ALGOLIA_INDEX = snapshot.child("algoliaIndex").getValue<String>() ?: ""
 
                 res(snapshot.child("termAndCondition").getValue<String>())
             }

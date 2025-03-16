@@ -19,6 +19,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import com.algolia.search.model.search.Query
 import com.mirrar.tablettryon.tools.filter.FilterDataModel
+import com.mirrar.tablettryon.utility.AppConstraint
 import com.mirrar.tablettryon.utility.AppConstraint.recommendationModel
 
 class AlgoliaViewModel : ViewModel() {
@@ -26,7 +27,7 @@ class AlgoliaViewModel : ViewModel() {
     private val searcher = HitsSearcher(
         applicationID = ApplicationID("V0MFZORLHS"),
         apiKey = APIKey("f9b905571a819c23a15b192b778e7b3a"),
-        indexName = IndexName("avolta-demo")
+        indexName = IndexName(AppConstraint.ALGOLIA_INDEX)
     )
 
 //    private val client = ClientSearch(
@@ -41,7 +42,7 @@ class AlgoliaViewModel : ViewModel() {
             APIKey("f9b905571a819c23a15b192b778e7b3a")
         )
     )
-    val index = client.initIndex(IndexName("avolta-demo"))
+    val index = client.initIndex(IndexName(AppConstraint.ALGOLIA_INDEX))
 
     private val _products = MutableLiveData<List<Product>>()
     val product: LiveData<List<Product>> = _products
@@ -68,6 +69,10 @@ class AlgoliaViewModel : ViewModel() {
                     )
 
                     else -> Query(query = "", filters = "gender:\"Unisex\"")
+                }
+
+                additionalQuery.apply {
+                    hitsPerPage = 500
                 }
 
                 val additionalProductsResponse = index.search(additionalQuery)
@@ -124,15 +129,15 @@ class AlgoliaViewModel : ViewModel() {
                     (
                     when (shortingIndex) {
                         0 -> {
-                            "avolta-demo-asc"
+                            AppConstraint.ALGOLIA_INDEX+"-asc"
                         }
 
                         1 -> {
-                            "avolta-demo-desc"
+                            AppConstraint.ALGOLIA_INDEX+"-desc"
                         }
 
                         else -> {
-                            "avolta-demo"
+                            AppConstraint.ALGOLIA_INDEX
                         }
 
                     }

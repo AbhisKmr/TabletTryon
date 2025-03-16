@@ -14,6 +14,7 @@ object AppConstraint {
     var SENDER_EMAIL = ""
     var WELCOME_MESSAGE = ""
     var CLUB_AVOLTA = ""
+    var ALGOLIA_INDEX = "avolta-glasses"
 
     var AR_BITMAP: Bitmap? = null
     var recommendationModel: FaceRecommendationModel? = null
