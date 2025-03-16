@@ -8,6 +8,7 @@ plugins {
 android {
     namespace = "com.mirrar.tablettryon"
     compileSdk = 35
+    buildToolsVersion = "23.0.1"
 
     defaultConfig {
         applicationId = "com.mirrar.tablettryon"
@@ -19,23 +20,25 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
-    buildTypes {
-        release {
-            isMinifyEnabled = true
-            isShrinkResources = true
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
-        }
-    }
-
     signingConfigs {
         create("release") {
             storeFile = file("../mirrarykey")
             storePassword = "8xDAv9DPGqFr6mkV"
             keyAlias = "key0"
             keyPassword = "8xDAv9DPGqFr6mkV"
+        }
+    }
+
+    buildTypes {
+        release {
+            isMinifyEnabled = true
+            isShrinkResources = true
+            isDebuggable = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+            signingConfig = signingConfigs.getByName("release")
         }
     }
 
