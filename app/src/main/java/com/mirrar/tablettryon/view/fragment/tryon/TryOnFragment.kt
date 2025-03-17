@@ -30,6 +30,7 @@ import com.mirrar.tablettryon.network.CallApi.uploadGlasses
 import com.mirrar.tablettryon.utility.AppConstraint.AR_BITMAP
 import com.mirrar.tablettryon.utility.AppConstraint.filterTryOn
 import com.mirrar.tablettryon.utility.Bookmarks
+import com.mirrar.tablettryon.utility.HelperFunctions.downloadAndSaveFile
 import com.mirrar.tablettryon.utility.HelperFunctions.rotateImage
 import com.mirrar.tablettryon.view.fragment.ClubAvoltaFragment
 import com.mirrar.tablettryon.view.fragment.ProductDetailsFragment
@@ -40,6 +41,9 @@ import com.mirrar.tablettryon.view.fragment.selfie.SelfieFragment
 import com.mirrar.tablettryon.view.fragment.tryon.adapter.ProductAdapter
 import com.mirrar.tablettryon.view.fragment.tryon.dataModel.Product
 import com.mirrar.tablettryon.view.fragment.tryon.viewModel.AlgoliaViewModel
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.newSingleThreadContext
+import kotlinx.coroutines.runBlocking
 import java.io.IOException
 import java.util.concurrent.ScheduledExecutorService
 
@@ -177,9 +181,28 @@ class TryOnFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
 
         binding.productRecyclerLoader.isVisible = true
         viewModel.product.observe(viewLifecycleOwner) {
+
+            it.forEach { p ->
+                runBlocking {
+                    launch(newSingleThreadContext("TaskQueue")) {
+                        uploadGlasses(
+                            requireContext(),
+                            AR_BITMAP!!,
+                            p.asset2DUrl?:""
+                        ) {
+                            val name = p.localItemCode.trim().replace(" ", "_")
+                            p.asset2DPath = downloadAndSaveFile(requireContext(), it, "${name}_2d.png")
+
+                            requireActivity().runOnUiThread {
+                            }
+                        }
+                        adapter.notifyDataSetChanged()
+                    }.join()
+                }
+            }
+
             binding.productRecyclerLoader.isVisible = false
             adapter.updateData(it)
-            // remove this
             binding.filterNavLayout.applyProgress.isVisible = false
             binding.filterNavLayout.apply.text = "Apply"
 
@@ -337,18 +360,12 @@ class TryOnFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
 
     private fun applyAR() {
         try {
+            Glide.with(requireContext()).load(selectedProduct?.asset2DPath).into(binding.imagePreview)
+
 //            val bitmap = viewToBitmap(binding.imagePreview) ?: return
 
 //            val icon = BitmapFactory.decodeResource(requireContext().resources, R.drawable.eye1)
-            uploadGlasses(
-                requireContext(),
-                AR_BITMAP!!,
-                selectedProduct?.asset2DUrl?:""
-            ) {
-                requireActivity().runOnUiThread {
-                    Glide.with(requireContext()).load(it).into(binding.imagePreview)
-                }
-            }
+
 //            binding.overlay.clear()
 //            backgroundExecutor = Executors.newSingleThreadScheduledExecutor()
 //            backgroundExecutor.execute {

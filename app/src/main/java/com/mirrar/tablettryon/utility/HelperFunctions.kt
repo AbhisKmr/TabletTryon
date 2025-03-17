@@ -4,6 +4,7 @@ import android.animation.ObjectAnimator
 import android.content.Context
 import android.graphics.Bitmap
 import android.util.DisplayMetrics
+import android.util.Log
 import android.util.TypedValue
 import android.view.animation.DecelerateInterpolator
 import android.widget.ImageView
@@ -13,6 +14,11 @@ import com.google.zxing.MultiFormatWriter
 import com.google.zxing.common.BitMatrix
 import com.journeyapps.barcodescanner.BarcodeEncoder
 import com.mirrar.tablettryon.view.fragment.tryon.dataModel.Product
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import java.io.File
+import java.io.FileOutputStream
+import java.io.InputStream
 
 object HelperFunctions {
 
@@ -25,6 +31,43 @@ object HelperFunctions {
             product.imageSmall ?: ""
         }
     }
+
+    fun downloadAndSaveFile(context: Context, fileUrl: String, fileName: String): String? {
+        return try {
+            val directory = context.cacheDir
+            val file = File(directory, fileName)
+
+            if (file.exists()) {
+                Log.d("Download", "File already exists: ${file.absolutePath}")
+                return file.absolutePath
+            }
+
+            val client = OkHttpClient()
+            val request = Request.Builder().url(fileUrl).build()
+            val response = client.newCall(request).execute()
+
+            if (!response.isSuccessful) {
+                Log.e("Download", "Failed to download file: ${response.message}")
+                return null
+            }
+
+            val inputStream: InputStream? = response.body?.byteStream()
+            val outputStream = FileOutputStream(file)
+            inputStream?.copyTo(outputStream)
+
+            outputStream.flush()
+            outputStream.close()
+            inputStream?.close()
+
+            Log.d("Download", "File saved: ${file.absolutePath}")
+            file.absolutePath
+
+        } catch (e: Exception) {
+            Log.e("Download", "Error: ${e.message}")
+            null
+        }
+    }
+
 
     fun generateQRCode(text: String, width: Int = 500, height: Int = 500): Bitmap? {
         return try {

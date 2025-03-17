@@ -16,6 +16,7 @@ import com.mirrar.tablettryon.DeepARActivity
 import com.mirrar.tablettryon.R
 import com.mirrar.tablettryon.databinding.ActivityDeepAractivityBinding
 import com.mirrar.tablettryon.utility.Bookmarks
+import com.mirrar.tablettryon.utility.HelperFunctions.downloadAndSaveFile
 import com.mirrar.tablettryon.utility.HelperFunctions.rotateImage
 import com.mirrar.tablettryon.view.fragment.ClubAvoltaFragment
 import com.mirrar.tablettryon.view.fragment.ProductDetailsFragment
@@ -155,7 +156,7 @@ class DeepARActivityHelper(
             deepARActivity.lifecycleScope.launch {
                 val path = withContext(Dispatchers.IO) {
                     val name = p.localItemCode.trim().replace(" ", "_")
-                    downloadAndSaveFile(p.asset3DUrl?:"none", "$name.deepar")
+                    downloadAndSaveFile(deepARActivity, p.asset3DUrl ?: "none", "$name.deepar")
                 }
                 applyEffect(path ?: "none")
             }
@@ -262,42 +263,6 @@ class DeepARActivityHelper(
     fun onResume() {
         if (adapter != null) {
             adapter!!.applyFilteredTryon()
-        }
-    }
-
-    private fun downloadAndSaveFile(fileUrl: String, fileName: String): String? {
-        return try {
-            val directory = deepARActivity.cacheDir
-            val file = File(directory, fileName)
-
-            if (file.exists()) {
-                Log.d("Download", "File already exists: ${file.absolutePath}")
-                return file.absolutePath
-            }
-
-            val client = OkHttpClient()
-            val request = Request.Builder().url(fileUrl).build()
-            val response = client.newCall(request).execute()
-
-            if (!response.isSuccessful) {
-                Log.e("Download", "Failed to download file: ${response.message}")
-                return null
-            }
-
-            val inputStream: InputStream? = response.body?.byteStream()
-            val outputStream = FileOutputStream(file)
-            inputStream?.copyTo(outputStream)
-
-            outputStream.flush()
-            outputStream.close()
-            inputStream?.close()
-
-            Log.d("Download", "File saved: ${file.absolutePath}")
-            file.absolutePath
-
-        } catch (e: Exception) {
-            Log.e("Download", "Error: ${e.message}")
-            null
         }
     }
 
