@@ -26,7 +26,7 @@ class AlgoliaViewModel : ViewModel() {
 
     private val searcher = HitsSearcher(
         applicationID = ApplicationID("V0MFZORLHS"),
-        apiKey = APIKey("f9b905571a819c23a15b192b778e7b3a"),
+        apiKey = APIKey("0feee6ee25524813cd5ada3b0fc68384"),
         indexName = IndexName(AppConstraint.ALGOLIA_INDEX)
     )
 
@@ -75,20 +75,15 @@ class AlgoliaViewModel : ViewModel() {
                     hitsPerPage = 500
                 }
 
-                val exclusionFilter = objects.joinToString(" AND ") { "NOT objectID:$it" }
 
-                additionalQuery.apply {
-                    filters = if (filters.isNullOrBlank()) exclusionFilter else "$filters AND $exclusionFilter"
+                if (!objects.isEmpty()) {
+                    val exclusionFilter = objects.joinToString(" AND ") { "NOT objectID:$it" }
+                    additionalQuery.apply {
+                        filters =
+                            if (filters.isNullOrBlank()) exclusionFilter else "$filters AND $exclusionFilter"
+                    }
                 }
-//                val exclusionFilter = " ${
-//                    objects.map {
-//                        " AND NOT objectID:${it} "
-//                    }
-//                }".replace (",", "").replace("[","").replace("]","")
-//
-//                additionalQuery.apply {
-//                    filters = additionalQuery.filters + exclusionFilter
-//                }
+
                 val additionalProductsResponse = index.search(additionalQuery)
 
 
