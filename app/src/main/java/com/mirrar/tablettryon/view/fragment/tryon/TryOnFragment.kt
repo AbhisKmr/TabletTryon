@@ -23,15 +23,12 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
-import com.bumptech.glide.request.target.SimpleTarget
 import com.google.mediapipe.examples.facelandmarker.FaceLandmarkerHelper
 import com.mirrar.tablettryon.R
 import com.mirrar.tablettryon.databinding.FragmentTryOnBinding
-import com.mirrar.tablettryon.network.CallApi.uploadGlasses
 import com.mirrar.tablettryon.utility.AppConstraint.AR_BITMAP
 import com.mirrar.tablettryon.utility.AppConstraint.filterTryOn
 import com.mirrar.tablettryon.utility.Bookmarks
-import com.mirrar.tablettryon.utility.HelperFunctions.downloadAndSaveFile
 import com.mirrar.tablettryon.utility.HelperFunctions.rotateImage
 import com.mirrar.tablettryon.view.fragment.ClubAvoltaFragment
 import com.mirrar.tablettryon.view.fragment.ProductDetailsFragment
@@ -45,8 +42,6 @@ import com.mirrar.tablettryon.view.fragment.tryon.viewModel.AlgoliaViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.newSingleThreadContext
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import java.io.IOException
 import java.util.concurrent.ScheduledExecutorService
@@ -199,11 +194,13 @@ class TryOnFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
             val vis = binding.filterNavLayout.sortbyDropdown.radioGroup.isVisible
             binding.filterNavLayout.sortbyDropdown.radioGroup.isVisible = !vis
 
-            rotateImage(
-                binding.filterNavLayout.sortbyDropdown.dropArrow,
-                if (!vis) 180f else 0f,
-                0f,
-            )
+            requireActivity().runOnUiThread {
+                rotateImage(
+                    binding.filterNavLayout.sortbyDropdown.dropArrow,
+                    if (!vis) 180f else 0f,
+                    0f,
+                )
+            }
         }
 
         viewModel.filter.observe(viewLifecycleOwner) {
@@ -346,20 +343,23 @@ class TryOnFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
 
     private fun applyAR() {
         try {
-            GlobalScope.launch {
-                val bb = withContext(Dispatchers.IO) {
-                    Glide
-                        .with(requireContext())
-                        .asBitmap()
-                        .load(selectedProduct?.asset2DUrl)
-                        .submit()
-                        .get()
-                }
-                withContext(Dispatchers.Main) {
-                    binding.imagePreview.setImageBitmap(bb)
-                }
+            if (selectedProduct?.triedOnImageUrl == null) {
+                binding.imagePreview.setImageBitmap(AR_BITMAP)
+            } else
+                GlobalScope.launch {
+                    val bb = withContext(Dispatchers.IO) {
+                        Glide
+                            .with(requireContext())
+                            .asBitmap()
+                            .load(selectedProduct?.triedOnImageUrl)
+                            .submit()
+                            .get()
+                    }
+                    withContext(Dispatchers.Main) {
+                        binding.imagePreview.setImageBitmap(bb)
+                    }
 
-            }
+                }
 
 //            val bitmap = viewToBitmap(binding.imagePreview) ?: return
 

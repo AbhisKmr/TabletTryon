@@ -107,5 +107,5 @@ data class Product(
 ) {
     var isBookmarked = false
     var isRecommended = false
-    var asset2DPath:String? = null
+    var triedOnImageUrl:String? = null
 }

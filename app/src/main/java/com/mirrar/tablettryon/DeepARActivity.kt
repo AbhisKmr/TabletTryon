@@ -117,7 +117,7 @@ class DeepARActivity : AppCompatActivity(), SurfaceHolder.Callback, AREventListe
     override fun onResume() {
         super.onResume()
         if (this::deepARActivityHelper.isInitialized) {
-            deepARActivityHelper.onResume()
+//            deepARActivityHelper.onResume()
         }
     }
 

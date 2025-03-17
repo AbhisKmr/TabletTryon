@@ -260,11 +260,11 @@ class DeepARActivityHelper(
         binding.wishlist.setCompoundDrawablesWithIntrinsicBounds(drawable, null, null, null)
     }
 
-    fun onResume() {
-        if (adapter != null) {
-            adapter!!.applyFilteredTryon()
-        }
-    }
+//    fun onResume() {
+//        if (adapter != null) {
+//            adapter!!.applyFilteredTryon()
+//        }
+//    }
 
     enum class SCREENSHOT {
         EMAIL, SELFIE

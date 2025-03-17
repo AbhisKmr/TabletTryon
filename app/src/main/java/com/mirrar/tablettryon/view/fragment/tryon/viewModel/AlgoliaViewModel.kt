@@ -96,7 +96,7 @@ class AlgoliaViewModel : ViewModel() {
 
                     recommendationModel?.recommendations?.forEach {
                         if (it.objectID == p.objectID) {
-                            p.asset2DUrl = it.triedOnImageUrl
+                            p.triedOnImageUrl = it.triedOnImageUrl
                         }
                     }
                     lst.add(p)
