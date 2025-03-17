@@ -101,4 +101,6 @@ dependencies {
     implementation("com.facebook.shimmer:shimmer:0.5.0")
 
     implementation("ai.deepar.ar:DeepAR:5.6.17")
+    // MediaPipe Library
+    implementation ("com.google.mediapipe:tasks-vision:0.20230731")
 }

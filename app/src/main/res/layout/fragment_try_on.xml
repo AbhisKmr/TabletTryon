@@ -147,6 +147,11 @@
             android:layout_height="match_parent"
             android:visibility="gone" />
 
+        <com.mirrar.tablettryon.tools.OverlayView
+            android:id="@+id/overlay"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
         <ImageView
             android:id="@+id/glassPreview"
             android:layout_width="match_parent"
