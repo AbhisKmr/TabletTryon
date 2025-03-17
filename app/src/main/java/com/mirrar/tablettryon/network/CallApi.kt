@@ -4,14 +4,20 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.util.Log
 import com.google.gson.Gson
+import com.mirrar.tablettryon.view.fragment.tryon.dataModel.triedOnUrl.TriedOnUrlRequest
+import com.mirrar.tablettryon.view.fragment.tryon.dataModel.triedOnUrl.TriedOnUrlResponse
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import okhttp3.Callback
 import okhttp3.MediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import org.json.JSONObject
+import retrofit2.Call
+import retrofit2.Response
+import retrofit2.await
 import retrofit2.http.Part
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -73,12 +79,28 @@ object CallApi {
                 val response = RetrofitClient.getInstance("https://glass-tryon.mirrar.com")
                     .applyGlasses(imagePart!!, glassesUrlRequestBody)
 
-                val  obj = JSONObject(response.string())
+                val obj = JSONObject(response.string())
 
                 res(obj.getString("image_url"))
                 Log.d("UPLOAD", "Success: ${response.string()}")
             } catch (e: Exception) {
                 Log.e("UPLOAD", "Error: ${e.message} ${e.localizedMessage}")
+            }
+        }
+    }
+
+    fun getMoreAssets(uuid: String, objectIds: List<String>, res: (TriedOnUrlResponse?) -> Unit) {
+
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val map = mutableMapOf<String, String>()
+                objectIds.map { map["objectId"] = it }
+                val body = TriedOnUrlRequest(uuid, map)
+                val response = RetrofitClient.getInstance("https://glass-tryon.mirrar.com")
+                    .getMoreGlasses(body)
+                res(response.await())
+            } catch (e: Exception) {
+                Log.e("getMoreAssets", "Error: ${e.message} ${e.localizedMessage}")
             }
         }
     }

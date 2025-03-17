@@ -7,6 +7,7 @@ import android.graphics.Canvas
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -22,12 +23,16 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.google.mediapipe.examples.facelandmarker.FaceLandmarkerHelper
 import com.mirrar.tablettryon.R
 import com.mirrar.tablettryon.databinding.FragmentTryOnBinding
+import com.mirrar.tablettryon.network.CallApi
 import com.mirrar.tablettryon.utility.AppConstraint.AR_BITMAP
 import com.mirrar.tablettryon.utility.AppConstraint.filterTryOn
+import com.mirrar.tablettryon.utility.AppConstraint.recommendationModel
 import com.mirrar.tablettryon.utility.Bookmarks
 import com.mirrar.tablettryon.utility.HelperFunctions.rotateImage
 import com.mirrar.tablettryon.view.fragment.ClubAvoltaFragment
@@ -176,6 +181,26 @@ class TryOnFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
         }
 
         binding.productRecycler.adapter = adapter
+
+        binding.productRecycler.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                val layoutManager = recyclerView.layoutManager as? LinearLayoutManager
+                layoutManager?.let {
+                    val firstVisibleItemIndex = it.findFirstVisibleItemPosition()
+                    if (recommendationModel?.recommendations != null) {
+                        if (firstVisibleItemIndex > recommendationModel!!.recommendations.size) {
+                            CallApi.getMoreAssets(
+                                recommendationModel!!.uuid!!,
+                                recommendationModel!!.recommendations.map { obj -> obj.objectID }
+                            ) { res ->
+                                adapter.updateAssetUrl(res?.tryonOutputs ?: emptyMap())
+                            }
+                        }
+                    }
+                }
+            }
+        })
 
         binding.productRecyclerLoader.isVisible = true
         viewModel.product.observe(viewLifecycleOwner) {
@@ -360,42 +385,6 @@ class TryOnFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
                     }
 
                 }
-
-//            val bitmap = viewToBitmap(binding.imagePreview) ?: return
-
-//            val icon = BitmapFactory.decodeResource(requireContext().resources, R.drawable.eye1)
-
-//            binding.overlay.clear()
-//            backgroundExecutor = Executors.newSingleThreadScheduledExecutor()
-//            backgroundExecutor.execute {
-//
-//                faceLandmarkerHelper =
-//                    FaceLandmarkerHelper(
-//                        context = requireContext(),
-//                        runningMode = RunningMode.IMAGE,
-//                        minFaceDetectionConfidence = FaceLandmarkerHelper.DEFAULT_FACE_DETECTION_CONFIDENCE,
-//                        minFaceTrackingConfidence = FaceLandmarkerHelper.DEFAULT_FACE_TRACKING_CONFIDENCE,
-//                        minFacePresenceConfidence = FaceLandmarkerHelper.DEFAULT_FACE_PRESENCE_CONFIDENCE,
-//                        maxNumFaces = 1,
-//                        currentDelegate = FaceLandmarkerHelper.DEFAULT_FACE_DETECTION_CONFIDENCE.toInt()
-//                    )
-//
-//                faceLandmarkerHelper.detectImage(bitmap)?.let { result ->
-//                    requireActivity().runOnUiThread {
-//                        Log.i("faceLandmarkerHelper", result.result.faceLandmarks().size.toString())
-//
-////                        binding.overlay.setResults(
-////                            result.result,
-////                            bitmap.height,
-////                            bitmap.width,
-////                            RunningMode.IMAGE
-////                        )
-//
-//                    }
-//                } ?: run { Log.e("faceLandmarkerHelper", "Error running face landmarker.") }
-//
-//                faceLandmarkerHelper.clearFaceLandmarker()
-//            }
         } catch (e: IOException) {
             e.printStackTrace()
         }

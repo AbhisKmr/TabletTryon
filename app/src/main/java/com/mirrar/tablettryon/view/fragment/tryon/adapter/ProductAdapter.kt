@@ -120,4 +120,14 @@ class ProductAdapter(private val clickListener: (Int, Product) -> Unit) :
         selectedIndex = 0
         notifyDataSetChanged()
     }
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun updateAssetUrl(map: Map<String, String>) {
+        list.forEach {
+            if (map.contains(it.objectID)) {
+                it.triedOnImageUrl = map[it.objectID]
+            }
+        }
+        notifyDataSetChanged()
+    }
 }

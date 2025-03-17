@@ -7,6 +7,8 @@ import com.mirrar.tablettryon.view.fragment.email.dataModel.ImageUploadRequest
 import com.mirrar.tablettryon.view.fragment.email.dataModel.ImageUploadResponse
 import com.mirrar.tablettryon.view.fragment.email.dataModel.emailApi.SendEmailApiRequest
 import com.mirrar.tablettryon.view.fragment.email.dataModel.emailApi.SendEmailApiResponse
+import com.mirrar.tablettryon.view.fragment.tryon.dataModel.triedOnUrl.TriedOnUrlRequest
+import com.mirrar.tablettryon.view.fragment.tryon.dataModel.triedOnUrl.TriedOnUrlResponse
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.ResponseBody
@@ -39,6 +41,11 @@ interface ApiService {
     fun sendApiEmail(
         @Body emailData: SendEmailApiRequest
     ): Call<SendEmailApiResponse>
+
+    @POST("apply-glasses")
+    suspend fun getMoreGlasses(
+        @Body body: TriedOnUrlRequest
+    ): Call<TriedOnUrlResponse>
 
     @POST("api/v1/image/base64/upload")
     fun uploadImage(
