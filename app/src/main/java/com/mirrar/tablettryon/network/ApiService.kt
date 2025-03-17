@@ -46,6 +46,6 @@ interface ApiService {
     ): Call<ImageUploadResponse>
 
     @Multipart
-    @POST("recommend-frames")
+    @POST("process-glasses")
     fun getRecommendationBasedOnFace(@Part image: MultipartBody.Part): Call<FaceRecommendationModel>
 }

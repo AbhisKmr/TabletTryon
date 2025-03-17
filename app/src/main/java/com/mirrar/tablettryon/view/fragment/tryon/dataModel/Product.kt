@@ -103,7 +103,7 @@ data class Product(
     val productUrl: String?,
     val imageFrontView: String?,
     val asset3DUrl: String?,
-    val asset2DUrl: String?
+    var asset2DUrl: String?
 ) {
     var isBookmarked = false
     var isRecommended = false

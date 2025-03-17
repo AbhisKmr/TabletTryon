@@ -5,6 +5,7 @@ import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -27,6 +28,11 @@ import androidx.navigation.fragment.findNavController
 import com.mirrar.tablettryon.R
 import com.mirrar.tablettryon.databinding.FragmentCameraBinding
 import com.mirrar.tablettryon.utility.AppConstraint.AR_BITMAP
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.io.ByteArrayOutputStream
 import java.io.File
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -64,6 +70,17 @@ class CameraFragment : Fragment() {
 
         binding.button.setOnClickListener {
             takePhoto()
+        }
+    }
+
+    fun compressBitmapLosslessly(original: Bitmap): Bitmap? {
+        val outputStream = ByteArrayOutputStream()
+        val compressedSuccessfully = original.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
+        return if (compressedSuccessfully) {
+            val byteArray = outputStream.toByteArray()
+            BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
+        } else {
+            null
         }
     }
 
@@ -125,8 +142,13 @@ class CameraFragment : Fragment() {
                 override fun onCaptureSuccess(image: ImageProxy) {
                     super.onCaptureSuccess(image)
 
-                    val bitmap =
-                        imageProxyToBitmap(image, rotationDegrees = 270f, flipHorizontal = true)
+                    val bitmap = (
+                        imageProxyToBitmap(
+                            image,
+                            rotationDegrees = 270f,
+                            flipHorizontal = true
+                        )
+                    )
                     image.close()
                     AR_BITMAP = bitmap
                     findNavController().navigate(R.id.action_cameraFragment_to_cameraImagePreviewFragment4)

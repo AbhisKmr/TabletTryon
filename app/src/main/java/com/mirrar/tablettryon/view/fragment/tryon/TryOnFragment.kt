@@ -23,6 +23,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.SimpleTarget
 import com.google.mediapipe.examples.facelandmarker.FaceLandmarkerHelper
 import com.mirrar.tablettryon.R
 import com.mirrar.tablettryon.databinding.FragmentTryOnBinding
@@ -41,9 +42,12 @@ import com.mirrar.tablettryon.view.fragment.selfie.SelfieFragment
 import com.mirrar.tablettryon.view.fragment.tryon.adapter.ProductAdapter
 import com.mirrar.tablettryon.view.fragment.tryon.dataModel.Product
 import com.mirrar.tablettryon.view.fragment.tryon.viewModel.AlgoliaViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.newSingleThreadContext
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import java.io.IOException
 import java.util.concurrent.ScheduledExecutorService
 
@@ -173,35 +177,17 @@ class TryOnFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
 
             updateHeartIcon(Bookmarks.getBookmarks())
             applyAR()
-//            Glide.with(requireContext()).load(p.imageFrontView).into(binding.glassPreview)
-//            binding.glassPreview.setImageDrawable(requireContext().resources.getDrawable(imageList[i % 2]))
+
         }
 
         binding.productRecycler.adapter = adapter
 
         binding.productRecyclerLoader.isVisible = true
         viewModel.product.observe(viewLifecycleOwner) {
-
-            it.forEach { p ->
-                runBlocking {
-                    launch(newSingleThreadContext("TaskQueue")) {
-                        uploadGlasses(
-                            requireContext(),
-                            AR_BITMAP!!,
-                            p.asset2DUrl?:""
-                        ) {
-                            val name = p.localItemCode.trim().replace(" ", "_")
-                            p.asset2DPath = downloadAndSaveFile(requireContext(), it, "${name}_2d.png")
-
-                            requireActivity().runOnUiThread {
-                            }
-                        }
-                        adapter.notifyDataSetChanged()
-                    }.join()
-                }
-            }
-
             binding.productRecyclerLoader.isVisible = false
+            if (it.isNullOrEmpty()) {
+                return@observe
+            }
             adapter.updateData(it)
             binding.filterNavLayout.applyProgress.isVisible = false
             binding.filterNavLayout.apply.text = "Apply"
@@ -353,14 +339,27 @@ class TryOnFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
     }
 
     private fun handleImageSelection(uri: Uri) {
-        binding.imagePreview.setImageURI(uri)
+        //binding.imagePreview.setImageURI(uri)
         applyAR()
         Toast.makeText(requireContext(), "Image Selected: $uri", Toast.LENGTH_SHORT).show()
     }
 
     private fun applyAR() {
         try {
-            Glide.with(requireContext()).load(selectedProduct?.asset2DPath).into(binding.imagePreview)
+            GlobalScope.launch {
+                val bb = withContext(Dispatchers.IO) {
+                    Glide
+                        .with(requireContext())
+                        .asBitmap()
+                        .load(selectedProduct?.asset2DUrl)
+                        .submit()
+                        .get()
+                }
+                withContext(Dispatchers.Main) {
+                    binding.imagePreview.setImageBitmap(bb)
+                }
+
+            }
 
 //            val bitmap = viewToBitmap(binding.imagePreview) ?: return
 

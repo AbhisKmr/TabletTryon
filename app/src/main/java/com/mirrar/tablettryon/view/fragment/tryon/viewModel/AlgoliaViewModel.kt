@@ -54,27 +54,28 @@ class AlgoliaViewModel : ViewModel() {
         viewModelScope.launch {
             try {
                 val objects =
-                    recommendationModel?.recommendations?.map { ObjectID(it) } ?: emptyList()
+                    recommendationModel?.recommendations?.map { ObjectID(it.objectID) }
+                        ?: emptyList()
                 val recommendedObjects = index.getObjects(objects)
 
-                val additionalQuery: Query = when (recommendationModel?.gender?.lowercase()) {
-                    "male" -> Query(
-                        query = "",
-                        filters = "gender:\"For Him\" OR gender:\"Unisex\""
-                    )
+                val additionalQuery: Query =
+                    when (recommendationModel?.faceAnalysis?.gender?.lowercase()) {
+                        "male" -> Query(
+                            query = "",
+                            filters = "gender:\"For Him\" OR gender:\"Unisex\""
+                        )
 
-                    "female" -> Query(
-                        query = "",
-                        filters = "gender:\"For Her\" OR gender:\"Unisex\""
-                    )
+                        "female" -> Query(
+                            query = "",
+                            filters = "gender:\"For Her\" OR gender:\"Unisex\""
+                        )
 
-                    else -> Query(query = "", filters = "gender:\"Unisex\"")
-                }
+                        else -> Query(query = "", filters = "gender:\"Unisex\"")
+                    }
 
                 additionalQuery.apply {
                     hitsPerPage = 500
                 }
-
 
                 if (!objects.isEmpty()) {
                     val exclusionFilter = objects.joinToString(" AND ") { "NOT objectID:$it" }
@@ -93,6 +94,11 @@ class AlgoliaViewModel : ViewModel() {
                     val p = GsonBuilder().create().fromJson(it.toString(), Product::class.java)
                         .apply { isRecommended = true }
 
+                    recommendationModel?.recommendations?.forEach {
+                        if (it.objectID == p.objectID) {
+                            p.asset2DUrl = it.triedOnImageUrl
+                        }
+                    }
                     lst.add(p)
                 }
 

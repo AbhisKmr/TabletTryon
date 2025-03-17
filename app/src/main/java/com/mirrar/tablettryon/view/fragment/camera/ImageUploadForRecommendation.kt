@@ -47,14 +47,14 @@ class ImageUploadForRecommendation {
         val file = bitmapToFile(bitmap, context)
         if (file != null) {
             val requestBody = RequestBody.create(mediaType.toMediaTypeOrNull(), file)
-            return MultipartBody.Part.createFormData("image", file.name, requestBody)
+            return MultipartBody.Part.createFormData("face", file.name, requestBody)
         }
         return null
     }
 
     fun uploadBitmap(bitmap: Bitmap, context: Context, callBack: (FaceRecommendationModel?) -> Unit) {
 
-        val apiService = RetrofitClient.getInstance("https://glass-tryon.mirrar.com/")
+        val apiService = RetrofitClient.getInstance("https://5489-122-172-87-239.ngrok-free.app/")
 
         val imagePart = createMultipartBodyPartFromBitmap(bitmap, "image/png", context)
 
