@@ -53,20 +53,33 @@ class CameraImagePreviewFragment : Fragment() {
         }
 
         binding.next.setOnClickListener {
-            emailFragment.show(childFragmentManager, emailFragment.tag)
+            binding.lottieAnimation.isVisible = true
+            updateScanView(false)
+//            emailFragment.show(childFragmentManager, emailFragment.tag)
             val b = ImageUploadForRecommendation().resizeAndCompressBitmap(AR_BITMAP!!)
             ImageUploadForRecommendation().uploadBitmap(
                 b, requireContext()
             ) {
+                updateScanView(true)
                 recommendationModel = it
-                GlobalScope.launch {
-                    withContext(Dispatchers.Main) {
-                        emailFragment.update()
-                    }
-                }
+                binding.lottieAnimation.isVisible = false
+                emailFragment.show(childFragmentManager, emailFragment.tag)
+//                GlobalScope.launch {
+//                    withContext(Dispatchers.Main) {
+//                        emailFragment.update()
+//                    }
+//                }
             }
         }
 
+    }
+
+    private fun updateScanView(b: Boolean) {
+        binding.back.isVisible = b
+        binding.next.isVisible = b
+        binding.textView4.isVisible = b
+        binding.tvtv.isVisible = b
+        binding.scanning.isVisible = !b
     }
 
     override fun onDestroyView() {

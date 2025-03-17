@@ -57,6 +57,15 @@
             android:layout_height="match_parent"
             android:scaleType="centerCrop"
             tools:src="@tools:sample/avatars" />
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/lottieAnimation"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true"
+            app:lottie_rawRes="@raw/face_scan" />
     </androidx.cardview.widget.CardView>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -102,6 +111,7 @@
             app:layout_constraintStart_toStartOf="@+id/back"
             app:layout_constraintTop_toBottomOf="@+id/back" />
 
+
         <Button
             android:id="@+id/next"
             android:layout_width="wrap_content"
@@ -118,7 +128,27 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <Button
+            android:id="@+id/scanning"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/white"
+            android:drawableLeft="@drawable/ic_face_scan"
+            android:maxWidth="1000dp"
+            android:maxLines="1"
+            android:paddingHorizontal="24dp"
+            android:paddingVertical="17dp"
+            android:text="Ai Scanning..."
+            android:visibility="invisible"
+            android:textColor="@color/text_black"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
         <TextView
+            android:id="@+id/tvtv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:checked="true"

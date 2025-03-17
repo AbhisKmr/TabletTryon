@@ -48,8 +48,8 @@ class EmailSavePopupFragment(val close: () -> Unit) : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.saveProgress.isVisible = true
-        binding.sendTv.text = ""
+//        binding.saveProgress.isVisible = true
+//        binding.sendTv.text = ""
 
         binding.close.setOnClickListener { dismissDialog() }
 
