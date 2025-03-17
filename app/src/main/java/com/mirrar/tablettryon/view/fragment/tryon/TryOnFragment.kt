@@ -7,7 +7,6 @@ import android.graphics.Canvas
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -25,9 +24,9 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.google.mediapipe.examples.facelandmarker.FaceLandmarkerHelper
-import com.google.mediapipe.tasks.vision.core.RunningMode
 import com.mirrar.tablettryon.R
 import com.mirrar.tablettryon.databinding.FragmentTryOnBinding
+import com.mirrar.tablettryon.network.CallApi.uploadGlasses
 import com.mirrar.tablettryon.utility.AppConstraint.AR_BITMAP
 import com.mirrar.tablettryon.utility.AppConstraint.filterTryOn
 import com.mirrar.tablettryon.utility.Bookmarks
@@ -42,7 +41,6 @@ import com.mirrar.tablettryon.view.fragment.tryon.adapter.ProductAdapter
 import com.mirrar.tablettryon.view.fragment.tryon.dataModel.Product
 import com.mirrar.tablettryon.view.fragment.tryon.viewModel.AlgoliaViewModel
 import java.io.IOException
-import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
 
 class TryOnFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
@@ -154,9 +152,9 @@ class TryOnFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
             }
         }
 
-        binding.cardView3.setOnClickListener {
-            checkPermissionAndOpenGallery()
-        }
+//        binding.cardView3.setOnClickListener {
+//            checkPermissionAndOpenGallery()
+//        }
 
         binding.cardView4.setOnClickListener {
             openDialogFragment(ClubAvoltaFragment.newInstance())
@@ -170,7 +168,8 @@ class TryOnFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
                 "${p.currency} ${p.priceDutyFree}"
 
             updateHeartIcon(Bookmarks.getBookmarks())
-            Glide.with(requireContext()).load(p.imageFrontView).into(binding.glassPreview)
+            applyAR()
+//            Glide.with(requireContext()).load(p.imageFrontView).into(binding.glassPreview)
 //            binding.glassPreview.setImageDrawable(requireContext().resources.getDrawable(imageList[i % 2]))
         }
 
@@ -338,38 +337,49 @@ class TryOnFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
 
     private fun applyAR() {
         try {
-            val bitmap = viewToBitmap(binding.imagePreview) ?: return
-            binding.overlay.clear()
-            backgroundExecutor = Executors.newSingleThreadScheduledExecutor()
-            backgroundExecutor.execute {
+//            val bitmap = viewToBitmap(binding.imagePreview) ?: return
 
-                faceLandmarkerHelper =
-                    FaceLandmarkerHelper(
-                        context = requireContext(),
-                        runningMode = RunningMode.IMAGE,
-                        minFaceDetectionConfidence = FaceLandmarkerHelper.DEFAULT_FACE_DETECTION_CONFIDENCE,
-                        minFaceTrackingConfidence = FaceLandmarkerHelper.DEFAULT_FACE_TRACKING_CONFIDENCE,
-                        minFacePresenceConfidence = FaceLandmarkerHelper.DEFAULT_FACE_PRESENCE_CONFIDENCE,
-                        maxNumFaces = 1,
-                        currentDelegate = FaceLandmarkerHelper.DEFAULT_FACE_DETECTION_CONFIDENCE.toInt()
-                    )
-
-                faceLandmarkerHelper.detectImage(bitmap)?.let { result ->
-                    activity?.runOnUiThread {
-                        Log.i("faceLandmarkerHelper", result.result.faceLandmarks().size.toString())
-
-                        binding.overlay.setResults(
-                            result.result,
-                            bitmap.height,
-                            bitmap.width,
-                            RunningMode.IMAGE
-                        )
-
-                    }
-                } ?: run { Log.e("faceLandmarkerHelper", "Error running face landmarker.") }
-
-                faceLandmarkerHelper.clearFaceLandmarker()
+//            val icon = BitmapFactory.decodeResource(requireContext().resources, R.drawable.eye1)
+            uploadGlasses(
+                requireContext(),
+                AR_BITMAP!!,
+                selectedProduct?.asset2DUrl?:""
+            ) {
+                requireActivity().runOnUiThread {
+                    Glide.with(requireContext()).load(it).into(binding.imagePreview)
+                }
             }
+//            binding.overlay.clear()
+//            backgroundExecutor = Executors.newSingleThreadScheduledExecutor()
+//            backgroundExecutor.execute {
+//
+//                faceLandmarkerHelper =
+//                    FaceLandmarkerHelper(
+//                        context = requireContext(),
+//                        runningMode = RunningMode.IMAGE,
+//                        minFaceDetectionConfidence = FaceLandmarkerHelper.DEFAULT_FACE_DETECTION_CONFIDENCE,
+//                        minFaceTrackingConfidence = FaceLandmarkerHelper.DEFAULT_FACE_TRACKING_CONFIDENCE,
+//                        minFacePresenceConfidence = FaceLandmarkerHelper.DEFAULT_FACE_PRESENCE_CONFIDENCE,
+//                        maxNumFaces = 1,
+//                        currentDelegate = FaceLandmarkerHelper.DEFAULT_FACE_DETECTION_CONFIDENCE.toInt()
+//                    )
+//
+//                faceLandmarkerHelper.detectImage(bitmap)?.let { result ->
+//                    requireActivity().runOnUiThread {
+//                        Log.i("faceLandmarkerHelper", result.result.faceLandmarks().size.toString())
+//
+////                        binding.overlay.setResults(
+////                            result.result,
+////                            bitmap.height,
+////                            bitmap.width,
+////                            RunningMode.IMAGE
+////                        )
+//
+//                    }
+//                } ?: run { Log.e("faceLandmarkerHelper", "Error running face landmarker.") }
+//
+//                faceLandmarkerHelper.clearFaceLandmarker()
+//            }
         } catch (e: IOException) {
             e.printStackTrace()
         }

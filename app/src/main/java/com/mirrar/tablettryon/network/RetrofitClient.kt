@@ -16,6 +16,7 @@ object RetrofitClient {
 
             val client = OkHttpClient.Builder()
                 .addInterceptor(logging)
+                .addInterceptor(CurlInterceptor())
                 .build()
 
             retrofit = Retrofit.Builder()
