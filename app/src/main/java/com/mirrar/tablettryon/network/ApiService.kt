@@ -13,6 +13,7 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.ResponseBody
 import retrofit2.Call
+import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.Header
 import retrofit2.http.Headers
@@ -45,7 +46,7 @@ interface ApiService {
     @POST("apply-glasses")
     suspend fun getMoreGlasses(
         @Body body: TriedOnUrlRequest
-    ): Call<TriedOnUrlResponse>
+    ): Response<TriedOnUrlResponse>
 
     @POST("api/v1/image/base64/upload")
     fun uploadImage(

@@ -54,7 +54,7 @@ class ImageUploadForRecommendation {
 
     fun uploadBitmap(bitmap: Bitmap, context: Context, callBack: (FaceRecommendationModel?) -> Unit) {
 
-        val apiService = RetrofitClient.getInstance("https://5489-122-172-87-239.ngrok-free.app/")
+        val apiService = RetrofitClient.getInstance("https://glass-tryon.mirrar.com/")
 
         val imagePart = createMultipartBodyPartFromBitmap(bitmap, "image/png", context)
 

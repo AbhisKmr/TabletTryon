@@ -60,7 +60,9 @@ class CameraImagePreviewFragment : Fragment() {
             ImageUploadForRecommendation().uploadBitmap(
                 b, requireContext()
             ) {
-                updateScanView(true)
+                GlobalScope.launch(Dispatchers.Main) {
+                    updateScanView(true)
+                }
                 recommendationModel = it
                 binding.lottieAnimation.isVisible = false
                 emailFragment.show(childFragmentManager, emailFragment.tag)

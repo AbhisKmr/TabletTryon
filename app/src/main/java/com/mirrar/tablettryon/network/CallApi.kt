@@ -89,16 +89,17 @@ object CallApi {
         }
     }
 
-    fun getMoreAssets(uuid: String, objectIds: List<String>, res: (TriedOnUrlResponse?) -> Unit) {
-
+    fun getMoreAssets(
+        uuid: String,
+        objectIds: Map<String, String>,
+        res: (TriedOnUrlResponse?) -> Unit
+    ) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                val map = mutableMapOf<String, String>()
-                objectIds.map { map["objectId"] = it }
-                val body = TriedOnUrlRequest(uuid, map)
+                val body = TriedOnUrlRequest(uuid, objectIds as MutableMap<String, String>)
                 val response = RetrofitClient.getInstance("https://glass-tryon.mirrar.com")
                     .getMoreGlasses(body)
-                res(response.await())
+                res(response.body())
             } catch (e: Exception) {
                 Log.e("getMoreAssets", "Error: ${e.message} ${e.localizedMessage}")
             }

@@ -66,6 +66,8 @@ class TryOnFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
     private lateinit var backgroundExecutor: ScheduledExecutorService
 
     private val imageList = listOf(R.drawable.eye1, R.drawable.eye2)
+    private val productList = mutableListOf<Product>()
+    private var completeAssetIndex = 0
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -193,13 +195,17 @@ class TryOnFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
                 layoutManager?.let {
                     val firstVisibleItemIndex = it.findFirstVisibleItemPosition()
                     if (recommendationModel?.recommendations != null) {
-                        if (firstVisibleItemIndex > recommendationModel!!.recommendations.size) {
-                            CallApi.getMoreAssets(
-                                recommendationModel!!.uuid!!,
-                                recommendationModel!!.recommendations.map { obj -> obj.objectID }
-                            ) { res ->
+                        if (firstVisibleItemIndex > recommendationModel!!.recommendations.size + completeAssetIndex) {
+                            val map = mutableMapOf<String, String>()
+                            productList.subList(
+                                recommendationModel!!.recommendations.size + completeAssetIndex,
+                                recommendationModel!!.recommendations.size + completeAssetIndex + 5
+                            ).forEach { obj -> map[obj.objectID] = obj.asset2DUrl.toString() }
+
+                            CallApi.getMoreAssets(recommendationModel!!.uuid!!, map) { res ->
                                 adapter.updateAssetUrl(res?.tryonOutputs ?: emptyMap())
                             }
+                            completeAssetIndex += 5
                         }
                     }
                 }
@@ -212,6 +218,8 @@ class TryOnFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
             if (it.isNullOrEmpty()) {
                 return@observe
             }
+            productList.clear()
+            productList.addAll(it)
             adapter.updateData(it)
             binding.filterNavLayout.applyProgress.isVisible = false
             binding.filterNavLayout.apply.text = "Apply"
@@ -410,12 +418,16 @@ class TryOnFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
             } else
                 GlobalScope.launch {
                     val bb = withContext(Dispatchers.IO) {
-                        Glide
-                            .with(requireContext())
-                            .asBitmap()
-                            .load(selectedProduct?.triedOnImageUrl)
-                            .submit()
-                            .get()
+                        try {
+                            Glide
+                                .with(requireContext())
+                                .asBitmap()
+                                .load(selectedProduct?.triedOnImageUrl)
+                                .submit()
+                                .get()
+                        } catch (e: Exception) {
+                            AR_BITMAP
+                        }
                     }
                     withContext(Dispatchers.Main) {
                         binding.imagePreview.setImageBitmap(bb)
