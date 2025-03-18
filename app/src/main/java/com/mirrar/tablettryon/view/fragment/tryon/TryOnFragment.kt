@@ -33,6 +33,8 @@ import com.mirrar.tablettryon.databinding.FragmentTryOnBinding
 import com.mirrar.tablettryon.network.CallApi
 import com.mirrar.tablettryon.utility.AppConstraint.AR_BITMAP
 import com.mirrar.tablettryon.utility.AppConstraint.filterTryOn
+import com.mirrar.tablettryon.utility.AppConstraint.priceMax
+import com.mirrar.tablettryon.utility.AppConstraint.priceMin
 import com.mirrar.tablettryon.utility.AppConstraint.recommendationModel
 import com.mirrar.tablettryon.utility.Bookmarks
 import com.mirrar.tablettryon.utility.HelperFunctions.rotateImage
@@ -230,11 +232,13 @@ class TryOnFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
             }
         }
 
-        updateRange(0f, 100f, 0f, 100f)
+        updateRange(priceMin!!, priceMax!!, priceMin!!, priceMax!!)
 
-        binding.filterNavLayout.priceRange.priceRange.addOnChangeListener { slider, value, fromUser ->
+        binding.filterNavLayout.priceRange.priceRange.addOnChangeListener { slider, _, _ ->
             binding.filterNavLayout.priceRange.min.text = "Min: CHF${slider.values[0].toInt()}"
             binding.filterNavLayout.priceRange.max.text = "Max: CHF${slider.values[1].toInt()}"
+            priceMin = slider.values[0]
+            priceMax = slider.values[1]
         }
 
         viewModel.filter.observe(viewLifecycleOwner) {
@@ -261,6 +265,17 @@ class TryOnFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
                     }, 500)
                 }
 
+                binding.filterNavLayout.priceRange.dropArrow.setOnClickListener {
+                    val vis = binding.filterNavLayout.priceRange.optionParent.isVisible
+                    binding.filterNavLayout.priceRange.optionParent.isVisible = !vis
+
+                    rotateImage(
+                        binding.filterNavLayout.priceRange.dropArrow,
+                        if (!vis) 180f else 0f,
+                        0f,
+                    )
+                }
+
                 binding.filterNavLayout.recyclerDropdownBrand.dropArrow.setOnClickListener {
                     val vis = binding.filterNavLayout.recyclerDropdownBrand.optionParent.isVisible
                     binding.filterNavLayout.recyclerDropdownBrand.optionParent.isVisible = !vis
@@ -280,9 +295,10 @@ class TryOnFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
                 binding.filterNavLayout.reset.setOnClickListener { v ->
                     it.forEach { pp -> pp.isSelected = false }
                     viewModel.fetchFilteredProducts(it)
+                    binding.filterNavLayout.sortbyDropdown.radioGroup.clearCheck()
+                    updateRange(priceMin!!, priceMax!!, priceMin!!, priceMax!!)
                     ad.notifyDataSetChanged()
                 }
-
             }
         }
 
@@ -302,9 +318,10 @@ class TryOnFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
     private fun updateRange(min: Float, max: Float, minValue: Float, maxValue: Float) {
         binding.filterNavLayout.priceRange.priceRange.valueFrom = min
         binding.filterNavLayout.priceRange.priceRange.valueTo = max
-        binding.filterNavLayout.priceRange.priceRange.values = listOf(minValue, maxValue) // Set the initial range
-        binding.filterNavLayout.priceRange.min.text = "Min: ${minValue.toInt()}"
-        binding.filterNavLayout.priceRange.max.text = "Max: ${maxValue.toInt()}"
+        binding.filterNavLayout.priceRange.priceRange.values =
+            listOf(minValue, maxValue) // Set the initial range
+        binding.filterNavLayout.priceRange.min.text = "Min: CHF${minValue.toInt()}"
+        binding.filterNavLayout.priceRange.max.text = "Max: CHF${maxValue.toInt()}"
     }
 
     private fun updateHeartIcon(list: List<Product>) {

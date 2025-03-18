@@ -28,37 +28,48 @@
         android:id="@+id/dropArrow"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:rotation="180"
+        android:rotation="0"
         android:src="@drawable/baseline_keyboard_arrow_down_24"
         app:layout_constraintBottom_toBottomOf="@+id/title"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/title" />
 
-    <TextView
-        android:id="@+id/min"
-        tools:text="CWZ 0"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="@color/text_black"
-        android:textSize="16sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/view4" />
-
-    <TextView
-        android:id="@+id/max"
-        tools:text="CWZ 1000"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="@color/text_black"
-        android:textSize="16sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/view4" />
-
-    <com.google.android.material.slider.RangeSlider
-        android:id="@+id/priceRange"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/optionParent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginVertical="24sp"
-        app:layout_constraintTop_toBottomOf="@+id/max" />
+        android:layout_marginTop="24dp"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/view4">
+
+        <TextView
+            android:id="@+id/min"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/text_black"
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="CWZ 0" />
+
+        <TextView
+            android:id="@+id/max"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/text_black"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="CWZ 1000" />
+
+        <com.google.android.material.slider.RangeSlider
+            android:id="@+id/priceRange"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="24sp"
+            app:layout_constraintTop_toBottomOf="@+id/max" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -22,4 +22,7 @@ object AppConstraint {
 
     var userName: String? = null
     var userEmail: String? = null
+
+    var priceMin: Float? = 0f
+    var priceMax: Float? = 1000f
 }

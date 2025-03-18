@@ -20,6 +20,8 @@ import kotlinx.coroutines.runBlocking
 import com.algolia.search.model.search.Query
 import com.mirrar.tablettryon.tools.filter.FilterDataModel
 import com.mirrar.tablettryon.utility.AppConstraint
+import com.mirrar.tablettryon.utility.AppConstraint.priceMax
+import com.mirrar.tablettryon.utility.AppConstraint.priceMin
 import com.mirrar.tablettryon.utility.AppConstraint.recommendationModel
 
 class AlgoliaViewModel : ViewModel() {
@@ -133,9 +135,13 @@ class AlgoliaViewModel : ViewModel() {
             val brd = bs.filter { it.isSelected }
             val filterString =
                 brd.joinToString(separator = " OR ") { brand -> "brand:\"${brand.value}\"" }
+            val filterPrice = "priceDutyFree >= $priceMin AND priceDutyFree <= $priceMax"
+
+            val finalFilter = if (brd.isEmpty()) filterPrice else "$filterString AND $filterPrice"
+
             val query = Query(
                 query = "",
-                filters = filterString,
+                filters = finalFilter,
                 hitsPerPage = 500
             )
 
