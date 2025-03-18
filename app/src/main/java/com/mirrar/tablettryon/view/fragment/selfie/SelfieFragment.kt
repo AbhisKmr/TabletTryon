@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.view.isVisible
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.lifecycleScope
@@ -27,6 +28,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import com.mirrar.tablettryon.view.fragment.email.dataModel.emailApi.Object
+import com.mirrar.tablettryon.view.fragment.selfie.adapter.SelfieAdapter
 
 class SelfieFragment(private val p: Product, private val bitmap: Bitmap) : DialogFragment() {
 
@@ -62,6 +64,13 @@ class SelfieFragment(private val p: Product, private val bitmap: Bitmap) : Dialo
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        binding.cardView11.visibility =
+            if (Bookmarks.getBookmarks().isEmpty()) View.VISIBLE else View.INVISIBLE
+        binding.linearLayout.visibility =
+            if (Bookmarks.getBookmarks().isEmpty()) View.VISIBLE else View.INVISIBLE
+        binding.imageRecycler.isVisible = Bookmarks.getBookmarks().isNotEmpty()
+
+        binding.imageRecycler.adapter = SelfieAdapter(Bookmarks.getBookmarks())
         binding.closeView.setOnClickListener {
             dismissDialog()
         }

@@ -5,6 +5,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.util.DisplayMetrics
 import android.util.Log
+import android.util.Patterns
 import android.util.TypedValue
 import android.view.animation.DecelerateInterpolator
 import android.widget.ImageView
@@ -68,6 +69,10 @@ object HelperFunctions {
         }
     }
 
+    fun isValidUrl(url: String?): Boolean {
+        if (url == null) return false
+        return Patterns.WEB_URL.matcher(url).matches()
+    }
 
     fun generateQRCode(text: String, width: Int = 500, height: Int = 500): Bitmap? {
         return try {
