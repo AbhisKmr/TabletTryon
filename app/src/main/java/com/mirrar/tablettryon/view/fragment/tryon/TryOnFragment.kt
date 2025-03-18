@@ -38,6 +38,7 @@ import com.mirrar.tablettryon.utility.AppConstraint.priceMax
 import com.mirrar.tablettryon.utility.AppConstraint.priceMin
 import com.mirrar.tablettryon.utility.AppConstraint.recommendationModel
 import com.mirrar.tablettryon.utility.Bookmarks
+import com.mirrar.tablettryon.utility.HelperFunctions.isValidUrl
 import com.mirrar.tablettryon.utility.HelperFunctions.rotateImage
 import com.mirrar.tablettryon.view.fragment.ClubAvoltaFragment
 import com.mirrar.tablettryon.view.fragment.ProductDetailsFragment
@@ -244,18 +245,21 @@ class TryOnFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
 //                viewModel.pageCount = 1
                 return@observe
             }
-            if (recommendationModel != null) {
-                CallApi.getMoreAssets(
-                    recommendationModel!!.uuid!!,
-                    recommendationModel!!.recommendations.map { obj -> obj.objectID }
-                ) { res ->
+            if (viewModel.itIsForRecommendation) {
+                updateProductList(viewModel, adapter, it)
+            } else if (recommendationModel != null) {
+                val map = mutableMapOf<String, String>()
+                it.forEach { obj -> map[obj.objectID] = obj.asset2DUrl.toString() }
+
+                CallApi.getMoreAssets(recommendationModel!!.uuid!!, map) { res ->
                     it.forEach {
                         if (res?.tryonOutputs!!.contains(it.objectID)) {
                             it.triedOnImageUrl = res?.tryonOutputs?.get(it.objectID) ?: ""
                         }
                     }
-
-                    updateProductList(viewModel, adapter, it)
+                    requireActivity().runOnUiThread(Runnable {
+                        updateProductList(viewModel, adapter, it)
+                    })
                 }
             } else {
                 updateProductList(viewModel, adapter, it)
@@ -309,6 +313,7 @@ class TryOnFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
                     binding.filterNavLayout.apply.text = ""
 
                     Handler().postDelayed({
+                        viewModel.pageCount = 1
                         viewModel.fetchProducts(false, binding.progressBar, it, selectedIndex)
                     }, 500)
                 }
@@ -468,28 +473,31 @@ class TryOnFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
 
     private fun applyAR() {
         try {
-            if (selectedProduct?.triedOnImageUrl == null) {
-                binding.imagePreview.setImageBitmap(AR_BITMAP)
-            } else
+            if (isValidUrl(selectedProduct?.triedOnImageUrl)) {
                 GlobalScope.launch {
                     val bb = withContext(Dispatchers.IO) {
-                        Glide
-                            .with(requireContext())
-                            .asBitmap()
-                            .load(selectedProduct?.triedOnImageUrl)
-                            .submit()
-                            .get()
+                        try {
+                            Glide
+                                .with(requireContext())
+                                .asBitmap()
+                                .load(selectedProduct?.triedOnImageUrl)
+                                .submit()
+                                .get()
+                        } catch (e: Exception) {
+                            AR_BITMAP
+                        }
                     }
                     withContext(Dispatchers.Main) {
                         binding.imagePreview.setImageBitmap(bb)
                     }
 
                 }
+            } else
+                binding.imagePreview.setImageBitmap(AR_BITMAP)
         } catch (e: IOException) {
             e.printStackTrace()
         }
     }
-
     private fun viewToBitmap(view: View): Bitmap? {
         if (view.width == 0 && view.height == 0) {
             return null
