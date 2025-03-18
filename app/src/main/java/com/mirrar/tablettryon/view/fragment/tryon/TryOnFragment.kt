@@ -230,6 +230,13 @@ class TryOnFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
             }
         }
 
+        updateRange(0f, 100f, 0f, 100f)
+
+        binding.filterNavLayout.priceRange.priceRange.addOnChangeListener { slider, value, fromUser ->
+            binding.filterNavLayout.priceRange.min.text = "Min: CHF${slider.values[0].toInt()}"
+            binding.filterNavLayout.priceRange.max.text = "Max: CHF${slider.values[1].toInt()}"
+        }
+
         viewModel.filter.observe(viewLifecycleOwner) {
             if (!it.isNullOrEmpty()) {
 
@@ -290,6 +297,14 @@ class TryOnFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
 
         viewModel.getData()
         viewModel.fetchAllBrands()
+    }
+
+    private fun updateRange(min: Float, max: Float, minValue: Float, maxValue: Float) {
+        binding.filterNavLayout.priceRange.priceRange.valueFrom = min
+        binding.filterNavLayout.priceRange.priceRange.valueTo = max
+        binding.filterNavLayout.priceRange.priceRange.values = listOf(minValue, maxValue) // Set the initial range
+        binding.filterNavLayout.priceRange.min.text = "Min: ${minValue.toInt()}"
+        binding.filterNavLayout.priceRange.max.text = "Max: ${maxValue.toInt()}"
     }
 
     private fun updateHeartIcon(list: List<Product>) {

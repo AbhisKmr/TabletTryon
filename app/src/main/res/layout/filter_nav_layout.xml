@@ -41,6 +41,13 @@
                 android:layout_height="wrap_content" />
 
             <include
+                android:id="@+id/priceRange"
+                layout="@layout/price_range"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp" />
+
+            <include
                 android:id="@+id/recycler_dropdown_brand"
                 layout="@layout/recycler_dropdown"
                 android:layout_width="match_parent"
