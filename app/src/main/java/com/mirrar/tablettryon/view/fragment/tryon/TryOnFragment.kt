@@ -295,6 +295,8 @@ class TryOnFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
                 binding.filterNavLayout.reset.setOnClickListener { v ->
                     it.forEach { pp -> pp.isSelected = false }
                     viewModel.fetchFilteredProducts(it)
+                    priceMin = 0f
+                    priceMax = 1000f
                     binding.filterNavLayout.sortbyDropdown.radioGroup.clearCheck()
                     updateRange(priceMin!!, priceMax!!, priceMin!!, priceMax!!)
                     ad.notifyDataSetChanged()
