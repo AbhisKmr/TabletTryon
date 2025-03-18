@@ -231,8 +231,7 @@ class TryOnFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
         binding.productRecyclerLoader.isVisible = true
 
         viewModel.product.observe(viewLifecycleOwner) {
-            binding.productRecyclerLoader.isVisible = false
-            binding.progressBar.isVisible = false
+
             binding.filterNavLayout.applyProgress.isVisible = false
             binding.filterNavLayout.apply.text = "Apply"
             binding.drawerLayout.closeDrawers()
@@ -245,15 +244,26 @@ class TryOnFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
 //                viewModel.pageCount = 1
                 return@observe
             }
+            if (recommendationModel != null) {
+                CallApi.getMoreAssets(
+                    recommendationModel!!.uuid!!,
+                    recommendationModel!!.recommendations.map { obj -> obj.objectID }
+                ) { res ->
+                    it.forEach {
+                        if (res?.tryonOutputs!!.contains(it.objectID)) {
+                            it.triedOnImageUrl = res?.tryonOutputs?.get(it.objectID) ?: ""
+                        }
+                    }
 
-            if (viewModel.loadMore) {
-                adapter.addData(it)
+                    updateProductList(viewModel, adapter, it)
+                }
             } else {
-                adapter.updateData(it)
+                updateProductList(viewModel, adapter, it)
+
             }
+
             totalProducts.value = viewModel.nbHits
             viewModel.pageCount++
-
             applyAR()
         }
 
@@ -353,6 +363,21 @@ class TryOnFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
 
         viewModel.onlyRecommendation()
         viewModel.fetchAllBrands()
+    }
+
+    private fun updateProductList(
+        viewModel: AlgoliaViewModel,
+        adapter: ProductAdapter,
+        list: List<Product>
+    ) {
+        binding.productRecyclerLoader.isVisible = false
+        binding.progressBar.isVisible = false
+
+        if (viewModel.loadMore) {
+            adapter.addData(list)
+        } else {
+            adapter.updateData(list)
+        }
     }
 
     private fun updateRange(min: Float, max: Float, minValue: Float, maxValue: Float) {
