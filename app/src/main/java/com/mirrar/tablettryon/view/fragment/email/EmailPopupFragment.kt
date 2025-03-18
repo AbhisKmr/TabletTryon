@@ -95,6 +95,9 @@ class EmailPopupFragment(val emailTag: String, val p: Product? = null) : DialogF
                 )
             }
 
+            userEmail = binding.email.text.toString()
+            userName = binding.name.text.toString()
+
             EmailHelper.sendDynamicEmail(SendEmailApiRequest(
                 binding.email.text.toString(), binding.name.text.toString(), objs, emailTag
             ), {
