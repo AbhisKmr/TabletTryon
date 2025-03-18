@@ -233,12 +233,6 @@ class TryOnFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
 
         viewModel.product.observe(viewLifecycleOwner) {
 
-            binding.filterNavLayout.applyProgress.isVisible = false
-            binding.filterNavLayout.apply.text = "Apply"
-            binding.drawerLayout.closeDrawers()
-            binding.emptyList.isVisible = false
-            isLoading = false
-
             if (it.isNullOrEmpty()) {
 //                adapter.clear()
 //                binding.emptyList.isVisible = true
@@ -265,6 +259,12 @@ class TryOnFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
                 updateProductList(viewModel, adapter, it)
 
             }
+
+            binding.filterNavLayout.applyProgress.isVisible = false
+            binding.filterNavLayout.apply.text = "Apply"
+            binding.drawerLayout.closeDrawers()
+            binding.emptyList.isVisible = false
+            isLoading = false
 
             totalProducts.value = viewModel.nbHits
             viewModel.pageCount++

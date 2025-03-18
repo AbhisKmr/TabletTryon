@@ -126,7 +126,7 @@ class AlgoliaViewModel : ViewModel() {
     ) {
         if (isLoading) return
         progressBar.visibility = View.VISIBLE
-
+        itIsForRecommendation = false
         viewModelScope.launch {
             try {
                 val brd = bs?.filter { it.isSelected } ?: emptyList()
