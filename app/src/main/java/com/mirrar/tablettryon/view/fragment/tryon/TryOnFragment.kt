@@ -37,6 +37,7 @@ import com.mirrar.tablettryon.utility.AppConstraint.priceMax
 import com.mirrar.tablettryon.utility.AppConstraint.priceMin
 import com.mirrar.tablettryon.utility.AppConstraint.recommendationModel
 import com.mirrar.tablettryon.utility.Bookmarks
+import com.mirrar.tablettryon.utility.HelperFunctions.isValidUrl
 import com.mirrar.tablettryon.utility.HelperFunctions.rotateImage
 import com.mirrar.tablettryon.view.fragment.ClubAvoltaFragment
 import com.mirrar.tablettryon.view.fragment.ProductDetailsFragment
@@ -54,6 +55,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.IOException
 import java.util.concurrent.ScheduledExecutorService
+import androidx.core.graphics.createBitmap
 
 class TryOnFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
 
@@ -195,7 +197,7 @@ class TryOnFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
                 layoutManager?.let {
                     val firstVisibleItemIndex = it.findFirstVisibleItemPosition()
                     if (recommendationModel?.recommendations != null) {
-                        if (firstVisibleItemIndex > recommendationModel!!.recommendations.size + completeAssetIndex) {
+                        if (firstVisibleItemIndex > (recommendationModel!!.recommendations.size - 7) + completeAssetIndex) {
                             val map = mutableMapOf<String, String>()
                             productList.subList(
                                 recommendationModel!!.recommendations.size + completeAssetIndex,
@@ -413,9 +415,7 @@ class TryOnFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
 
     private fun applyAR() {
         try {
-            if (selectedProduct?.triedOnImageUrl == null) {
-                binding.imagePreview.setImageBitmap(AR_BITMAP)
-            } else
+            if (isValidUrl(selectedProduct?.triedOnImageUrl)) {
                 GlobalScope.launch {
                     val bb = withContext(Dispatchers.IO) {
                         try {
@@ -434,6 +434,8 @@ class TryOnFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
                     }
 
                 }
+            } else
+                binding.imagePreview.setImageBitmap(AR_BITMAP)
         } catch (e: IOException) {
             e.printStackTrace()
         }
@@ -443,7 +445,7 @@ class TryOnFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
         if (view.width == 0 && view.height == 0) {
             return null
         }
-        val bitmap = Bitmap.createBitmap(view.width, view.height, Bitmap.Config.ARGB_8888)
+        val bitmap = createBitmap(view.width, view.height)
         val canvas = Canvas(bitmap)
         view.draw(canvas)
         return bitmap
