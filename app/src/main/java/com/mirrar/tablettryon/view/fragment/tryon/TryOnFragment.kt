@@ -7,6 +7,7 @@ import android.graphics.Canvas
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -46,6 +47,7 @@ import com.mirrar.tablettryon.view.fragment.tryon.dataModel.Product
 import com.mirrar.tablettryon.view.fragment.tryon.viewModel.AlgoliaViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Runnable
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.IOException
@@ -211,7 +213,7 @@ class TryOnFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
             adapter.updateData(it)
             binding.filterNavLayout.applyProgress.isVisible = false
             binding.filterNavLayout.apply.text = "Apply"
-
+            binding.drawerLayout.closeDrawers()
             applyAR()
         }
 
@@ -247,8 +249,9 @@ class TryOnFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
                     binding.filterNavLayout.applyProgress.isVisible = true
                     binding.filterNavLayout.apply.text = ""
 
-                    viewModel.fetchFilteredProducts(it, selectedIndex)
-                    binding.drawerLayout.closeDrawers()
+                    Handler().postDelayed({
+                        viewModel.fetchFilteredProducts(it, selectedIndex)
+                    }, 500)
                 }
 
                 binding.filterNavLayout.recyclerDropdownBrand.dropArrow.setOnClickListener {
