@@ -16,4 +16,14 @@
         <item name="android:windowBackground">@android:color/transparent</item>
     </style>
 
+    <style name="SliderTheme" parent="Widget.AppCompat.SeekBar">
+        <item name="trackColorActive">@color/primery_purple</item>
+        <item name="trackColorInactive">@color/primery_purple_light</item>
+        <item name="tickColor">#13161d</item>
+        <item name="thumbColor">@color/primery_purple</item>
+        <item name="thumbHeight">30dp</item>
+        <item name="thumbWidth">30dp</item>
+        <item name="thumbIconSize">30dp</item>
+        <item name="minTouchTargetSize">30dp</item>
+    </style>
 </resources>

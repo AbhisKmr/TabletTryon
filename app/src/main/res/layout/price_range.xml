@@ -24,6 +24,13 @@
         android:background="@color/chip_gray"
         app:layout_constraintTop_toBottomOf="@+id/title" />
 
+    <View
+        android:id="@+id/clickView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/view4"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <ImageView
         android:id="@+id/dropArrow"
         android:layout_width="0dp"
@@ -66,6 +73,7 @@
 
         <com.google.android.material.slider.RangeSlider
             android:id="@+id/priceRange"
+            style="@style/SliderTheme"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginVertical="24sp"

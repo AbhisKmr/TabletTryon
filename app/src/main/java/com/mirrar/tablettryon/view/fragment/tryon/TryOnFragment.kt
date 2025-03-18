@@ -19,6 +19,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.core.view.isVisible
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.drawerlayout.widget.DrawerLayout.DrawerListener
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
@@ -271,7 +272,7 @@ class TryOnFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
             applyAR()
         }
 
-        binding.filterNavLayout.sortbyDropdown.dropArrow.setOnClickListener {
+        binding.filterNavLayout.sortbyDropdown.clickView.setOnClickListener {
             val vis = binding.filterNavLayout.sortbyDropdown.radioGroup.isVisible
             binding.filterNavLayout.sortbyDropdown.radioGroup.isVisible = !vis
 
@@ -313,12 +314,14 @@ class TryOnFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
                     binding.filterNavLayout.apply.text = ""
 
                     Handler().postDelayed({
+                        adapter.clear()
+                        binding.productRecyclerLoader.isVisible = true
                         viewModel.pageCount = 1
                         viewModel.fetchProducts(false, binding.progressBar, it, selectedIndex)
                     }, 500)
                 }
 
-                binding.filterNavLayout.priceRange.dropArrow.setOnClickListener {
+                binding.filterNavLayout.priceRange.clickView.setOnClickListener {
                     val vis = binding.filterNavLayout.priceRange.optionParent.isVisible
                     binding.filterNavLayout.priceRange.optionParent.isVisible = !vis
 
@@ -329,7 +332,7 @@ class TryOnFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
                     )
                 }
 
-                binding.filterNavLayout.recyclerDropdownBrand.dropArrow.setOnClickListener {
+                binding.filterNavLayout.recyclerDropdownBrand.clickView.setOnClickListener {
                     val vis = binding.filterNavLayout.recyclerDropdownBrand.optionParent.isVisible
                     binding.filterNavLayout.recyclerDropdownBrand.optionParent.isVisible = !vis
 
@@ -368,6 +371,8 @@ class TryOnFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
 
         viewModel.onlyRecommendation()
         viewModel.fetchAllBrands()
+
+        binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
     }
 
     private fun updateProductList(
