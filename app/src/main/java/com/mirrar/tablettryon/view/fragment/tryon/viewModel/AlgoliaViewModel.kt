@@ -29,11 +29,11 @@ import com.mirrar.tablettryon.utility.Bookmarks
 
 class AlgoliaViewModel : ViewModel() {
 
-    private val searcher = HitsSearcher(
-        applicationID = ApplicationID("V0MFZORLHS"),
-        apiKey = APIKey("0feee6ee25524813cd5ada3b0fc68384"),
-        indexName = IndexName(AppConstraint.ALGOLIA_INDEX)
-    )
+//    private val searcher = HitsSearcher(
+//        applicationID = ApplicationID("V0MFZORLHS"),
+//        apiKey = APIKey("0feee6ee25524813cd5ada3b0fc68384"),
+//        indexName = IndexName(AppConstraint.ALGOLIA_INDEX)
+//    )
 
 //    private val client = ClientSearch(
 //        applicationID = ApplicationID("V0MFZORLHS"),
@@ -57,6 +57,7 @@ class AlgoliaViewModel : ViewModel() {
 
     var loadMore = false
     var nbHits = 10
+    var pageCount = 1
 
     fun onlyRecommendation() {
         viewModelScope.launch {
@@ -112,115 +113,6 @@ class AlgoliaViewModel : ViewModel() {
         }
     }
 
-    /*
-        fun getData() {
-            viewModelScope.launch {
-                try {
-                    val objects =
-                        recommendationModel?.recommendations?.map { ObjectID(it.objectID) }
-                            ?: emptyList()
-                    val recommendedObjects = index.getObjects(objects)
-
-                    val additionalQuery: Query =
-                        when (recommendationModel?.faceAnalysis?.gender?.lowercase()) {
-                            "male" -> Query(
-                                query = "",
-                                filters = "gender:\"For Him\" OR gender:\"Unisex\""
-                            )
-
-                            "female" -> Query(
-                                query = "",
-                                filters = "gender:\"For Her\" OR gender:\"Unisex\""
-                            )
-
-                            else -> Query(query = "", filters = "gender:\"Unisex\"")
-                        }
-
-                    additionalQuery.apply {
-                        hitsPerPage = 500
-                    }
-
-                    if (!objects.isEmpty()) {
-                        val exclusionFilter = objects.joinToString(" AND ") { "NOT objectID:$it" }
-                        additionalQuery.apply {
-                            filters =
-                                if (filters.isNullOrBlank()) exclusionFilter else "$filters AND $exclusionFilter"
-                        }
-                    }
-
-                    val additionalProductsResponse = index.search(additionalQuery)
-
-
-                    val lst = mutableListOf<Product>()
-
-                    recommendedObjects.results.forEach {
-                        val p = GsonBuilder().create().fromJson(it.toString(), Product::class.java)
-                            .apply { isRecommended = true }
-
-                        recommendationModel?.recommendations?.forEach {
-                            if (it.objectID == p.objectID) {
-                                p.triedOnImageUrl = it.triedOnImageUrl
-                            }
-                        }
-                        lst.add(p)
-                    }
-
-                    additionalProductsResponse.hits.map {
-                        lst.add(
-                            GsonBuilder().create().fromJson(it.json.toString(), Product::class.java)
-                        )
-                    }
-                    _products.value = lst
-
-                } catch (e: Exception) {
-                    Log.e("Algolia", "Error fetching products", e)
-                }
-            }
-        }
-
-        fun fetchFilteredProducts(bs: List<FilterDataModel>, shortingIndex: Int = -1) {
-            return runBlocking {
-                val brd = bs.filter { it.isSelected }
-                val filterString =
-                    brd.joinToString(separator = " OR ") { brand -> "brand:\"${brand.value}\"" }
-                val filterPrice = "priceDutyFree >= $priceMin AND priceDutyFree <= $priceMax"
-
-                val finalFilter = if (brd.isEmpty()) filterPrice else "$filterString AND $filterPrice"
-
-                val query = Query(
-                    query = "",
-                    filters = finalFilter,
-                    hitsPerPage = 500
-                )
-
-                val cc = client.initIndex(
-                    IndexName
-                        (
-                        when (shortingIndex) {
-                            0 -> {
-                                AppConstraint.ALGOLIA_INDEX + "-asc"
-                            }
-
-                            1 -> {
-                                AppConstraint.ALGOLIA_INDEX + "-desc"
-                            }
-
-                            else -> {
-                                AppConstraint.ALGOLIA_INDEX
-                            }
-
-                        }
-                    )
-                )
-
-                val response = cc.search(query)
-                val list = response.hits.map {
-                    GsonBuilder().create().fromJson(it.json.toString(), Product::class.java)
-                }
-                _products.value = list
-            }
-        }
-    */
 
     fun fetchProducts(
         isLoading: Boolean = false,
@@ -229,7 +121,7 @@ class AlgoliaViewModel : ViewModel() {
         shortingIndex: Int = -1
     ) {
         if (isLoading) return
-        loadMore = true
+
         progressBar.visibility = View.VISIBLE
         viewModelScope.launch {
 
@@ -276,8 +168,10 @@ class AlgoliaViewModel : ViewModel() {
                 val brd = bs.filter { it.isSelected }
                 val filterString =
                     brd.joinToString(separator = " OR ") { brand -> "brand:\"${brand.value}\"" }
-                additionalQuery.apply {
-                    filters += "AND $filterString"
+                if (brd.isNotEmpty()) {
+                    additionalQuery.apply {
+                        filters += "AND $filterString"
+                    }
                 }
             }
 
@@ -293,15 +187,22 @@ class AlgoliaViewModel : ViewModel() {
                 }
             }
 
+            additionalQuery.apply {
+                hitsPerPage = 10
+                page = pageCount
+            }
+
             val lst = mutableListOf<Product>()
+
             val searchResponse = cc.search(additionalQuery)
+            loadMore = searchResponse.nbHits > (pageCount * 10)
             nbHits = searchResponse.nbHits
             searchResponse.hits.map {
                 lst.add(
                     GsonBuilder().create().fromJson(it.json.toString(), Product::class.java)
                 )
             }
-            loadMore = false
+
             _products.value = lst
         }
     }
@@ -317,10 +218,5 @@ class AlgoliaViewModel : ViewModel() {
                 FilterDataModel(it.value)
             } ?: emptyList()
         }
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        searcher.cancel()
     }
 }

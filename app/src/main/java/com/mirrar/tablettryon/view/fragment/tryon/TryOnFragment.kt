@@ -68,7 +68,7 @@ class TryOnFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
 
     private var currentPage = 0
     private val totalProducts = MutableLiveData<Int>()
-    private val isLoading: Boolean = false
+    private var isLoading: Boolean = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -192,24 +192,44 @@ class TryOnFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
         binding.productRecycler.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
-                val layoutManager = recyclerView.layoutManager as? LinearLayoutManager
-                layoutManager?.let {
-                    val firstVisibleItemIndex = it.findFirstVisibleItemPosition()
-                    if (recommendationModel?.recommendations != null) {
-                        if (firstVisibleItemIndex > recommendationModel!!.recommendations.size) {
-                            CallApi.getMoreAssets(
-                                recommendationModel!!.uuid!!,
-                                recommendationModel!!.recommendations.map { obj -> obj.objectID }
-                            ) { res ->
-                                adapter.updateAssetUrl(res?.tryonOutputs ?: emptyMap())
-                            }
-                        }
-                    }
+                val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+                val visibleItemCount = layoutManager.childCount
+                val totalItemCount = layoutManager.itemCount
+                val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
+
+                if (!isLoading && (visibleItemCount + firstVisibleItemPosition) >= totalItemCount && firstVisibleItemPosition >= 0) {
+
+                    isLoading = true
+
+                    viewModel.fetchProducts(
+                        false,
+                        progressBar = binding.progressBar,
+                        viewModel.filter.value ?: emptyList(),
+                        binding.filterNavLayout.sortbyDropdown.radioGroup.indexOfChild(
+                            view.findViewById(binding.filterNavLayout.sortbyDropdown.radioGroup.checkedRadioButtonId)
+                        )
+                    )
                 }
+
+                /* val layoutManager = recyclerView.layoutManager as? LinearLayoutManager
+                 layoutManager?.let {
+                     val firstVisibleItemIndex = it.findFirstVisibleItemPosition()
+                     if (recommendationModel?.recommendations != null) {
+                         if (firstVisibleItemIndex > recommendationModel!!.recommendations.size) {
+                             CallApi.getMoreAssets(
+                                 recommendationModel!!.uuid!!,
+                                 recommendationModel!!.recommendations.map { obj -> obj.objectID }
+                             ) { res ->
+                                 adapter.updateAssetUrl(res?.tryonOutputs ?: emptyMap())
+                             }
+                         }
+                     }
+                 }*/
             }
         })
 
         binding.productRecyclerLoader.isVisible = true
+
         viewModel.product.observe(viewLifecycleOwner) {
             binding.productRecyclerLoader.isVisible = false
             binding.progressBar.isVisible = false
@@ -217,10 +237,12 @@ class TryOnFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
             binding.filterNavLayout.apply.text = "Apply"
             binding.drawerLayout.closeDrawers()
             binding.emptyList.isVisible = false
+            isLoading = false
 
             if (it.isNullOrEmpty()) {
-                adapter.clear()
-                binding.emptyList.isVisible = true
+//                adapter.clear()
+//                binding.emptyList.isVisible = true
+//                viewModel.pageCount = 1
                 return@observe
             }
 
@@ -230,7 +252,7 @@ class TryOnFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
                 adapter.updateData(it)
             }
             totalProducts.value = viewModel.nbHits
-            currentPage++
+            viewModel.pageCount++
 
             applyAR()
         }
