@@ -139,7 +139,7 @@ class CatalogueFragment : Fragment() {
                     binding.filterNavLayout.apply.text = ""
 
                     Handler().postDelayed({
-                        viewModel.fetchFilteredProducts(it, selectedIndex)
+                        viewModel.fetchProducts(true, binding.progressBar,  it, selectedIndex)
                     }, 500)
                 }
 
@@ -176,14 +176,15 @@ class CatalogueFragment : Fragment() {
                     priceMin = 0f
                     priceMax = 1000f
                     updateRange(priceMin!!, priceMax!!, priceMin!!, priceMax!!)
-                    viewModel.fetchFilteredProducts(it)
+
+                    viewModel.fetchProducts(true, binding.progressBar,  it)
                     ad.notifyDataSetChanged()
                 }
 
             }
         }
 
-        viewModel.getData()
+        viewModel.onlyRecommendation()
         viewModel.fetchAllBrands()
     }
 

@@ -111,6 +111,18 @@ class ProductAdapter(private val clickListener: (Int, Product) -> Unit) :
         }
     }
 
+    fun addData(newProducts: List<Product>) {
+        val startPos = list.size
+        list.addAll(newProducts)
+        notifyItemRangeInserted(startPos, newProducts.size)
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun clear() {
+        this.list.clear()
+        notifyDataSetChanged()
+    }
+
     @SuppressLint("NotifyDataSetChanged")
     fun setPreSelected(p: Product) {
         if (list.contains(p)) {

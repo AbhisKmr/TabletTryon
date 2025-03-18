@@ -1,6 +1,8 @@
 package com.mirrar.tablettryon.view.fragment.tryon.viewModel
 
 import android.util.Log
+import android.view.View
+import android.widget.ProgressBar
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -23,6 +25,7 @@ import com.mirrar.tablettryon.utility.AppConstraint
 import com.mirrar.tablettryon.utility.AppConstraint.priceMax
 import com.mirrar.tablettryon.utility.AppConstraint.priceMin
 import com.mirrar.tablettryon.utility.AppConstraint.recommendationModel
+import com.mirrar.tablettryon.utility.Bookmarks
 
 class AlgoliaViewModel : ViewModel() {
 
@@ -38,13 +41,13 @@ class AlgoliaViewModel : ViewModel() {
 //    )
 //    val index = client.initIndex(indexName = IndexName("avolta-glasses"))
 
-    val client = ClientSearch(
+    private val client = ClientSearch(
         ConfigurationSearch(
             ApplicationID("V0MFZORLHS"),
             APIKey("f9b905571a819c23a15b192b778e7b3a")
         )
     )
-    val index = client.initIndex(IndexName(AppConstraint.ALGOLIA_INDEX))
+    private val index = client.initIndex(IndexName(AppConstraint.ALGOLIA_INDEX))
 
     private val _products = MutableLiveData<List<Product>>()
     val product: LiveData<List<Product>> = _products
@@ -52,14 +55,18 @@ class AlgoliaViewModel : ViewModel() {
     private val _filter = MutableLiveData<List<FilterDataModel>>()
     val filter: LiveData<List<FilterDataModel>> = _filter
 
-    fun getData() {
-        viewModelScope.launch {
-            try {
-                val objects =
-                    recommendationModel?.recommendations?.map { ObjectID(it.objectID) }
-                        ?: emptyList()
-                val recommendedObjects = index.getObjects(objects)
+    var loadMore = false
+    var nbHits = 10
 
+    fun onlyRecommendation() {
+        viewModelScope.launch {
+            val objects =
+                recommendationModel?.recommendations?.map { ObjectID(it.objectID) }
+                    ?: emptyList()
+
+            val lst = mutableListOf<Product>()
+
+            if (objects.isEmpty()) {
                 val additionalQuery: Query =
                     when (recommendationModel?.faceAnalysis?.gender?.lowercase()) {
                         "male" -> Query(
@@ -76,33 +83,9 @@ class AlgoliaViewModel : ViewModel() {
                     }
 
                 additionalQuery.apply {
-                    hitsPerPage = 500
+                    hitsPerPage = 10
                 }
-
-                if (!objects.isEmpty()) {
-                    val exclusionFilter = objects.joinToString(" AND ") { "NOT objectID:$it" }
-                    additionalQuery.apply {
-                        filters =
-                            if (filters.isNullOrBlank()) exclusionFilter else "$filters AND $exclusionFilter"
-                    }
-                }
-
                 val additionalProductsResponse = index.search(additionalQuery)
-
-
-                val lst = mutableListOf<Product>()
-
-                recommendedObjects.results.forEach {
-                    val p = GsonBuilder().create().fromJson(it.toString(), Product::class.java)
-                        .apply { isRecommended = true }
-
-                    recommendationModel?.recommendations?.forEach {
-                        if (it.objectID == p.objectID) {
-                            p.triedOnImageUrl = it.triedOnImageUrl
-                        }
-                    }
-                    lst.add(p)
-                }
 
                 additionalProductsResponse.hits.map {
                     lst.add(
@@ -110,40 +93,149 @@ class AlgoliaViewModel : ViewModel() {
                     )
                 }
                 _products.value = lst
-
-            } catch (e: Exception) {
-                Log.e("Algolia", "Error fetching products", e)
+                return@launch
             }
+            val recommendedObjects = index.getObjects(objects)
+
+            recommendedObjects.results.forEach {
+                val p = GsonBuilder().create().fromJson(it.toString(), Product::class.java)
+                    .apply { isRecommended = true }
+
+                recommendationModel?.recommendations?.forEach { pod ->
+                    if (pod.objectID == p.objectID) {
+                        p.triedOnImageUrl = pod.triedOnImageUrl
+                    }
+                }
+                lst.add(p)
+            }
+            _products.value = lst
         }
     }
 
-    fun fetchAllBrands() {
-        _filter.value = runBlocking {
-            val query = Query().apply {
-                facets = setOf(Attribute("brand"))
+    /*
+        fun getData() {
+            viewModelScope.launch {
+                try {
+                    val objects =
+                        recommendationModel?.recommendations?.map { ObjectID(it.objectID) }
+                            ?: emptyList()
+                    val recommendedObjects = index.getObjects(objects)
+
+                    val additionalQuery: Query =
+                        when (recommendationModel?.faceAnalysis?.gender?.lowercase()) {
+                            "male" -> Query(
+                                query = "",
+                                filters = "gender:\"For Him\" OR gender:\"Unisex\""
+                            )
+
+                            "female" -> Query(
+                                query = "",
+                                filters = "gender:\"For Her\" OR gender:\"Unisex\""
+                            )
+
+                            else -> Query(query = "", filters = "gender:\"Unisex\"")
+                        }
+
+                    additionalQuery.apply {
+                        hitsPerPage = 500
+                    }
+
+                    if (!objects.isEmpty()) {
+                        val exclusionFilter = objects.joinToString(" AND ") { "NOT objectID:$it" }
+                        additionalQuery.apply {
+                            filters =
+                                if (filters.isNullOrBlank()) exclusionFilter else "$filters AND $exclusionFilter"
+                        }
+                    }
+
+                    val additionalProductsResponse = index.search(additionalQuery)
+
+
+                    val lst = mutableListOf<Product>()
+
+                    recommendedObjects.results.forEach {
+                        val p = GsonBuilder().create().fromJson(it.toString(), Product::class.java)
+                            .apply { isRecommended = true }
+
+                        recommendationModel?.recommendations?.forEach {
+                            if (it.objectID == p.objectID) {
+                                p.triedOnImageUrl = it.triedOnImageUrl
+                            }
+                        }
+                        lst.add(p)
+                    }
+
+                    additionalProductsResponse.hits.map {
+                        lst.add(
+                            GsonBuilder().create().fromJson(it.json.toString(), Product::class.java)
+                        )
+                    }
+                    _products.value = lst
+
+                } catch (e: Exception) {
+                    Log.e("Algolia", "Error fetching products", e)
+                }
             }
-
-            val response = index.search(query)
-            response.facets[Attribute("brand")]?.map {
-                FilterDataModel(it.value)
-            } ?: emptyList()
         }
-    }
 
-    fun fetchFilteredProducts(bs: List<FilterDataModel>, shortingIndex: Int = -1) {
-        return runBlocking {
-            val brd = bs.filter { it.isSelected }
-            val filterString =
-                brd.joinToString(separator = " OR ") { brand -> "brand:\"${brand.value}\"" }
-            val filterPrice = "priceDutyFree >= $priceMin AND priceDutyFree <= $priceMax"
+        fun fetchFilteredProducts(bs: List<FilterDataModel>, shortingIndex: Int = -1) {
+            return runBlocking {
+                val brd = bs.filter { it.isSelected }
+                val filterString =
+                    brd.joinToString(separator = " OR ") { brand -> "brand:\"${brand.value}\"" }
+                val filterPrice = "priceDutyFree >= $priceMin AND priceDutyFree <= $priceMax"
 
-            val finalFilter = if (brd.isEmpty()) filterPrice else "$filterString AND $filterPrice"
+                val finalFilter = if (brd.isEmpty()) filterPrice else "$filterString AND $filterPrice"
 
-            val query = Query(
-                query = "",
-                filters = finalFilter,
-                hitsPerPage = 500
-            )
+                val query = Query(
+                    query = "",
+                    filters = finalFilter,
+                    hitsPerPage = 500
+                )
+
+                val cc = client.initIndex(
+                    IndexName
+                        (
+                        when (shortingIndex) {
+                            0 -> {
+                                AppConstraint.ALGOLIA_INDEX + "-asc"
+                            }
+
+                            1 -> {
+                                AppConstraint.ALGOLIA_INDEX + "-desc"
+                            }
+
+                            else -> {
+                                AppConstraint.ALGOLIA_INDEX
+                            }
+
+                        }
+                    )
+                )
+
+                val response = cc.search(query)
+                val list = response.hits.map {
+                    GsonBuilder().create().fromJson(it.json.toString(), Product::class.java)
+                }
+                _products.value = list
+            }
+        }
+    */
+
+    fun fetchProducts(
+        isLoading: Boolean = false,
+        progressBar: ProgressBar,
+        bs: List<FilterDataModel>? = null,
+        shortingIndex: Int = -1
+    ) {
+        if (isLoading) return
+        loadMore = true
+        progressBar.visibility = View.VISIBLE
+        viewModelScope.launch {
+
+            val objects =
+                recommendationModel?.recommendations?.map { ObjectID(it.objectID) }
+                    ?: emptyList()
 
             val cc = client.initIndex(
                 IndexName
@@ -165,11 +257,65 @@ class AlgoliaViewModel : ViewModel() {
                 )
             )
 
-            val response = cc.search(query)
-            val list = response.hits.map {
-                GsonBuilder().create().fromJson(it.json.toString(), Product::class.java)
+            val additionalQuery: Query =
+                when (recommendationModel?.faceAnalysis?.gender?.lowercase()) {
+                    "male" -> Query(
+                        query = "",
+                        filters = "gender:\"For Him\" OR gender:\"Unisex\""
+                    )
+
+                    "female" -> Query(
+                        query = "",
+                        filters = "gender:\"For Her\" OR gender:\"Unisex\""
+                    )
+
+                    else -> Query(query = "", filters = "gender:\"Unisex\"")
+                }
+
+            if (bs != null) {
+                val brd = bs.filter { it.isSelected }
+                val filterString =
+                    brd.joinToString(separator = " OR ") { brand -> "brand:\"${brand.value}\"" }
+                additionalQuery.apply {
+                    filters += "AND $filterString"
+                }
             }
-            _products.value = list
+
+            additionalQuery.apply {
+                filters += "AND priceDutyFree >= $priceMin AND priceDutyFree <= $priceMax"
+            }
+
+            if (objects.isNotEmpty()) {
+                val exclusionFilter = objects.joinToString(" AND ") { "NOT objectID:$it" }
+                additionalQuery.apply {
+                    filters =
+                        if (filters.isNullOrBlank()) exclusionFilter else "$filters AND $exclusionFilter"
+                }
+            }
+
+            val lst = mutableListOf<Product>()
+            val searchResponse = cc.search(additionalQuery)
+            nbHits = searchResponse.nbHits
+            searchResponse.hits.map {
+                lst.add(
+                    GsonBuilder().create().fromJson(it.json.toString(), Product::class.java)
+                )
+            }
+            loadMore = false
+            _products.value = lst
+        }
+    }
+
+    fun fetchAllBrands() {
+        _filter.value = runBlocking {
+            val query = Query().apply {
+                facets = setOf(Attribute("brand"))
+            }
+
+            val response = index.search(query)
+            response.facets[Attribute("brand")]?.map {
+                FilterDataModel(it.value)
+            } ?: emptyList()
         }
     }
 

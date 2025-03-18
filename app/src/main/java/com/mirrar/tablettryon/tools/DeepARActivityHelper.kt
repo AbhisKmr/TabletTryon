@@ -204,7 +204,7 @@ class DeepARActivityHelper(
                     binding.filterNavLayout.applyProgress.isVisible = true
                     binding.filterNavLayout.apply.text = ""
 
-                    viewModel.fetchFilteredProducts(it, selectedIndex)
+                    viewModel.fetchProducts(true, binding.progressBar,  it, selectedIndex)
                     binding.drawerLayout.closeDrawers()
                 }
 
@@ -226,7 +226,7 @@ class DeepARActivityHelper(
 
                 binding.filterNavLayout.reset.setOnClickListener { v ->
                     it.forEach { pp -> pp.isSelected = false }
-                    viewModel.fetchFilteredProducts(it)
+                    viewModel.fetchProducts(true, binding.progressBar,  it)
                     ad.notifyDataSetChanged()
                 }
 
@@ -242,7 +242,7 @@ class DeepARActivityHelper(
             binding.bookmarkCount.text = "${bookmarkedProducts.size}"
         }
 
-        viewModel.getData()
+        viewModel.onlyRecommendation()
         viewModel.fetchAllBrands()
     }
 

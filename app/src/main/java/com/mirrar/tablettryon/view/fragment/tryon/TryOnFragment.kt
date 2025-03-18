@@ -22,6 +22,7 @@ import androidx.core.view.isVisible
 import androidx.drawerlayout.widget.DrawerLayout.DrawerListener
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -65,7 +66,9 @@ class TryOnFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
     private lateinit var faceLandmarkerHelper: FaceLandmarkerHelper
     private lateinit var backgroundExecutor: ScheduledExecutorService
 
-    private val imageList = listOf(R.drawable.eye1, R.drawable.eye2)
+    private var currentPage = 0
+    private val totalProducts = MutableLiveData<Int>()
+    private val isLoading: Boolean = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -209,13 +212,26 @@ class TryOnFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
         binding.productRecyclerLoader.isVisible = true
         viewModel.product.observe(viewLifecycleOwner) {
             binding.productRecyclerLoader.isVisible = false
-            if (it.isNullOrEmpty()) {
-                return@observe
-            }
-            adapter.updateData(it)
+            binding.progressBar.isVisible = false
             binding.filterNavLayout.applyProgress.isVisible = false
             binding.filterNavLayout.apply.text = "Apply"
             binding.drawerLayout.closeDrawers()
+            binding.emptyList.isVisible = false
+
+            if (it.isNullOrEmpty()) {
+                adapter.clear()
+                binding.emptyList.isVisible = true
+                return@observe
+            }
+
+            if (viewModel.loadMore) {
+                adapter.addData(it)
+            } else {
+                adapter.updateData(it)
+            }
+            totalProducts.value = viewModel.nbHits
+            currentPage++
+
             applyAR()
         }
 
@@ -261,7 +277,7 @@ class TryOnFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
                     binding.filterNavLayout.apply.text = ""
 
                     Handler().postDelayed({
-                        viewModel.fetchFilteredProducts(it, selectedIndex)
+                        viewModel.fetchProducts(false, binding.progressBar, it, selectedIndex)
                     }, 500)
                 }
 
@@ -294,7 +310,7 @@ class TryOnFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
 
                 binding.filterNavLayout.reset.setOnClickListener { v ->
                     it.forEach { pp -> pp.isSelected = false }
-                    viewModel.fetchFilteredProducts(it)
+                    viewModel.onlyRecommendation()
                     priceMin = 0f
                     priceMax = 1000f
                     binding.filterNavLayout.sortbyDropdown.radioGroup.clearCheck()
@@ -313,7 +329,7 @@ class TryOnFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
             binding.bookmarkCount.text = "${bookmarkedProducts.size}"
         }
 
-        viewModel.getData()
+        viewModel.onlyRecommendation()
         viewModel.fetchAllBrands()
     }
 
