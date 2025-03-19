@@ -9,27 +9,40 @@ import androidx.core.view.isVisible
 import androidx.drawerlayout.widget.DrawerLayout.DrawerListener
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentTransaction
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.mirrar.tablettryon.DeepARActivity
 import com.mirrar.tablettryon.R
 import com.mirrar.tablettryon.databinding.ActivityDeepAractivityBinding
+import com.mirrar.tablettryon.network.ApiService
+import com.mirrar.tablettryon.network.Repository
+import com.mirrar.tablettryon.network.Resource
+import com.mirrar.tablettryon.network.Retrofit
 import com.mirrar.tablettryon.products.model.product.Product
+import com.mirrar.tablettryon.products.viewModel.ProductViewModel
 import com.mirrar.tablettryon.utility.Bookmarks
+import com.mirrar.tablettryon.utility.GlobalProducts
 import com.mirrar.tablettryon.utility.HelperFunctions.downloadAndSaveFile
 import com.mirrar.tablettryon.utility.HelperFunctions.rotateImage
 import com.mirrar.tablettryon.view.fragment.ClubAvoltaFragment
+import com.mirrar.tablettryon.view.fragment.ProductDetailsFragment
 import com.mirrar.tablettryon.view.fragment.bookmark.YouBookmarkFragment
 import com.mirrar.tablettryon.view.fragment.catalogue.CatalogueFragment
 import com.mirrar.tablettryon.view.fragment.catalogue.adapter.FilterListAdapter
+import com.mirrar.tablettryon.view.fragment.email.EmailFragment
 import com.mirrar.tablettryon.view.fragment.tryon.adapter.ProductAdapter
 import com.mirrar.tablettryon.view.fragment.tryon.viewModel.AlgoliaViewModel
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class DeepARActivityHelper(
     private val deepARActivity: DeepARActivity,
+    private val productViewModel: ProductViewModel,
     private val applyEffect: (String) -> Unit,
     private val onScreenshot: (SCREENSHOT, Product) -> Unit
 ) {
@@ -44,21 +57,10 @@ class DeepARActivityHelper(
     private var minPrice = 0
     private var maxPrice = 0
     private var brandList = mutableListOf<String>()
-
-    private val assetsUrl = arrayOf(
-        "https://github.com/AbhisKmr/alpha/raw/refs/heads/master/glass.deepar",
-        "https://github.com/AbhisKmr/alpha/raw/refs/heads/master/glass2.deepar",
-        "https://github.com/AbhisKmr/alpha/raw/refs/heads/master/glass3.deepar",
-        "https://github.com/AbhisKmr/alpha/raw/refs/heads/master/glass4.deepar",
-        "https://github.com/AbhisKmr/alpha/raw/refs/heads/master/glass5.deepar",
-        "https://github.com/AbhisKmr/alpha/raw/refs/heads/master/glass6.deepar",
-        "https://github.com/AbhisKmr/alpha/raw/refs/heads/master/glass7.deepar",
-        "https://github.com/AbhisKmr/alpha/raw/refs/heads/master/glass8.deepar",
-        "https://github.com/AbhisKmr/alpha/raw/refs/heads/master/glass9.deepar",
-        "https://github.com/AbhisKmr/alpha/raw/refs/heads/master/glass10.deepar",
-    )
+    private var isLoading: Boolean = false
 
     init {
+
         binding.catalogue.setOnClickListener {
             val transaction = deepARActivity.supportFragmentManager.beginTransaction()
             transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_MATCH_ACTIVITY_OPEN)
@@ -105,21 +107,12 @@ class DeepARActivityHelper(
 
         binding.details.setOnClickListener {
             if (selectedProduct != null) {
-//                openDialogFragment(ProductDetailsFragment.newInstance(selectedProduct!!, {}))
+                openDialogFragment(ProductDetailsFragment.newInstance(selectedProduct!!, {}))
             }
         }
 
         binding.email.setOnClickListener {
-            if (selectedProduct != null) {
-//                deepAR.takeScreenshot()
-                // **Bitmap
-//                openDialogFragment(
-//                    EmailFragment.newInstance(
-//                        selectedProduct!!,
-//                        viewToBitmap(binding.cardView3)!!
-//                    )
-//                )
-            }
+
         }
 
         binding.next.setOnClickListener {
@@ -140,7 +133,7 @@ class DeepARActivityHelper(
 
         binding.wishlist.setOnClickListener {
             if (selectedProduct != null) {
-//                Bookmarks.addToBookmark(selectedProduct!!)
+                Bookmarks.addToBookmark(selectedProduct!!)
             }
         }
 
@@ -167,77 +160,103 @@ class DeepARActivityHelper(
                 }
                 applyEffect(path ?: "none")
             }
-//            updateHeartIcon(Bookmarks.getBookmarks())
+            updateHeartIcon(Bookmarks.getBookmarks())
+        }
+
+        val filterManager = FilterManager(
+            binding.filterNavLayout,
+            productViewModel
+        ) { sorting, min, max, brandList ->
+            this.sortingOrder = sorting
+            this.currentPage = 0
+            this.totalProducts = 0
+            this.minPrice = min.toInt()
+            this.maxPrice = max.toInt()
+            this.brandList.clear()
+            this.brandList.addAll(brandList)
+            binding.productRecycler.scrollToPosition(0)
+            binding.productRecyclerLoader.isVisible = true
         }
 
         binding.productRecycler.adapter = adapter
 
-        binding.productRecyclerLoader.isVisible = true
-        viewModel.product.observe(deepARActivity) {
-            binding.productRecyclerLoader.isVisible = false
-//            adapter!!.updateData(it)
-            // remove this
-            binding.filterNavLayout.applyProgress.isVisible = false
-            binding.filterNavLayout.apply.text = "Apply"
-        }
+        binding.productRecycler.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
 
-        binding.filterNavLayout.sortbyDropdown.dropArrow.setOnClickListener {
-            val vis = binding.filterNavLayout.sortbyDropdown.radioGroup.isVisible
-            binding.filterNavLayout.sortbyDropdown.radioGroup.isVisible = !vis
+                val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+                val visibleItemCount = layoutManager.childCount
+                val totalItemCount = layoutManager.itemCount
+                val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
 
-            rotateImage(
-                binding.filterNavLayout.sortbyDropdown.dropArrow,
-                if (!vis) 180f else 0f,
-                0f,
-            )
-        }
+
+                if (totalProducts <= totalItemCount) return
+
+                if (!isLoading && totalItemCount > visibleItemCount &&
+                    (visibleItemCount + firstVisibleItemPosition) >= totalItemCount - 1 &&
+                    firstVisibleItemPosition >= 0
+                ) {
+
+                    if (maxPrice == 0) {
+                        maxPrice = 1000
+                    }
+                    isLoading = true
+                    productViewModel.fetchProduct(
+                        sortingOrder = sortingOrder,
+                        page = currentPage,
+                        min = minPrice,
+                        max = maxPrice,
+                        brands = brandList
+                    )
+                }
+            }
+        })
 
         viewModel.filter.observe(deepARActivity) {
             if (!it.isNullOrEmpty()) {
+                filterManager.updateBrandList(it)
+            }
+        }
 
-                binding.filterNavLayout.apply.setOnClickListener { v ->
-                    val selectedIndex =
-                        binding.filterNavLayout.sortbyDropdown.radioGroup.indexOfChild(
-                            binding.root.findViewById(binding.filterNavLayout.sortbyDropdown.radioGroup.checkedRadioButtonId)
-                        )
+        viewModel.price.observe(deepARActivity) {
+            if (it == null) return@observe
+            minPrice = it.min().toInt()
+            maxPrice = it.max().toInt()
+            filterManager.updateRange(it.min().toFloat(), it.max().toFloat())
+        }
 
-                    if (it.none { iii -> iii.isSelected } && selectedIndex < 0) {
-                        Toast.makeText(
-                            deepARActivity, "Please select filter first", Toast.LENGTH_SHORT
-                        ).show()
-                        return@setOnClickListener
+        productViewModel.products.observe(deepARActivity) {
+            when (it) {
+                is Resource.Error -> {
+                    isLoading = false
+                    binding.productRecyclerLoader.isVisible = false
+                }
+
+                is Resource.Loading -> {
+
+                }
+
+                is Resource.Success -> {
+                    isLoading = false
+                    binding.productRecyclerLoader.isVisible = false
+
+                    if (totalProducts > currentPage * 10) {
+                        GlobalProducts.addProduct(it.data.products)
+                    } else {
+                        if (GlobalProducts.getproducts().isEmpty()) {
+                            GlobalProducts.updateProduct(it.data.products)
+                        } else {
+                            GlobalProducts.addProduct(it.data.products)
+                        }
                     }
 
-                    binding.filterNavLayout.applyProgress.isVisible = true
-                    binding.filterNavLayout.apply.text = ""
-
-                    viewModel.fetchProducts(true, binding.progressBar,  it, selectedIndex)
-                    binding.drawerLayout.closeDrawers()
+                    currentPage++
+                    totalProducts = it.data.totalHits
                 }
-
-                binding.filterNavLayout.recyclerDropdownBrand.dropArrow.setOnClickListener {
-                    val vis = binding.filterNavLayout.recyclerDropdownBrand.optionParent.isVisible
-                    binding.filterNavLayout.recyclerDropdownBrand.optionParent.isVisible = !vis
-
-                    rotateImage(
-                        binding.filterNavLayout.recyclerDropdownBrand.dropArrow,
-                        if (!vis) 180f else 0f,
-                        0f,
-                    )
-                }
-                val ad = FilterListAdapter(it) {
-
-                }
-                binding.filterNavLayout.recyclerDropdownBrand.options.adapter = ad
-
-
-                binding.filterNavLayout.reset.setOnClickListener { v ->
-                    it.forEach { pp -> pp.isSelected = false }
-                    viewModel.fetchProducts(true, binding.progressBar,  it)
-                    ad.notifyDataSetChanged()
-                }
-
             }
+            binding.drawerLayout.closeDrawers()
+            binding.filterNavLayout.applyProgress.isVisible = false
+            binding.filterNavLayout.apply.text = "Apply"
         }
 
         Bookmarks.bookmarks.observe(deepARActivity) { bookmarkedProducts ->
@@ -248,9 +267,16 @@ class DeepARActivityHelper(
 //            updateHeartIcon(bookmarkedProducts)
             binding.bookmarkCount.text = "${bookmarkedProducts.size}"
         }
-
-        viewModel.onlyRecommendation()
+        GlobalProducts.products.observe(deepARActivity) {
+            binding.productRecyclerLoader.isVisible = false
+            adapter!!.updateData(it)
+        }
+//        binding.productRecyclerLoader.isVisible = true
         viewModel.fetchAllBrands()
+        CoroutineScope(Dispatchers.Main).launch {
+            viewModel.fetchAllRecords()
+        }
+        productViewModel.fetchProduct()
     }
 
     private fun openDialogFragment(fragment: DialogFragment) {

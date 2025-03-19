@@ -22,6 +22,7 @@ import android.view.Surface
 import android.view.SurfaceHolder
 import android.view.View
 import android.widget.TextView
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
@@ -37,7 +38,11 @@ import com.mirrar.tablettryon.LoadImageHandlerThread.LOAD_BITMAP
 import com.mirrar.tablettryon.LoadImageHandlerThread.LOAD_DEFAULT_IMAGE_TASK
 import com.mirrar.tablettryon.LoadImageHandlerThread.REFRESH_IMAGE_TASK
 import com.mirrar.tablettryon.databinding.ActivityDeepAractivityBinding
+import com.mirrar.tablettryon.network.ApiService
+import com.mirrar.tablettryon.network.Repository
+import com.mirrar.tablettryon.network.Retrofit
 import com.mirrar.tablettryon.products.model.product.Product
+import com.mirrar.tablettryon.products.viewModel.ProductViewModel
 import com.mirrar.tablettryon.tools.DeepARActivityHelper
 import com.mirrar.tablettryon.utility.AppConstraint.AR_BITMAP
 import com.mirrar.tablettryon.utility.HelperFunctions.getNavigationBarHeight
@@ -64,6 +69,11 @@ class DeepARActivity : AppCompatActivity(), SurfaceHolder.Callback, AREventListe
     private var currentBuffer = 0
     private val NUMBER_OF_BUFFERS: Int = 2
     private val useExternalCameraTexture: Boolean = false
+
+    private val response = Retrofit.getInstance()?.create(ApiService::class.java)
+    private val productViewModel: ProductViewModel by viewModels {
+        ProductViewModel.Factory(Repository((response!!)))
+    }
 
     private var deepAR: DeepAR? = null
 
@@ -273,7 +283,7 @@ class DeepARActivity : AppCompatActivity(), SurfaceHolder.Callback, AREventListe
         val cameraResolutionPreset = CameraResolutionPreset.P1920x1080
         val width: Int ///= binding.surface.width
         val height: Int// = binding.surface.height
-       val orientation = getScreenOrientation()
+        val orientation = getScreenOrientation()
         if (orientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE || orientation == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
             width = cameraResolutionPreset.width
             height = cameraResolutionPreset.height
@@ -397,7 +407,7 @@ class DeepARActivity : AppCompatActivity(), SurfaceHolder.Callback, AREventListe
         _binding = ActivityDeepAractivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        deepARActivityHelper = DeepARActivityHelper(this, {
+        deepARActivityHelper = DeepARActivityHelper(this, productViewModel, {
             deepAR!!.switchEffect("effect", it)
         }, { s, p ->
             screenshot = s

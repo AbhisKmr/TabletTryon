@@ -1,6 +1,7 @@
 package com.mirrar.tablettryon.view.fragment.tryon
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Canvas
@@ -30,6 +31,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
+import com.mirrar.tablettryon.DeepARActivity
 import com.mirrar.tablettryon.R
 import com.mirrar.tablettryon.databinding.FragmentTryOnBinding
 import com.mirrar.tablettryon.network.ApiService
@@ -120,6 +122,7 @@ class TryOnFragment : Fragment() {
         })
 
         binding.switchMode.setOnClickListener {
+            startActivity(Intent(requireActivity(), DeepARActivity::class.java))
         }
 
         binding.details.setOnClickListener {
