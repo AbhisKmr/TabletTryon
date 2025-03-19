@@ -62,4 +62,9 @@
             android:id="@+id/action_deepARFragment_to_catalogueFragment"
             app:destination="@id/catalogueFragment" />
     </fragment>
+    <dialog
+        android:id="@+id/selfieFragment"
+        android:name="com.mirrar.tablettryon.view.fragment.selfie.SelfieFragment"
+        android:label="fragment_selfie"
+        tools:layout="@layout/fragment_selfie" />
 </navigation>

@@ -105,17 +105,17 @@ class SelfieFragment(private val p: Product, private val bitmap: Bitmap) : Dialo
 
         binding.send.setOnClickListener {
 
-            if (binding.name.text.trim().isEmpty()) {
+            if (binding.name.text?.trim()?.isEmpty() == true) {
                 binding.name.error = "Required"
                 return@setOnClickListener
             }
 
-            if (binding.email.text.trim().isEmpty()) {
+            if (binding.email.text?.trim()?.isEmpty() == true) {
                 binding.email.error = "Required"
                 return@setOnClickListener
             }
 
-            if (!EmailHelper.isValidEmail(binding.email.text.trim().toString())) {
+            if (!EmailHelper.isValidEmail(binding.email.text?.trim().toString())) {
                 binding.email.error = "Invalid email"
                 return@setOnClickListener
             }
