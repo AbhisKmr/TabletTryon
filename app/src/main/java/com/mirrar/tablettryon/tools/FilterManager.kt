@@ -1,5 +1,7 @@
 package com.mirrar.tablettryon.tools
 
+import android.annotation.SuppressLint
+import android.widget.RadioButton
 import androidx.core.view.isVisible
 import com.mirrar.tablettryon.R
 import com.mirrar.tablettryon.databinding.FilterNavLayoutBinding
@@ -11,6 +13,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
+@SuppressLint("NotifyDataSetChanged")
 class FilterManager(
     val binding: FilterNavLayoutBinding,
     productViewModel: ProductViewModel,
@@ -18,9 +21,10 @@ class FilterManager(
 ) {
 
     private val filterDataModels = mutableListOf<FilterDataModel>()
+    private var filterListAdapter: FilterListAdapter = FilterListAdapter(filterDataModels) {}
 
     init {
-
+        binding.recyclerDropdownBrand.options.adapter = filterListAdapter
         binding.sortbyDropdown.radioGroup.check(R.id.radioOption1)
 
         binding.sortbyDropdown.clickView.setOnClickListener {
@@ -59,6 +63,11 @@ class FilterManager(
         }
 
         binding.reset.setOnClickListener {
+            val firstRadioButton = binding.sortbyDropdown.radioGroup.getChildAt(0) as? RadioButton
+            firstRadioButton?.let { binding.sortbyDropdown.radioGroup.check(it.id) }
+            filterDataModels.forEach { it.isSelected = false }
+            filterListAdapter.notifyDataSetChanged()
+
             applyFilter("low_to_high", 0f, 0f, emptyList())
             productViewModel.fetchProduct()
         }
@@ -80,13 +89,11 @@ class FilterManager(
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     fun updateBrandList(filterDataModels: List<FilterDataModel>) {
         this.filterDataModels.clear()
         this.filterDataModels.addAll(filterDataModels)
 
-        val ad = FilterListAdapter(filterDataModels) {
-
-        }
-        binding.recyclerDropdownBrand.options.adapter = ad
+        filterListAdapter.notifyDataSetChanged()
     }
 }
