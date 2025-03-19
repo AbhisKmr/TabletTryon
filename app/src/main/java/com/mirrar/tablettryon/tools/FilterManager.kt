@@ -20,12 +20,16 @@ class FilterManager(
     val applyFilter: (sortingOrder: String, min: Float, max: Float, brandList: List<String>) -> Unit
 ) {
 
+    private var minPrince = 0f
+    private var maxPrince = 10000f
     private val filterDataModels = mutableListOf<FilterDataModel>()
     private var filterListAdapter: FilterListAdapter = FilterListAdapter(filterDataModels) {}
 
     init {
         binding.recyclerDropdownBrand.options.adapter = filterListAdapter
         binding.sortbyDropdown.radioGroup.check(R.id.radioOption1)
+
+        updateRange(minPrince, maxPrince)
 
         binding.sortbyDropdown.clickView.setOnClickListener {
             val vis = binding.sortbyDropdown.radioGroup.isVisible
@@ -67,9 +71,18 @@ class FilterManager(
             firstRadioButton?.let { binding.sortbyDropdown.radioGroup.check(it.id) }
             filterDataModels.forEach { it.isSelected = false }
             filterListAdapter.notifyDataSetChanged()
-
-            applyFilter("low_to_high", 0f, 0f, emptyList())
+            minPrince = 0f
+            maxPrince = 10000f
+            updateRange(minPrince, maxPrince)
+            applyFilter("low_to_high", minPrince, maxPrince, emptyList())
             productViewModel.fetchProduct()
+        }
+
+        binding.priceRange.priceRange.addOnChangeListener { slider, value, fromUser ->
+            minPrince = slider.values[0]
+            maxPrince = slider.values[1]
+            binding.priceRange.min.text = "Min: CHF${slider.values[0].toInt()}"
+            binding.priceRange.max.text = "Max: CHF${slider.values[1].toInt()}"
         }
 
         binding.apply.setOnClickListener {
@@ -84,8 +97,8 @@ class FilterManager(
 
             val lst = filterDataModels.mapNotNull { if (it.isSelected) it.value else null }
 
-            productViewModel.fetchProduct(sortingOrder = sorting, brands = lst)
-            applyFilter(sorting, 0f, 0f, lst)
+            productViewModel.fetchProduct(sortingOrder = sorting, min = minPrince.toInt(), max = maxPrince.toInt(), brands = lst)
+            applyFilter(sorting, minPrince, maxPrince, lst)
         }
     }
 
@@ -96,4 +109,15 @@ class FilterManager(
 
         filterListAdapter.notifyDataSetChanged()
     }
+
+    fun updateRange(min: Float, max: Float) {
+        binding.priceRange.priceRange.valueFrom = min
+        binding.priceRange.priceRange.valueTo = max
+        binding.priceRange.priceRange.values =
+            listOf(0f, 10000f)
+        // Set the limit range
+        binding.priceRange.min.text = "Min: CHF${0}"
+        binding.priceRange.max.text = "Max: CHF${10000}"
+    }
+
 }

@@ -74,6 +74,8 @@ class TryOnFragment : Fragment() {
     private var sortingOrder = "low_to_high"
     private var currentPage = 0
     private var totalProducts = 0
+    private var minPrice = 0
+    private var maxPrice = 0
     private var isLoading: Boolean = false
     private var brandList = mutableListOf<String>()
 
@@ -203,6 +205,8 @@ class TryOnFragment : Fragment() {
             this.sortingOrder = sorting
             this.currentPage = 0
             this.totalProducts = 0
+            this.minPrice = min.toInt()
+            this.maxPrice = maxPrice
             this.brandList.clear()
             this.brandList.addAll(brandList)
             adapter.clear()
@@ -225,11 +229,18 @@ class TryOnFragment : Fragment() {
 
                 if (!isLoading && totalItemCount > visibleItemCount &&
                     (visibleItemCount + firstVisibleItemPosition) >= totalItemCount - 1 &&
-                    firstVisibleItemPosition >= 0) {
+                    firstVisibleItemPosition >= 0
+                ) {
 
                     isLoading = true
                     binding.progressBar.isVisible = true
-                    productViewModel.fetchProduct(sortingOrder = sortingOrder, page = currentPage, brands = brandList)
+                    productViewModel.fetchProduct(
+                        sortingOrder = sortingOrder,
+                        page = currentPage,
+                        min = minPrice,
+                        max = maxPrice,
+                        brands = brandList
+                    )
                 }
             }
         })
@@ -272,15 +283,6 @@ class TryOnFragment : Fragment() {
             binding.filterNavLayout.apply.text = "Apply"
         }
 
-        updateRange(priceMin!!, priceMax!!, priceMin!!, priceMax!!)
-
-        binding.filterNavLayout.priceRange.priceRange.addOnChangeListener { slider, _, _ ->
-            binding.filterNavLayout.priceRange.min.text = "Min: CHF${slider.values[0].toInt()}"
-            binding.filterNavLayout.priceRange.max.text = "Max: CHF${slider.values[1].toInt()}"
-            priceMin = slider.values[0]
-            priceMax = slider.values[1]
-        }
-
         Bookmarks.bookmarks.observe(viewLifecycleOwner) { bookmarkedProducts ->
             if (bookmarkedProducts == null) {
                 return@observe
@@ -293,15 +295,6 @@ class TryOnFragment : Fragment() {
         binding.productRecyclerLoader.isVisible = true
         viewModel.fetchAllBrands()
         productViewModel.fetchProduct()
-    }
-
-    private fun updateRange(min: Float, max: Float, minValue: Float, maxValue: Float) {
-        binding.filterNavLayout.priceRange.priceRange.valueFrom = min
-        binding.filterNavLayout.priceRange.priceRange.valueTo = max
-        binding.filterNavLayout.priceRange.priceRange.values =
-            listOf(minValue, maxValue) // Set the initial range
-        binding.filterNavLayout.priceRange.min.text = "Min: CHF${minValue.toInt()}"
-        binding.filterNavLayout.priceRange.max.text = "Max: CHF${maxValue.toInt()}"
     }
 
     private fun updateHeartIcon(list: List<Product>) {

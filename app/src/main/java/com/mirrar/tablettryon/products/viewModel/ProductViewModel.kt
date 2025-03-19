@@ -20,11 +20,13 @@ class ProductViewModel(private val repository: Repository) : ViewModel() {
         sortingOrder: String = "low_to_high",
         uuid: String = recommendationModel?.uuid ?: "",
         page: Int = 0,
+        min: Int = 0,
+        max: Int = 10000,
         brands: List<String> = emptyList()
     ) {
         viewModelScope.launch {
             _products.value = Resource.Loading()
-            _products.value = repository.fetchCategories(sortingOrder, uuid, page, brands)
+            _products.value = repository.fetchCategories(sortingOrder, uuid, page, min, max, brands)
         }
     }
 

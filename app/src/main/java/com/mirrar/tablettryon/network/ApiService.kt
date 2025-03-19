@@ -65,6 +65,8 @@ interface ApiService {
         @Query("sort_order") sortOrder: String,
         @Query("page") page: Int,
         @Query("uuid") uuid: String,
+        @Query("min_price") minPrice: Int,
+        @Query("max_price") maxPrice: Int,
         @Query("brand") brands: List<String>
     ): Response<ApiProduct>
 }

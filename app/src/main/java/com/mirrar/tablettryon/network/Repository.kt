@@ -11,11 +11,13 @@ class Repository(private val apiService: ApiService) {
         sortingOrder: String,
         uuid: String,
         page: Int,
+        minPrice: Int,
+        maxPrice: Int,
         brands: List<String>
     ): Resource<ApiProduct> {
         return try {
             val response =
-                apiService.getFilteredProducts(sortingOrder, page, uuid, brands)
+                apiService.getFilteredProducts(sortingOrder, page, uuid, minPrice, maxPrice, brands)
             handleApiResponse(response)
         } catch (e: Exception) {
             Resource.Error("Network error: ${e.localizedMessage}")
