@@ -123,7 +123,7 @@ class SelfieFragment : DialogFragment() {
                 "selfie"
             ) {
                 if (it != null) {
-                    dismissDialog()
+//                    dismissDialog()
                 } else {
                     binding.sendProgress.isVisible = true
                     binding.sendTv.text = "Send"

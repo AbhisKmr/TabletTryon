@@ -34,15 +34,16 @@ class CameraImagePreviewFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val emailFragment = EmailSavePopupFragment.newInstance {
-            EmailHelper.sendDynamicEmail(requireContext(), "face scan") {
-                if (it == null) {
-                    Toast.makeText(
-                        requireContext(), "Failed to send email.", Toast.LENGTH_SHORT
-                    ).show()
-                }
-                findNavController().navigate(R.id.action_cameraImagePreviewFragment4_to_tryOnFragment)
-
-            }
+//            EmailHelper.sendDynamicEmail(requireContext(), "face scan") {
+//                if (it == null) {
+//                    Toast.makeText(
+//                        requireContext(), "Failed to send email.", Toast.LENGTH_SHORT
+//                    ).show()
+//                }
+//                findNavController().navigate(R.id.action_cameraImagePreviewFragment4_to_tryOnFragment)
+//
+//            }
+            findNavController().navigate(R.id.action_cameraImagePreviewFragment4_to_tryOnFragment)
         }
 
         binding.cameraPreview.setImageBitmap(AR_BITMAP)
