@@ -31,7 +31,6 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.google.mediapipe.examples.facelandmarker.FaceLandmarkerHelper
-import com.mirrar.tablettryon.products.viewModel.ProductViewModel
 import com.mirrar.tablettryon.R
 import com.mirrar.tablettryon.databinding.FragmentTryOnBinding
 import com.mirrar.tablettryon.network.ApiService
@@ -39,6 +38,7 @@ import com.mirrar.tablettryon.network.Repository
 import com.mirrar.tablettryon.network.Resource
 import com.mirrar.tablettryon.network.Retrofit
 import com.mirrar.tablettryon.products.model.product.Product
+import com.mirrar.tablettryon.products.viewModel.ProductViewModel
 import com.mirrar.tablettryon.utility.AppConstraint.AR_BITMAP
 import com.mirrar.tablettryon.utility.AppConstraint.filterTryOn
 import com.mirrar.tablettryon.utility.AppConstraint.priceMax
@@ -47,16 +47,11 @@ import com.mirrar.tablettryon.utility.Bookmarks
 import com.mirrar.tablettryon.utility.HelperFunctions.isValidUrl
 import com.mirrar.tablettryon.utility.HelperFunctions.rotateImage
 import com.mirrar.tablettryon.view.fragment.ClubAvoltaFragment
-import com.mirrar.tablettryon.view.fragment.ProductDetailsFragment
 import com.mirrar.tablettryon.view.fragment.bookmark.YouBookmarkFragment
-import com.mirrar.tablettryon.view.fragment.email.EmailFragment
-import com.mirrar.tablettryon.view.fragment.selfie.SelfieFragment
 import com.mirrar.tablettryon.view.fragment.tryon.adapter.ProductAdapter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.io.IOException
 import java.util.concurrent.ScheduledExecutorService
 
@@ -72,11 +67,8 @@ class TryOnFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
         ProductViewModel.Factory(Repository((response!!)))
     }
 
-    private lateinit var faceLandmarkerHelper: FaceLandmarkerHelper
-    private lateinit var backgroundExecutor: ScheduledExecutorService
-
-    private var currentPage = 0
-    private val totalProducts = MutableLiveData<Int>()
+    private var currentPage = 1
+    private var totalProducts = 1
     private var isLoading: Boolean = false
 
     override fun onCreateView(
@@ -206,35 +198,19 @@ class TryOnFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
                 val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
 
                 if (!isLoading && (visibleItemCount + firstVisibleItemPosition) >= totalItemCount && firstVisibleItemPosition >= 0) {
-
                     isLoading = true
-
+                    binding.progressBar.isVisible = true
+                    productViewModel.fetchProduct(page = currentPage)
                 }
-
-                /* val layoutManager = recyclerView.layoutManager as? LinearLayoutManager
-                 layoutManager?.let {
-                     val firstVisibleItemIndex = it.findFirstVisibleItemPosition()
-                     if (recommendationModel?.recommendations != null) {
-                         if (firstVisibleItemIndex > recommendationModel!!.recommendations.size) {
-                             CallApi.getMoreAssets(
-                                 recommendationModel!!.uuid!!,
-                                 recommendationModel!!.recommendations.map { obj -> obj.objectID }
-                             ) { res ->
-                                 adapter.updateAssetUrl(res?.tryonOutputs ?: emptyMap())
-                             }
-                         }
-                     }
-                 }*/
             }
         })
 
-        binding.productRecyclerLoader.isVisible = true
-
         productViewModel.products.observe(viewLifecycleOwner) {
-            binding.productRecyclerLoader.isVisible = it is Resource.Loading
             when (it) {
                 is Resource.Error -> {
-
+                    isLoading = false
+                    binding.progressBar.isVisible = false
+                    binding.productRecyclerLoader.isVisible = false
                 }
 
                 is Resource.Loading -> {
@@ -242,8 +218,18 @@ class TryOnFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
                 }
 
                 is Resource.Success -> {
-                    adapter.updateData(it.data.products)
+                    isLoading = false
+                    binding.progressBar.isVisible = false
+                    binding.productRecyclerLoader.isVisible = false
 
+                    if (totalProducts >= currentPage * 10) {
+                        adapter.addData(it.data.products)
+                    } else {
+                        adapter.updateData(it.data.products)
+                    }
+
+                    currentPage++
+                    totalProducts = it.data.totalHits
                 }
             }
         }
@@ -279,7 +265,8 @@ class TryOnFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
             binding.bookmarkCount.text = "${bookmarkedProducts.size}"
         }
 
-        productViewModel.fetchProduct()
+        binding.productRecyclerLoader.isVisible = true
+        productViewModel.fetchProduct(page = currentPage)
 
         binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
     }
@@ -374,6 +361,7 @@ class TryOnFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
         try {
             if (isValidUrl(selectedProduct?.triedOnUrl)) {
                 binding.lottieAnimation.isVisible = true
+                binding.imagePreview.setImageBitmap(AR_BITMAP)
                 CoroutineScope(Dispatchers.IO).launch {
                     Glide.with(requireContext())
                         .asBitmap()
