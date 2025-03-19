@@ -96,6 +96,7 @@ class TryOnFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
 
         binding.filterNavLayout.recyclerDropdownBrand.title.text = "Brand"
         binding.imageView3.setOnClickListener {
+            filterTryOn = null
             binding.drawerLayout.elevation = 100f
             binding.drawerLayout.openDrawer(GravityCompat.START)
         }
@@ -119,6 +120,7 @@ class TryOnFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
         })
 
         binding.catalogue.setOnClickListener {
+            filterTryOn = null
             findNavController().navigate(R.id.action_tryOnFragment_to_catalogueFragment)
         }
 
@@ -241,7 +243,7 @@ class TryOnFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
                 return@observe
             }
             if (viewModel.itIsForRecommendation) {
-                updateProductList(viewModel, adapter, it)
+                updateProductList(viewModel, adapter, it.toMutableList())
             } else if (recommendationModel != null) {
                 val map = mutableMapOf<String, String>()
                 it.forEach { obj -> map[obj.objectID] = obj.asset2DUrl.toString() }
@@ -253,11 +255,11 @@ class TryOnFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
                         }
                     }
                     requireActivity().runOnUiThread(Runnable {
-                        updateProductList(viewModel, adapter, it)
+                        updateProductList(viewModel, adapter, it.toMutableList())
                     })
                 }
             } else {
-                updateProductList(viewModel, adapter, it)
+                updateProductList(viewModel, adapter, it.toMutableList())
 
             }
 
@@ -378,11 +380,14 @@ class TryOnFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
     private fun updateProductList(
         viewModel: AlgoliaViewModel,
         adapter: ProductAdapter,
-        list: List<Product>
+        list: MutableList<Product>
     ) {
         binding.productRecyclerLoader.isVisible = false
         binding.progressBar.isVisible = false
 
+        if (filterTryOn != null) {
+            list.add(0, filterTryOn!!)
+        }
         if (viewModel.loadMore) {
             adapter.addData(list)
         } else {
@@ -503,6 +508,7 @@ class TryOnFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
             e.printStackTrace()
         }
     }
+
     private fun viewToBitmap(view: View): Bitmap? {
         if (view.width == 0 && view.height == 0) {
             return null

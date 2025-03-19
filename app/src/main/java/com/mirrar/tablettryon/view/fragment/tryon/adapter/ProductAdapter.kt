@@ -84,14 +84,14 @@ class ProductAdapter(private val clickListener: (Int, Product) -> Unit) :
 
         this.list.clear()
         this.list.addAll(list)
-        if (filterTryOn != null) {
-            if (this.list.contains(filterTryOn)) {
-                this.list.remove(filterTryOn)
-            }
-            this.list.add(0, filterTryOn!!)
-            filterTryOn = null
-            selectedIndex = 0
-        }
+//        if (filterTryOn != null) {
+//            if (this.list.contains(filterTryOn)) {
+//                this.list.remove(filterTryOn)
+//            }
+//            this.list.add(0, filterTryOn!!)
+//            filterTryOn = null
+//            selectedIndex = 0
+//        }
         notifyDataSetChanged()
     }
 
