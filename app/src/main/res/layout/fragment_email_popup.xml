@@ -50,7 +50,7 @@
                 android:layout_gravity="center"
                 android:fontFamily="@font/manrope_extra_bold"
                 android:gravity="center"
-                android:text="We are finding recommendation based on your look"
+                android:text="Discover Your Best Look with Personalized AI"
                 android:textColor="@color/black"
                 android:textSize="16sp" />
 

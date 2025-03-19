@@ -1,8 +1,6 @@
 package com.mirrar.tablettryon.view.fragment.email
 
-import android.graphics.Bitmap
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,9 +13,6 @@ import com.mirrar.tablettryon.databinding.FragmentEmailPopupBinding
 import com.mirrar.tablettryon.products.model.product.Product
 import com.mirrar.tablettryon.utility.AppConstraint.userEmail
 import com.mirrar.tablettryon.utility.AppConstraint.userName
-import com.mirrar.tablettryon.utility.Bookmarks
-import com.mirrar.tablettryon.view.fragment.email.dataModel.emailApi.Object
-import com.mirrar.tablettryon.view.fragment.email.dataModel.emailApi.SendEmailApiRequest
 
 class EmailPopupFragment(val emailTag: String, val p: Product? = null) : DialogFragment() {
 

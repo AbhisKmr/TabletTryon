@@ -33,6 +33,8 @@ class CameraImagePreviewFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        changeSubHeadingTxt()
+
         val emailFragment = EmailSavePopupFragment.newInstance {
 //            EmailHelper.sendDynamicEmail(requireContext(), "face scan") {
 //                if (it == null) {
@@ -55,12 +57,17 @@ class CameraImagePreviewFragment : Fragment() {
 
         binding.next.setOnClickListener {
             binding.lottieAnimation.isVisible = true
+            changeSubHeadingTxt(
+                "Finding Your Match",
+                "Our AI is analyzing your face for the perfect fit."
+            )
             updateScanView(false)
 //            emailFragment.show(childFragmentManager, emailFragment.tag)
             val b = ImageUploadForRecommendation().resizeAndCompressBitmap(AR_BITMAP!!)
             ImageUploadForRecommendation().uploadBitmap(
                 b, requireContext()
             ) {
+                changeSubHeadingTxt()
                 updateScanView(true)
                 recommendationModel = it
                 GlobalProducts.updateProduct(it?.recommendations ?: emptyList())
@@ -82,6 +89,14 @@ class CameraImagePreviewFragment : Fragment() {
         binding.textView4.isVisible = b
         binding.tvtv.isVisible = b
         binding.scanning.isVisible = !b
+    }
+
+    private fun changeSubHeadingTxt(
+        t: String = "Preview Your Style",
+        txt: String = "Review your look before moving forward."
+    ) {
+        binding.textView2.text = t
+        binding.textView3.text = txt
     }
 
     override fun onDestroyView() {

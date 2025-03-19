@@ -30,7 +30,7 @@
         android:ellipsize="end"
         android:fontFamily="@font/manrope_semi_bold"
         android:maxLines="1"
-        android:text="Our AI is analyzing your face for the perfect fit."
+        android:text="Capture your best look for better results."
         android:textColor="@color/black"
         android:textSize="16sp"
         android:theme="@style/CustomCheckbox"
