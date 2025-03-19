@@ -13,9 +13,9 @@ import androidx.lifecycle.withCreated
 import com.bumptech.glide.Glide
 import com.mirrar.tablettryon.R
 import com.mirrar.tablettryon.databinding.FragmentEmailBinding
+import com.mirrar.tablettryon.products.model.product.Product
 import com.mirrar.tablettryon.utility.HelperFunctions
 import com.mirrar.tablettryon.utility.HelperFunctions.getImageUrlFromProduct
-import com.mirrar.tablettryon.view.fragment.tryon.dataModel.Product
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext

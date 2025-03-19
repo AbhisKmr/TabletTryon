@@ -11,12 +11,12 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentTransaction
 import com.mirrar.tablettryon.R
 import com.mirrar.tablettryon.databinding.FragmentEmailPopupBinding
+import com.mirrar.tablettryon.products.model.product.Product
 import com.mirrar.tablettryon.utility.AppConstraint.userEmail
 import com.mirrar.tablettryon.utility.AppConstraint.userName
 import com.mirrar.tablettryon.utility.Bookmarks
 import com.mirrar.tablettryon.view.fragment.email.dataModel.emailApi.Object
 import com.mirrar.tablettryon.view.fragment.email.dataModel.emailApi.SendEmailApiRequest
-import com.mirrar.tablettryon.view.fragment.tryon.dataModel.Product
 
 class EmailPopupFragment(val emailTag: String, val p: Product? = null) : DialogFragment() {
 

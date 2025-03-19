@@ -14,7 +14,7 @@ import com.google.zxing.EncodeHintType
 import com.google.zxing.MultiFormatWriter
 import com.google.zxing.common.BitMatrix
 import com.journeyapps.barcodescanner.BarcodeEncoder
-import com.mirrar.tablettryon.view.fragment.tryon.dataModel.Product
+import com.mirrar.tablettryon.products.model.product.Product
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import java.io.File

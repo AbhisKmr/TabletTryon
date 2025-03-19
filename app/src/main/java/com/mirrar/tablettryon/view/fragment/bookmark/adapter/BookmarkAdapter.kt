@@ -7,8 +7,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.mirrar.tablettryon.databinding.BookmarkItemBinding
+import com.mirrar.tablettryon.products.model.product.Product
 import com.mirrar.tablettryon.utility.Bookmarks
-import com.mirrar.tablettryon.view.fragment.tryon.dataModel.Product
 
 class BookmarkAdapter : RecyclerView.Adapter<BookmarkAdapter.ViewHolder>() {
 

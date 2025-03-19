@@ -85,7 +85,7 @@ class CatalogueProductAdapter(private val clickListener: (Int, Product) -> Unit)
         }
 
         holder.binding.wishlist.setOnClickListener {
-            Bookmarks.addToBookmark(p)
+//            Bookmarks.addToBookmark(p)
             p.isBookmarked = !p.isBookmarked
             notifyDataSetChanged()
         }

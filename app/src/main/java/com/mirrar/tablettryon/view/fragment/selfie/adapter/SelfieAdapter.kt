@@ -7,9 +7,9 @@ import androidx.lifecycle.DEFAULT_ARGS_KEY
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.mirrar.tablettryon.databinding.SelfieItemBinding
+import com.mirrar.tablettryon.products.model.product.Product
 import com.mirrar.tablettryon.utility.AppConstraint.AR_BITMAP
 import com.mirrar.tablettryon.utility.HelperFunctions.isValidUrl
-import com.mirrar.tablettryon.view.fragment.tryon.dataModel.Product
 
 class SelfieAdapter(val list: List<Product>) : RecyclerView.Adapter<SelfieAdapter.ViewHolder>() {
 
@@ -37,8 +37,8 @@ class SelfieAdapter(val list: List<Product>) : RecyclerView.Adapter<SelfieAdapte
         holder.binding.productPrice.text =
             "${p.currency} ${p.priceDutyFree}"
 
-        if (isValidUrl(p.triedOnImageUrl)) {
-            Glide.with(ctx).load(p.triedOnImageUrl).into(holder.binding.modelPreview)
+        if (isValidUrl(p.triedOnUrl)) {
+            Glide.with(ctx).load(p.triedOnUrl).into(holder.binding.modelPreview)
         }
         else {
             holder.binding.modelPreview.setImageBitmap(AR_BITMAP)

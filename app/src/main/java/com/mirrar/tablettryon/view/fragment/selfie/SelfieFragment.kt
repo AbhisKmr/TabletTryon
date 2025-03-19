@@ -15,6 +15,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.mirrar.tablettryon.R
 import com.mirrar.tablettryon.databinding.FragmentSelfieBinding
+import com.mirrar.tablettryon.products.model.product.Product
 import com.mirrar.tablettryon.utility.AppConstraint.userEmail
 import com.mirrar.tablettryon.utility.AppConstraint.userName
 import com.mirrar.tablettryon.utility.Bookmarks
@@ -22,7 +23,6 @@ import com.mirrar.tablettryon.utility.HelperFunctions
 import com.mirrar.tablettryon.view.activity.MainActivity
 import com.mirrar.tablettryon.view.fragment.email.EmailHelper
 import com.mirrar.tablettryon.view.fragment.email.dataModel.emailApi.SendEmailApiRequest
-import com.mirrar.tablettryon.view.fragment.tryon.dataModel.Product
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch

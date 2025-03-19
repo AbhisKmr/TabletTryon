@@ -78,20 +78,20 @@ class CatalogueFragment : Fragment() {
 
         binding.filterChipRecycler.adapter = FilterChipAdapter()
         val adapter = CatalogueProductAdapter { _, p ->
-            ProductDetailsFragment.newInstance(p, {
-                filterTryOn = p
-                Handler().postDelayed({
-                    requireActivity().onBackPressedDispatcher.onBackPressed()
-                }, 500)
-            }).show(childFragmentManager, "ProductDetailsFragment")
+//            ProductDetailsFragment.newInstance(p, {
+//                filterTryOn = p
+//                Handler().postDelayed({
+//                    requireActivity().onBackPressedDispatcher.onBackPressed()
+//                }, 500)
+//            }).show(childFragmentManager, "ProductDetailsFragment")
         }
 
         binding.productRecycler.adapter = adapter
 
         viewModel.product.observe(viewLifecycleOwner) { products ->
-            products.forEach { product ->
-                product.isBookmarked = Bookmarks.getBookmarks().contains(product)
-            }
+//            products.forEach { product ->
+//                product.isBookmarked = Bookmarks.getBookmarks().contains(product)
+//            }
             adapter.updateData(products)
 
             binding.filterNavLayout.applyProgress.isVisible = false

@@ -2,7 +2,7 @@ package com.mirrar.tablettryon.utility
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.mirrar.tablettryon.view.fragment.tryon.dataModel.Product
+import com.mirrar.tablettryon.products.model.product.Product
 
 object Bookmarks {
     private val _bookmarks = MutableLiveData<MutableList<Product>>()

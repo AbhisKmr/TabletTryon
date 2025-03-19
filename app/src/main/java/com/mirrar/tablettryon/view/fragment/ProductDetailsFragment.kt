@@ -13,10 +13,10 @@ import androidx.fragment.app.FragmentTransaction
 import com.bumptech.glide.Glide
 import com.mirrar.tablettryon.R
 import com.mirrar.tablettryon.databinding.FragmentProductDetailsBinding
+import com.mirrar.tablettryon.products.model.product.Product
 import com.mirrar.tablettryon.utility.Bookmarks
 import com.mirrar.tablettryon.utility.HelperFunctions.getImageUrlFromProduct
 import com.mirrar.tablettryon.view.fragment.email.EmailPopupFragment
-import com.mirrar.tablettryon.view.fragment.tryon.dataModel.Product
 
 class ProductDetailsFragment(
     private val product: Product,

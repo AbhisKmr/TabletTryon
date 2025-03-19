@@ -48,7 +48,10 @@ import com.mirrar.tablettryon.utility.Bookmarks
 import com.mirrar.tablettryon.utility.HelperFunctions.isValidUrl
 import com.mirrar.tablettryon.utility.HelperFunctions.rotateImage
 import com.mirrar.tablettryon.view.fragment.ClubAvoltaFragment
+import com.mirrar.tablettryon.view.fragment.ProductDetailsFragment
 import com.mirrar.tablettryon.view.fragment.bookmark.YouBookmarkFragment
+import com.mirrar.tablettryon.view.fragment.email.EmailFragment
+import com.mirrar.tablettryon.view.fragment.selfie.SelfieFragment
 import com.mirrar.tablettryon.view.fragment.tryon.adapter.ProductAdapter
 import com.mirrar.tablettryon.view.fragment.tryon.viewModel.AlgoliaViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -129,29 +132,29 @@ class TryOnFragment : Fragment() {
 
         binding.details.setOnClickListener {
             if (selectedProduct != null) {
-//                openDialogFragment(ProductDetailsFragment.newInstance(selectedProduct!!, {}))
+                openDialogFragment(ProductDetailsFragment.newInstance(selectedProduct!!, {}))
             }
         }
 
         binding.email.setOnClickListener {
             if (selectedProduct != null) {
-//                openDialogFragment(
-//                    EmailFragment.newInstance(
-//                        selectedProduct!!,
-//                        viewToBitmap(binding.cardView3)!!
-//                    )
-//                )
+                openDialogFragment(
+                    EmailFragment.newInstance(
+                        selectedProduct!!,
+                        viewToBitmap(binding.cardView3)!!
+                    )
+                )
             }
         }
 
         binding.next.setOnClickListener {
             if (selectedProduct != null) {
-//                openDialogFragment(
-//                    SelfieFragment.newInstance(
-//                        selectedProduct!!,
-//                        viewToBitmap(binding.cardView3)!!
-//                    )
-//                )
+                openDialogFragment(
+                    SelfieFragment.newInstance(
+                        selectedProduct!!,
+                        viewToBitmap(binding.cardView3)!!
+                    )
+                )
             }
         }
 
@@ -167,7 +170,7 @@ class TryOnFragment : Fragment() {
 
         binding.wishlist.setOnClickListener {
             if (selectedProduct != null) {
-//                Bookmarks.addToBookmark(selectedProduct!!)
+                Bookmarks.addToBookmark(selectedProduct!!)
             }
         }
 
@@ -188,6 +191,7 @@ class TryOnFragment : Fragment() {
             binding.productPrice.text =
                 "${p.currency} ${p.priceDutyFree}"
 
+            updateHeartIcon(Bookmarks.getBookmarks())
             applyAR()
 
         }
@@ -282,7 +286,7 @@ class TryOnFragment : Fragment() {
                 return@observe
             }
 
-//            updateHeartIcon(bookmarkedProducts)
+            updateHeartIcon(bookmarkedProducts)
             binding.bookmarkCount.text = "${bookmarkedProducts.size}"
         }
 
