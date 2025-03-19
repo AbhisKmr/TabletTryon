@@ -351,24 +351,13 @@
         android:id="@+id/productRecycler"
         android:layout_width="0dp"
         android:layout_height="124dp"
-        android:layout_marginEnd="12dp"
         android:orientation="horizontal"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toTopOf="@+id/constraintLayout2"
-        app:layout_constraintEnd_toStartOf="@+id/progressBar"
+        app:layout_constraintEnd_toEndOf="@+id/cardView3"
         app:layout_constraintStart_toEndOf="@+id/imageView3"
         app:layout_constraintTop_toBottomOf="@+id/cardView3"
         tools:listitem="@layout/product_card" />
-
-    <ProgressBar
-        android:id="@+id/progressBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@+id/productRecycler"
-        app:layout_constraintDimensionRatio="1:1"
-        app:layout_constraintEnd_toEndOf="@+id/cardView3"
-        app:layout_constraintTop_toTopOf="@+id/productRecycler" />
 
     <com.facebook.shimmer.ShimmerFrameLayout
         android:id="@+id/productRecyclerLoader"

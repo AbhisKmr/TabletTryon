@@ -8,6 +8,7 @@ import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -46,6 +47,7 @@ import com.mirrar.tablettryon.utility.AppConstraint.filterTryOn
 import com.mirrar.tablettryon.utility.AppConstraint.priceMax
 import com.mirrar.tablettryon.utility.AppConstraint.priceMin
 import com.mirrar.tablettryon.utility.Bookmarks
+import com.mirrar.tablettryon.utility.GlobalProducts
 import com.mirrar.tablettryon.utility.HelperFunctions.isValidUrl
 import com.mirrar.tablettryon.utility.HelperFunctions.rotateImage
 import com.mirrar.tablettryon.view.fragment.ClubAvoltaFragment
@@ -240,11 +242,10 @@ class TryOnFragment : Fragment() {
                     firstVisibleItemPosition >= 0
                 ) {
 
-                    if (maxPrice == 0){
+                    if (maxPrice == 0) {
                         maxPrice = 1000
                     }
                     isLoading = true
-                    binding.progressBar.isVisible = true
                     productViewModel.fetchProduct(
                         sortingOrder = sortingOrder,
                         page = currentPage,
@@ -273,7 +274,6 @@ class TryOnFragment : Fragment() {
             when (it) {
                 is Resource.Error -> {
                     isLoading = false
-                    binding.progressBar.isVisible = false
                     binding.productRecyclerLoader.isVisible = false
                 }
 
@@ -283,13 +283,12 @@ class TryOnFragment : Fragment() {
 
                 is Resource.Success -> {
                     isLoading = false
-                    binding.progressBar.isVisible = false
                     binding.productRecyclerLoader.isVisible = false
 
                     if (totalProducts > currentPage * 10) {
-                        adapter.addData(it.data.products)
+                        GlobalProducts.addProduct(it.data.products)
                     } else {
-                        adapter.updateData(it.data.products)
+                        GlobalProducts.updateProduct(it.data.products)
                     }
 
                     currentPage++
@@ -309,7 +308,9 @@ class TryOnFragment : Fragment() {
             updateHeartIcon(bookmarkedProducts)
             binding.bookmarkCount.text = "${bookmarkedProducts.size}"
         }
-
+        GlobalProducts.products.observe(viewLifecycleOwner) {
+            adapter.updateData(it)
+        }
         binding.productRecyclerLoader.isVisible = true
         viewModel.fetchAllBrands()
         CoroutineScope(Dispatchers.Main).launch {
