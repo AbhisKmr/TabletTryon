@@ -251,6 +251,11 @@ class TryOnFragment : Fragment() {
             }
         }
 
+        viewModel.price.observe(viewLifecycleOwner) {
+            if (it == null) return@observe
+            filterManager.updateRange(it.min().toFloat(), it.max().toFloat())
+        }
+
         productViewModel.products.observe(viewLifecycleOwner) {
             when (it) {
                 is Resource.Error -> {
@@ -294,6 +299,9 @@ class TryOnFragment : Fragment() {
 
         binding.productRecyclerLoader.isVisible = true
         viewModel.fetchAllBrands()
+        CoroutineScope(Dispatchers.Main).launch {
+            viewModel.fetchAllRecords()
+        }
         productViewModel.fetchProduct()
     }
 

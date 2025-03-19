@@ -27,6 +27,8 @@ import com.mirrar.tablettryon.utility.AppConstraint.priceMin
 import com.mirrar.tablettryon.utility.AppConstraint.recommendationModel
 import com.mirrar.tablettryon.utility.AppConstraint.recommendationProductList
 import com.mirrar.tablettryon.utility.Bookmarks
+import kotlinx.serialization.json.contentOrNull
+import kotlinx.serialization.json.jsonPrimitive
 
 class AlgoliaViewModel : ViewModel() {
 
@@ -42,6 +44,7 @@ class AlgoliaViewModel : ViewModel() {
 //    )
 //    val index = client.initIndex(indexName = IndexName("avolta-glasses"))
 
+
     private val client = ClientSearch(
         ConfigurationSearch(
             ApplicationID("V0MFZORLHS"),
@@ -52,6 +55,9 @@ class AlgoliaViewModel : ViewModel() {
 
     private val _products = MutableLiveData<List<Product>>()
     val product: LiveData<List<Product>> = _products
+
+    private val _price = MutableLiveData<List<Double>>()
+    val price: LiveData<List<Double>> = _price
 
     private val _filter = MutableLiveData<List<FilterDataModel>>()
     val filter: LiveData<List<FilterDataModel>> = _filter
@@ -197,5 +203,31 @@ class AlgoliaViewModel : ViewModel() {
                 FilterDataModel(it.value)
             } ?: emptyList()
         }
+    }
+
+    suspend fun fetchAllRecords() {
+        val allPrices = mutableListOf<Double>()
+        var currentPage = 0
+
+        while (true) {
+            val response = index.search(Query("").apply {
+                page = currentPage
+                hitsPerPage = 1000
+                attributesToRetrieve = listOf(Attribute("priceDutyFree"))
+            })
+
+            val hits = response.hits
+            if (hits.isEmpty()) break // Exit if no more records
+
+            allPrices.addAll(
+                hits.mapNotNull { hit ->
+                    hit.json.getValue("priceDutyFree").jsonPrimitive.contentOrNull?.toDoubleOrNull()
+                }
+            )
+
+            currentPage++ // Increment page to fetch next batch
+        }
+
+        _price.value = allPrices
     }
 }

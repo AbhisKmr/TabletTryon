@@ -97,7 +97,12 @@ class FilterManager(
 
             val lst = filterDataModels.mapNotNull { if (it.isSelected) it.value else null }
 
-            productViewModel.fetchProduct(sortingOrder = sorting, min = minPrince.toInt(), max = maxPrince.toInt(), brands = lst)
+            productViewModel.fetchProduct(
+                sortingOrder = sorting,
+                min = minPrince.toInt(),
+                max = maxPrince.toInt(),
+                brands = lst
+            )
             applyFilter(sorting, minPrince, maxPrince, lst)
         }
     }
@@ -114,10 +119,10 @@ class FilterManager(
         binding.priceRange.priceRange.valueFrom = min
         binding.priceRange.priceRange.valueTo = max
         binding.priceRange.priceRange.values =
-            listOf(0f, 10000f)
+            listOf(min, max)
         // Set the limit range
-        binding.priceRange.min.text = "Min: CHF${0}"
-        binding.priceRange.max.text = "Max: CHF${10000}"
+        binding.priceRange.min.text = "Min: CHF${min}"
+        binding.priceRange.max.text = "Max: CHF${max}"
     }
 
 }
