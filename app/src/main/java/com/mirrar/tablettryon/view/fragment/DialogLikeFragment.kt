@@ -12,6 +12,9 @@ import androidx.navigation.fragment.findNavController
 import com.mirrar.tablettryon.R
 import com.mirrar.tablettryon.databinding.CustomAlertLayoutBinding
 import com.mirrar.tablettryon.tools.FirebaseHelper
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 
 class DialogLikeFragment(val onNext : () -> Unit) : Fragment() {
@@ -54,16 +57,22 @@ class DialogLikeFragment(val onNext : () -> Unit) : Fragment() {
 
     private fun observer() {
         firebaseHelper.getTermAndCondition {
-            binding.loader.isVisible = false
-            binding.tnc.text = Html.fromHtml(it, Html.FROM_HTML_MODE_COMPACT)
+            CoroutineScope(Dispatchers.Main).launch {
+                try {
 
-            binding.button.setOnClickListener {
-                if (!binding.checkbox.isChecked) {
-                    binding.checkbox.error = "Please accept the terms to proceed."
-                    return@setOnClickListener
-                }
 
-                onNext()
+                    binding.loader.isVisible = false
+                    binding.tnc.text = Html.fromHtml(it, Html.FROM_HTML_MODE_COMPACT)
+
+                    binding.button.setOnClickListener {
+                        if (!binding.checkbox.isChecked) {
+                            binding.checkbox.error = "Please accept the terms to proceed."
+                            return@setOnClickListener
+                        }
+
+                        onNext()
+                    }
+                } catch (e: Exception) {}
             }
         }
     }

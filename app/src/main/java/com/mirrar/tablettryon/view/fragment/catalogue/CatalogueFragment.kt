@@ -2,6 +2,7 @@ package com.mirrar.tablettryon.view.fragment.catalogue
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,6 +10,7 @@ import androidx.core.view.GravityCompat
 import androidx.core.view.isVisible
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.drawerlayout.widget.DrawerLayout.DrawerListener
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
@@ -19,9 +21,11 @@ import com.mirrar.tablettryon.network.ApiService
 import com.mirrar.tablettryon.network.Repository
 import com.mirrar.tablettryon.network.Resource
 import com.mirrar.tablettryon.network.Retrofit
+import com.mirrar.tablettryon.products.model.product.Product
 import com.mirrar.tablettryon.products.viewModel.ProductViewModel
 import com.mirrar.tablettryon.tools.FilterManager
 import com.mirrar.tablettryon.utility.GlobalProducts
+import com.mirrar.tablettryon.view.fragment.ProductDetailsFragment
 import com.mirrar.tablettryon.view.fragment.catalogue.adapter.CatalogueProductAdapter
 import com.mirrar.tablettryon.view.fragment.tryon.viewModel.AlgoliaViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -35,7 +39,8 @@ class CatalogueFragment(
     var totalProducts: Int = 1,
     var minPrice: Int = 0,
     var maxPrice: Int = 1000,
-    var brandList: MutableList<String> = mutableListOf()
+    var brandList: MutableList<String> = mutableListOf(),
+    var productTryonClick: (Int, Product) -> Unit
 ) : Fragment() {
 
     private var _binding: FragmentCatalogueBinding? = null
@@ -96,7 +101,14 @@ class CatalogueFragment(
             }
         })
 
-        val adapter = CatalogueProductAdapter { i, p -> }
+        val adapter = CatalogueProductAdapter { i, p ->
+            openDialogFragment(ProductDetailsFragment.newInstance(p, {
+                productTryonClick(i, p)
+                Handler().postDelayed({
+                    requireActivity().onBackPressedDispatcher.onBackPressed()
+                }, 500)
+            }))
+        }
 
         val filterManager = FilterManager(
             binding.filterNavLayout,
@@ -208,6 +220,10 @@ class CatalogueFragment(
 //        productViewModel.fetchProduct()
     }
 
+    private fun openDialogFragment(fragment: DialogFragment) {
+        fragment.show(childFragmentManager, fragment.tag)
+    }
+
     companion object {
         @JvmStatic
         fun newInstance(
@@ -216,14 +232,16 @@ class CatalogueFragment(
             totalProducts: Int,
             minPrice: Int,
             maxPrice: Int,
-            brandList: MutableList<String>
+            brandList: MutableList<String>,
+            productTryonClick: (Int, Product) -> Unit
         ) = CatalogueFragment(
             sortingOrder,
             currentPage,
             totalProducts,
             minPrice,
             maxPrice,
-            brandList
+            brandList,
+            productTryonClick
         )
     }
 }

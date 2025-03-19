@@ -109,4 +109,12 @@ class ProductAdapter(private val clickListener: (Int, Product) -> Unit) :
         selectedIndex = 0
         notifyDataSetChanged()
     }
+
+    fun scrollToPosition(i: Int) {
+        val oldPos = selectedIndex
+        selectedIndex = i
+        notifyItemChanged(oldPos)
+        notifyItemChanged(selectedIndex)
+        clickListener(selectedIndex, list[selectedIndex])
+    }
 }

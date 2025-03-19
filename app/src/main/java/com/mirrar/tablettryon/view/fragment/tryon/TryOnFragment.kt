@@ -122,25 +122,6 @@ class TryOnFragment : Fragment() {
             }
         })
 
-        binding.catalogue.setOnClickListener {
-            filterTryOn = null
-            val transaction = childFragmentManager.beginTransaction()
-            transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_MATCH_ACTIVITY_OPEN)
-            transaction.add(
-                R.id.container, CatalogueFragment.newInstance(
-                    sortingOrder,
-                    currentPage,
-                    totalProducts,
-                    minPrice,
-                    maxPrice,
-                    brandList
-                )
-            )
-            transaction.addToBackStack(null)
-            transaction.commit()
-//            findNavController().navigate(R.id.action_tryOnFragment_to_catalogueFragment)
-        }
-
         binding.switchMode.setOnClickListener {
         }
 
@@ -208,6 +189,28 @@ class TryOnFragment : Fragment() {
             updateHeartIcon(Bookmarks.getBookmarks())
             applyAR()
 
+        }
+
+        binding.catalogue.setOnClickListener {
+            filterTryOn = null
+            val transaction = childFragmentManager.beginTransaction()
+            transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_MATCH_ACTIVITY_OPEN)
+            transaction.add(
+                R.id.container, CatalogueFragment.newInstance(
+                    sortingOrder,
+                    currentPage,
+                    totalProducts,
+                    minPrice,
+                    maxPrice,
+                    brandList
+                ) { i, p ->
+                    adapter.scrollToPosition(i)
+                    binding.productRecycler.scrollToPosition(i)
+                }
+            )
+            transaction.addToBackStack(null)
+            transaction.commit()
+//            findNavController().navigate(R.id.action_tryOnFragment_to_catalogueFragment)
         }
 
         val filterManager = FilterManager(
