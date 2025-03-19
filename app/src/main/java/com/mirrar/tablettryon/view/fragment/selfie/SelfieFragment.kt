@@ -122,7 +122,7 @@ class SelfieFragment : DialogFragment() {
             EmailHelper.sendDynamicEmail(requireContext(),
                 "selfie"
             ) {
-                binding.sendProgress.isVisible = true
+                binding.sendProgress.isVisible = false
                 binding.sendTv.text = "Send"
                 if (it != null) {
 //                    dismissDialog()
