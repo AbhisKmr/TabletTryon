@@ -123,6 +123,7 @@ class CatalogueFragment(
             this.brandList.addAll(brandList)
             adapter.clear()
             binding.productRecycler.scrollToPosition(0)
+            binding.productRecyclerLoader.isVisible = true
         }
 
         binding.productRecycler.adapter = adapter
@@ -185,6 +186,7 @@ class CatalogueFragment(
                 is Resource.Error -> {
                     isLoading = false
                     binding.productLoading.isVisible = false
+                    binding.productRecyclerLoader.isVisible = false
                 }
 
                 is Resource.Loading -> {
@@ -193,11 +195,16 @@ class CatalogueFragment(
 
                 is Resource.Success -> {
                     isLoading = false
+                    binding.productRecyclerLoader.isVisible = false
                     binding.productLoading.isVisible = false
                     if (totalProducts > currentPage * 10) {
                         GlobalProducts.addProduct(it.data.products)
                     } else {
-                        GlobalProducts.updateProduct(it.data.products)
+                        if (GlobalProducts.getproducts().isEmpty()) {
+                            GlobalProducts.updateProduct(it.data.products)
+                        } else {
+                            GlobalProducts.addProduct(it.data.products)
+                        }
                     }
 
                     currentPage++
@@ -210,9 +217,11 @@ class CatalogueFragment(
         }
 
         GlobalProducts.products.observe(viewLifecycleOwner) {
+            binding.productRecyclerLoader.isVisible = false
             adapter.updateData(it)
         }
 
+        binding.productRecyclerLoader.isVisible = false
         viewModel.fetchAllBrands()
         CoroutineScope(Dispatchers.Main).launch {
             viewModel.fetchAllRecords()
