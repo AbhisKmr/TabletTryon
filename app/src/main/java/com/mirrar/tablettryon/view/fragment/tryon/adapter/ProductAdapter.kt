@@ -9,7 +9,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.mirrar.tablettryon.databinding.ProductCardBinding
 import com.mirrar.tablettryon.products.model.product.Product
-import com.mirrar.tablettryon.utility.AppConstraint.filterTryOn
 
 class ProductAdapter(private val clickListener: (Int, Product) -> Unit) :
     RecyclerView.Adapter<ProductAdapter.ViewHolder>() {

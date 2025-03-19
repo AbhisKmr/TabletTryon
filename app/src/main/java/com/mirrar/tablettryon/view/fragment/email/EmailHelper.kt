@@ -4,12 +4,16 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.util.Base64
 import android.util.Log
+import android.widget.Toast
 import com.mirrar.tablettryon.network.RetrofitClient
 import com.mirrar.tablettryon.utility.AppConstraint
 import com.mirrar.tablettryon.utility.AppConstraint.BREVO_API_KEY
 import com.mirrar.tablettryon.utility.AppConstraint.SENDER_EMAIL
 import com.mirrar.tablettryon.utility.AppConstraint.SENDER_NAME
 import com.mirrar.tablettryon.utility.AppConstraint.WELCOME_MESSAGE
+import com.mirrar.tablettryon.utility.AppConstraint.recommendationModel
+import com.mirrar.tablettryon.utility.AppConstraint.userEmail
+import com.mirrar.tablettryon.utility.AppConstraint.userName
 import com.mirrar.tablettryon.view.fragment.email.dataModel.EmailRequest
 import com.mirrar.tablettryon.view.fragment.email.dataModel.EmailResponse
 import com.mirrar.tablettryon.view.fragment.email.dataModel.ImageUploadRequest
@@ -24,17 +28,37 @@ import retrofit2.Response
 import java.io.BufferedReader
 import java.io.ByteArrayOutputStream
 import java.io.InputStreamReader
+import com.mirrar.tablettryon.view.fragment.email.dataModel.emailApi.Object
+import kotlin.math.roundToInt
 
 object EmailHelper {
 
-    fun sendDynamicEmail(body: SendEmailApiRequest, res: (SendEmailApiResponse?) -> Unit) {
-        RetrofitClient.getInstance("https://glass-tryon.mirrar.com").sendApiEmail(body)
+    fun sendDynamicEmail(
+        context: Context,
+        purpose: String,
+        res: (SendEmailApiResponse?) -> Unit
+    ) {
+        val objs = recommendationModel?.recommendations?.map {
+            Object(
+                it.brand, it.imageUrlBase ?: "",
+                it.priceDutyFree.roundToInt(), it.productUrl ?: "", it.triedOnUrl ?: ""
+            )
+        } ?: emptyList()
+
+        RetrofitClient.getInstance("https://glass-tryon.mirrar.com").sendApiEmail(
+            SendEmailApiRequest(
+                userEmail ?: "", userName ?: "", objs, purpose
+            )
+        )
             .enqueue(object : Callback<SendEmailApiResponse> {
                 override fun onResponse(
                     call: Call<SendEmailApiResponse>,
                     response: Response<SendEmailApiResponse>
                 ) {
                     res(response.body())
+                    Toast.makeText(
+                        context, "Email has been sent.", Toast.LENGTH_SHORT
+                    ).show()
                 }
 
                 override fun onFailure(call: Call<SendEmailApiResponse>, t: Throwable) {

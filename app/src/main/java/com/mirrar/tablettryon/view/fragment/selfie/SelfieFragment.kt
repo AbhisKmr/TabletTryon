@@ -117,25 +117,21 @@ class SelfieFragment : DialogFragment() {
                 return@setOnClickListener
             }
 
-            val objs = recommendationModel?.recommendations?.map {
-                Object(
-                    it.brand, it.imageUrlBase ?: "",
-                    it.priceDutyFree.roundToInt(), it.productUrl ?: "", it.triedOnUrl ?: ""
-                )
-            } ?: emptyList()
-
-            EmailHelper.sendDynamicEmail(
-                SendEmailApiRequest(
-                    binding.email.text.toString(), binding.name.text.toString(), objs, "selfie"
-                ), {
-                    if (it != null) {
-                        dismissDialog()
-                    } else {
-                        Toast.makeText(
-                            requireContext(), "Failed to send email.", Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                })
+            binding.sendProgress.isVisible = true
+            binding.sendTv.text = ""
+            EmailHelper.sendDynamicEmail(requireContext(),
+                "selfie"
+            ) {
+                if (it != null) {
+                    dismissDialog()
+                } else {
+                    binding.sendProgress.isVisible = true
+                    binding.sendTv.text = "Send"
+                    Toast.makeText(
+                        requireContext(), "Failed to send email.", Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
         }
 
         binding.qrLoader.isVisible = true

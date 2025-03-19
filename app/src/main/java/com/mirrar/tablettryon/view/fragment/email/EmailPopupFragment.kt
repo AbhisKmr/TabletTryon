@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.view.isVisible
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentTransaction
 import com.mirrar.tablettryon.R
@@ -77,54 +78,23 @@ class EmailPopupFragment(val emailTag: String, val p: Product? = null) : DialogF
                 return@setOnClickListener
             }
 
-            val objs = if (p == null) {
-                Bookmarks.getBookmarks().map {
-                    Object(
-                        it.brand,
-                        it.imageUrlBase!!,
-                        it.priceDutyFree.toInt(),
-                        it.productUrl ?: "",
-                        ""
-                    )
-                }
-            } else {
-                listOf(
-                    Object(
-                        p.brand, p.imageUrlBase!!, p.priceDutyFree.toInt(), p.productUrl ?: "", ""
-                    )
-                )
-            }
+            binding.saveProgress.isVisible = true
+            binding.sendTv.text = ""
 
             userEmail = binding.email.text.toString()
             userName = binding.name.text.toString()
 
-            EmailHelper.sendDynamicEmail(SendEmailApiRequest(
-                binding.email.text.toString(), binding.name.text.toString(), objs, emailTag
-            ), {
+            EmailHelper.sendDynamicEmail(requireContext(), emailTag) {
                 if (it != null) {
                     dismissDialog()
                 } else {
+                    binding.saveProgress.isVisible = true
+                    binding.sendTv.text = "Send"
                     Toast.makeText(
                         requireContext(), "Failed to send email.", Toast.LENGTH_SHORT
                     ).show()
                 }
-            })
-
-//            EmailHelper.sendDynamicEmail(
-//                context = requireContext(),
-//                recipientEmail = binding.email.text.toString(),
-//                username = binding.name.text.toString(), {
-//                    if (it) {
-//                        dismissDialog()
-//                    } else {
-//                        Toast.makeText(
-//                            requireContext(),
-//                            "Failed to send email.",
-//                            Toast.LENGTH_SHORT
-//                        ).show()
-//                    }
-//                }
-//            )
+            }
         }
     }
 

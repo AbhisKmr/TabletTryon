@@ -266,6 +266,7 @@
                     app:cardElevation="0dp">
 
                     <TextView
+                        android:id="@+id/sendTv"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
@@ -274,6 +275,15 @@
                         android:text="Send"
                         android:textColor="@color/white"
                         android:textSize="14sp" />
+
+                    <ProgressBar
+                        android:id="@+id/sendProgress"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:indeterminateTint="@color/white"
+                        android:visibility="gone"
+                        tools:visibility="visible" />
                 </androidx.cardview.widget.CardView>
             </LinearLayout>
 

@@ -40,7 +40,6 @@ import com.mirrar.tablettryon.products.model.product.Product
 import com.mirrar.tablettryon.products.viewModel.ProductViewModel
 import com.mirrar.tablettryon.tools.FilterManager
 import com.mirrar.tablettryon.utility.AppConstraint.AR_BITMAP
-import com.mirrar.tablettryon.utility.AppConstraint.filterTryOn
 import com.mirrar.tablettryon.utility.Bookmarks
 import com.mirrar.tablettryon.utility.GlobalProducts
 import com.mirrar.tablettryon.utility.HelperFunctions.isValidUrl
@@ -87,7 +86,6 @@ class TryOnFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        filterTryOn = null
         _binding = null
     }
 
@@ -98,7 +96,6 @@ class TryOnFragment : Fragment() {
 
         binding.filterNavLayout.recyclerDropdownBrand.title.text = "Brand"
         binding.imageView3.setOnClickListener {
-            filterTryOn = null
             binding.drawerLayout.elevation = 100f
             binding.drawerLayout.openDrawer(GravityCompat.START)
         }
@@ -189,7 +186,6 @@ class TryOnFragment : Fragment() {
         }
 
         binding.catalogue.setOnClickListener {
-            filterTryOn = null
             val transaction = childFragmentManager.beginTransaction()
             transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_MATCH_ACTIVITY_OPEN)
             transaction.add(

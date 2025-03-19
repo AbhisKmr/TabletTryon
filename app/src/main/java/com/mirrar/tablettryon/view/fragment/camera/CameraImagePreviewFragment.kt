@@ -1,28 +1,21 @@
 package com.mirrar.tablettryon.view.fragment.camera
 
-import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import com.mirrar.tablettryon.DeepARActivity
 import com.mirrar.tablettryon.R
 import com.mirrar.tablettryon.databinding.FragmentCameraImagePreviewBinding
-import com.mirrar.tablettryon.tools.model.FaceRecommendationModel
 import com.mirrar.tablettryon.utility.AppConstraint.AR_BITMAP
-import com.mirrar.tablettryon.utility.AppConstraint.filterTryOn
 import com.mirrar.tablettryon.utility.AppConstraint.recommendationModel
 import com.mirrar.tablettryon.utility.GlobalProducts
-import com.mirrar.tablettryon.view.fragment.email.EmailPopupFragment
+import com.mirrar.tablettryon.view.fragment.email.EmailHelper
 import com.mirrar.tablettryon.view.fragment.email.EmailSavePopupFragment
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class CameraImagePreviewFragment : Fragment() {
 
@@ -41,11 +34,15 @@ class CameraImagePreviewFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val emailFragment = EmailSavePopupFragment.newInstance {
-            Handler().postDelayed({
-                filterTryOn = null
-//                startActivity(Intent(requireActivity(), DeepARActivity::class.java))
+            EmailHelper.sendDynamicEmail(requireContext(), "face scan") {
+                if (it == null) {
+                    Toast.makeText(
+                        requireContext(), "Failed to send email.", Toast.LENGTH_SHORT
+                    ).show()
+                }
                 findNavController().navigate(R.id.action_cameraImagePreviewFragment4_to_tryOnFragment)
-            }, 100)
+
+            }
         }
 
         binding.cameraPreview.setImageBitmap(AR_BITMAP)
@@ -65,7 +62,7 @@ class CameraImagePreviewFragment : Fragment() {
             ) {
                 updateScanView(true)
                 recommendationModel = it
-                GlobalProducts.updateProduct(it?.recommendations?: emptyList())
+                GlobalProducts.updateProduct(it?.recommendations ?: emptyList())
                 binding.lottieAnimation.isVisible = false
                 emailFragment.show(childFragmentManager, emailFragment.tag)
 //                GlobalScope.launch {
