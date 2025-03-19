@@ -337,7 +337,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/manrope_extra_bold"
-        android:text="Unable to find relevant data"
+        android:text="Unable to find relevant data."
         android:textColor="@color/black"
         android:textSize="16sp"
         android:textStyle="bold"

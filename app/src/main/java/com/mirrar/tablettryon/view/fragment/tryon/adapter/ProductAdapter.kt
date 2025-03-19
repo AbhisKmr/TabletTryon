@@ -45,7 +45,7 @@ class ProductAdapter(private val clickListener: (Int, Product) -> Unit) :
 //            holder.binding.recommendationTag.isVisible = false
 //        }
 
-//        holder.binding.recommendationTag.isVisible = list[position].isRecommended
+        holder.binding.recommendationTag.isVisible = list[position].recommended == true
 
         holder.binding.selectorHighlight.isVisible = selectedIndex == position
 

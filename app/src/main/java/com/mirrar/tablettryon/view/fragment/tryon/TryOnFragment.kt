@@ -22,6 +22,7 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.drawerlayout.widget.DrawerLayout.DrawerListener
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentTransaction
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -48,8 +49,10 @@ import com.mirrar.tablettryon.utility.Bookmarks
 import com.mirrar.tablettryon.utility.HelperFunctions.isValidUrl
 import com.mirrar.tablettryon.utility.HelperFunctions.rotateImage
 import com.mirrar.tablettryon.view.fragment.ClubAvoltaFragment
+import com.mirrar.tablettryon.view.fragment.DialogLikeFragment
 import com.mirrar.tablettryon.view.fragment.ProductDetailsFragment
 import com.mirrar.tablettryon.view.fragment.bookmark.YouBookmarkFragment
+import com.mirrar.tablettryon.view.fragment.catalogue.CatalogueFragment
 import com.mirrar.tablettryon.view.fragment.email.EmailFragment
 import com.mirrar.tablettryon.view.fragment.selfie.SelfieFragment
 import com.mirrar.tablettryon.view.fragment.tryon.adapter.ProductAdapter
@@ -126,7 +129,12 @@ class TryOnFragment : Fragment() {
 
         binding.catalogue.setOnClickListener {
             filterTryOn = null
-            findNavController().navigate(R.id.action_tryOnFragment_to_catalogueFragment)
+            val transaction = childFragmentManager.beginTransaction()
+            transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_MATCH_ACTIVITY_OPEN)
+            transaction.add(R.id.container, CatalogueFragment.newInstance())
+            transaction.addToBackStack(null)
+            transaction.commit()
+//            findNavController().navigate(R.id.action_tryOnFragment_to_catalogueFragment)
         }
 
         binding.switchMode.setOnClickListener {
@@ -220,18 +228,21 @@ class TryOnFragment : Fragment() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
 
-                if (dy <= 0) return
-
                 val layoutManager = recyclerView.layoutManager as LinearLayoutManager
                 val visibleItemCount = layoutManager.childCount
                 val totalItemCount = layoutManager.itemCount
                 val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
+
+                if (totalItemCount < 10) return
 
                 if (!isLoading && totalItemCount > visibleItemCount &&
                     (visibleItemCount + firstVisibleItemPosition) >= totalItemCount - 1 &&
                     firstVisibleItemPosition >= 0
                 ) {
 
+                    if (maxPrice == 0){
+                        maxPrice = 1000
+                    }
                     isLoading = true
                     binding.progressBar.isVisible = true
                     productViewModel.fetchProduct(
@@ -253,6 +264,8 @@ class TryOnFragment : Fragment() {
 
         viewModel.price.observe(viewLifecycleOwner) {
             if (it == null) return@observe
+            minPrice = it.min().toInt()
+            maxPrice = it.max().toInt()
             filterManager.updateRange(it.min().toFloat(), it.max().toFloat())
         }
 

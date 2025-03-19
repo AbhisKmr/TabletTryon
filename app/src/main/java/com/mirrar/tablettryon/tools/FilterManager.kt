@@ -97,6 +97,9 @@ class FilterManager(
 
             val lst = filterDataModels.mapNotNull { if (it.isSelected) it.value else null }
 
+            if (maxPrince == 0f) {
+                maxPrince = 1000f
+            }
             productViewModel.fetchProduct(
                 sortingOrder = sorting,
                 min = minPrince.toInt(),
