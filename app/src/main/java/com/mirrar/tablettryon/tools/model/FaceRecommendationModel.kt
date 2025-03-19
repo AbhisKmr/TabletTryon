@@ -1,11 +1,12 @@
 package com.mirrar.tablettryon.tools.model
 
 import com.google.gson.annotations.SerializedName
+import com.mirrar.tablettryon.products.model.product.Product
 
 data class FaceRecommendationModel(
     @SerializedName("face_analysis")
     val faceAnalysis: FaceAnalysis,
-    val recommendations: List<Recommendation>,
+    val recommendations: List<Product>,
     val uuid: String?
 )
 

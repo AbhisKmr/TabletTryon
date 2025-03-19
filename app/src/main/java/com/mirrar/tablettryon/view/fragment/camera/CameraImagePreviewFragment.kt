@@ -16,6 +16,7 @@ import com.mirrar.tablettryon.tools.model.FaceRecommendationModel
 import com.mirrar.tablettryon.utility.AppConstraint.AR_BITMAP
 import com.mirrar.tablettryon.utility.AppConstraint.filterTryOn
 import com.mirrar.tablettryon.utility.AppConstraint.recommendationModel
+import com.mirrar.tablettryon.utility.GlobalProducts
 import com.mirrar.tablettryon.view.fragment.email.EmailPopupFragment
 import com.mirrar.tablettryon.view.fragment.email.EmailSavePopupFragment
 import kotlinx.coroutines.Dispatchers
@@ -64,6 +65,7 @@ class CameraImagePreviewFragment : Fragment() {
             ) {
                 updateScanView(true)
                 recommendationModel = it
+                GlobalProducts.updateProduct(it?.recommendations?: emptyList())
                 binding.lottieAnimation.isVisible = false
                 emailFragment.show(childFragmentManager, emailFragment.tag)
 //                GlobalScope.launch {

@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import com.mirrar.tablettryon.network.RetrofitClient
+import com.mirrar.tablettryon.products.model.product.ApiProduct
 import com.mirrar.tablettryon.tools.model.FaceRecommendationModel
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody

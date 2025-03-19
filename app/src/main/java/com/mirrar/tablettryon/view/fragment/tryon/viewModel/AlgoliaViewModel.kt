@@ -114,7 +114,7 @@ class AlgoliaViewModel : ViewModel() {
 
                 recommendationModel?.recommendations?.forEach { pod ->
                     if (pod.objectID == p.objectID) {
-                        p.triedOnImageUrl = pod.triedOnImageUrl
+//                        p.triedOnImageUrl = pod.triedOnImageUrl
                     }
                 }
                 lst.add(p)

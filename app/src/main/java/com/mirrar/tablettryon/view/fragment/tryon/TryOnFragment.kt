@@ -218,7 +218,7 @@ class TryOnFragment : Fragment() {
             this.currentPage = 0
             this.totalProducts = 0
             this.minPrice = min.toInt()
-            this.maxPrice = maxPrice
+            this.maxPrice = max.toInt()
             this.brandList.clear()
             this.brandList.addAll(brandList)
             adapter.clear()
@@ -237,7 +237,8 @@ class TryOnFragment : Fragment() {
                 val totalItemCount = layoutManager.itemCount
                 val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
 
-                if (totalItemCount < 10) return
+
+                if (totalProducts <= totalItemCount) return
 
                 if (!isLoading && totalItemCount > visibleItemCount &&
                     (visibleItemCount + firstVisibleItemPosition) >= totalItemCount - 1 &&
@@ -290,7 +291,11 @@ class TryOnFragment : Fragment() {
                     if (totalProducts > currentPage * 10) {
                         GlobalProducts.addProduct(it.data.products)
                     } else {
-                        GlobalProducts.updateProduct(it.data.products)
+                        if (GlobalProducts.getproducts().isEmpty()) {
+                            GlobalProducts.updateProduct(it.data.products)
+                        } else {
+                            GlobalProducts.addProduct(it.data.products)
+                        }
                     }
 
                     currentPage++
@@ -313,7 +318,7 @@ class TryOnFragment : Fragment() {
         GlobalProducts.products.observe(viewLifecycleOwner) {
             adapter.updateData(it)
         }
-        binding.productRecyclerLoader.isVisible = true
+//        binding.productRecyclerLoader.isVisible = true
         viewModel.fetchAllBrands()
         CoroutineScope(Dispatchers.Main).launch {
             viewModel.fetchAllRecords()
