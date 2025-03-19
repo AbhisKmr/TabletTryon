@@ -27,7 +27,6 @@ class FilterManager(
 
     init {
         binding.recyclerDropdownBrand.options.adapter = filterListAdapter
-        binding.sortbyDropdown.radioGroup.check(R.id.radioOption1)
 
         updateRange(minPrince, maxPrince)
 
@@ -67,8 +66,7 @@ class FilterManager(
         }
 
         binding.reset.setOnClickListener {
-            val firstRadioButton = binding.sortbyDropdown.radioGroup.getChildAt(0) as? RadioButton
-            firstRadioButton?.let { binding.sortbyDropdown.radioGroup.check(it.id) }
+            binding.sortbyDropdown.radioGroup.clearCheck()
             filterDataModels.forEach { it.isSelected = false }
             filterListAdapter.notifyDataSetChanged()
             minPrince = 0f
@@ -90,7 +88,17 @@ class FilterManager(
                 binding.root.findViewById(binding.sortbyDropdown.radioGroup.checkedRadioButtonId)
             )
 
-            val sorting = if (selectedIndex == 1) "high_to_low" else "low_to_high"
+            val sorting = when(selectedIndex) {
+                 0 -> {
+                     "low_to_high"
+                }
+                1 -> {
+                    "high_to_low"
+                }
+                else -> {
+                    "null"
+                }
+            }
 
             binding.applyProgress.isVisible = true
             binding.apply.text = ""
