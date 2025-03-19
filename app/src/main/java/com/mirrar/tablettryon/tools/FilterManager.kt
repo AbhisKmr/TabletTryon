@@ -74,9 +74,8 @@ class FilterManager(
             minPrince = 0f
             maxPrince = 10000f
             updateRange(minPrince, maxPrince)
-            GlobalProducts.clearAll()
-            GlobalProducts.updateProduct(recommendationModel?.recommendations ?: emptyList())
             applyFilter("low_to_high", minPrince, maxPrince, emptyList())
+            GlobalProducts.updateProduct(recommendationModel?.recommendations ?: emptyList())
             productViewModel.fetchProduct()
         }
 

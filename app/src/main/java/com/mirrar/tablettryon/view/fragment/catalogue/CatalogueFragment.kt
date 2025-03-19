@@ -121,7 +121,6 @@ class CatalogueFragment(
             this.maxPrice = maxPrice
             this.brandList.clear()
             this.brandList.addAll(brandList)
-            adapter.clear()
             binding.productRecycler.scrollToPosition(0)
             binding.productRecyclerLoader.isVisible = true
         }

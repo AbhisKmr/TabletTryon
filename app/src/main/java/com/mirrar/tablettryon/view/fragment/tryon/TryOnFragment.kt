@@ -221,7 +221,6 @@ class TryOnFragment : Fragment() {
             this.maxPrice = max.toInt()
             this.brandList.clear()
             this.brandList.addAll(brandList)
-            adapter.clear()
             binding.productRecycler.scrollToPosition(0)
             binding.productRecyclerLoader.isVisible = true
         }
@@ -316,6 +315,7 @@ class TryOnFragment : Fragment() {
             binding.bookmarkCount.text = "${bookmarkedProducts.size}"
         }
         GlobalProducts.products.observe(viewLifecycleOwner) {
+            binding.productRecyclerLoader.isVisible = false
             adapter.updateData(it)
         }
 //        binding.productRecyclerLoader.isVisible = true
