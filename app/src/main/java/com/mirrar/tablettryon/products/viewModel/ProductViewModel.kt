@@ -19,7 +19,7 @@ class ProductViewModel(private val repository: Repository) : ViewModel() {
     fun fetchProduct(
         sortingOrder: String = "low_to_high",
         uuid: String = recommendationModel?.uuid ?: "",
-        page: Int = 1,
+        page: Int = 0,
         brands: List<String> = emptyList()
     ) {
         viewModelScope.launch {

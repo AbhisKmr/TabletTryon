@@ -23,7 +23,7 @@ import androidx.drawerlayout.widget.DrawerLayout.DrawerListener
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -39,6 +39,7 @@ import com.mirrar.tablettryon.network.Resource
 import com.mirrar.tablettryon.network.Retrofit
 import com.mirrar.tablettryon.products.model.product.Product
 import com.mirrar.tablettryon.products.viewModel.ProductViewModel
+import com.mirrar.tablettryon.tools.FilterManager
 import com.mirrar.tablettryon.utility.AppConstraint.AR_BITMAP
 import com.mirrar.tablettryon.utility.AppConstraint.filterTryOn
 import com.mirrar.tablettryon.utility.AppConstraint.priceMax
@@ -49,13 +50,13 @@ import com.mirrar.tablettryon.utility.HelperFunctions.rotateImage
 import com.mirrar.tablettryon.view.fragment.ClubAvoltaFragment
 import com.mirrar.tablettryon.view.fragment.bookmark.YouBookmarkFragment
 import com.mirrar.tablettryon.view.fragment.tryon.adapter.ProductAdapter
+import com.mirrar.tablettryon.view.fragment.tryon.viewModel.AlgoliaViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.IOException
-import java.util.concurrent.ScheduledExecutorService
 
-class TryOnFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
+class TryOnFragment : Fragment() {
 
     private var _binding: FragmentTryOnBinding? = null
     private val binding get() = _binding!!
@@ -67,9 +68,11 @@ class TryOnFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
         ProductViewModel.Factory(Repository((response!!)))
     }
 
-    private var currentPage = 1
-    private var totalProducts = 1
+    private var sortingOrder = "low_to_high"
+    private var currentPage = 0
+    private var totalProducts = 0
     private var isLoading: Boolean = false
+    private var brandList = mutableListOf<String>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -97,6 +100,7 @@ class TryOnFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
             binding.drawerLayout.openDrawer(GravityCompat.START)
         }
 
+        binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
         binding.drawerLayout.addDrawerListener(object : DrawerListener {
             override fun onDrawerSlide(drawerView: View, slideOffset: Float) {
                 binding.drawerLayout.elevation = 100f
@@ -175,6 +179,8 @@ class TryOnFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
             openDialogFragment(ClubAvoltaFragment.newInstance())
         }
 
+        val viewModel = ViewModelProvider.create(this)[AlgoliaViewModel::class.java]
+
         val adapter = ProductAdapter { i, p ->
             selectedProduct = p
             binding.brand.text = p.brand
@@ -182,9 +188,22 @@ class TryOnFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
             binding.productPrice.text =
                 "${p.currency} ${p.priceDutyFree}"
 
-//            updateHeartIcon(Bookmarks.getBookmarks())
             applyAR()
 
+        }
+
+        val filterManager = FilterManager(
+            binding.filterNavLayout,
+            productViewModel
+        ) { sorting, min, max, brandList ->
+            this.sortingOrder = sorting
+            this.currentPage = 0
+            this.totalProducts = 0
+            this.brandList.clear()
+            this.brandList.addAll(brandList)
+            adapter.clear()
+            binding.productRecycler.scrollToPosition(0)
+            binding.productRecyclerLoader.isVisible = true
         }
 
         binding.productRecycler.adapter = adapter
@@ -192,18 +211,30 @@ class TryOnFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
         binding.productRecycler.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
+
+                if (dy <= 0) return
+
                 val layoutManager = recyclerView.layoutManager as LinearLayoutManager
                 val visibleItemCount = layoutManager.childCount
                 val totalItemCount = layoutManager.itemCount
                 val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
 
-                if (!isLoading && (visibleItemCount + firstVisibleItemPosition) >= totalItemCount && firstVisibleItemPosition >= 0) {
+                if (!isLoading && totalItemCount > visibleItemCount &&
+                    (visibleItemCount + firstVisibleItemPosition) >= totalItemCount - 1 &&
+                    firstVisibleItemPosition >= 0) {
+
                     isLoading = true
                     binding.progressBar.isVisible = true
-                    productViewModel.fetchProduct(page = currentPage)
+                    productViewModel.fetchProduct(sortingOrder = sortingOrder, page = currentPage, brands = brandList)
                 }
             }
         })
+
+        viewModel.filter.observe(viewLifecycleOwner) {
+            if (!it.isNullOrEmpty()) {
+                filterManager.updateBrandList(it)
+            }
+        }
 
         productViewModel.products.observe(viewLifecycleOwner) {
             when (it) {
@@ -222,7 +253,7 @@ class TryOnFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
                     binding.progressBar.isVisible = false
                     binding.productRecyclerLoader.isVisible = false
 
-                    if (totalProducts >= currentPage * 10) {
+                    if (totalProducts > currentPage * 10) {
                         adapter.addData(it.data.products)
                     } else {
                         adapter.updateData(it.data.products)
@@ -232,19 +263,9 @@ class TryOnFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
                     totalProducts = it.data.totalHits
                 }
             }
-        }
-
-        binding.filterNavLayout.sortbyDropdown.clickView.setOnClickListener {
-            val vis = binding.filterNavLayout.sortbyDropdown.radioGroup.isVisible
-            binding.filterNavLayout.sortbyDropdown.radioGroup.isVisible = !vis
-
-            requireActivity().runOnUiThread {
-                rotateImage(
-                    binding.filterNavLayout.sortbyDropdown.dropArrow,
-                    if (!vis) 180f else 0f,
-                    0f,
-                )
-            }
+            binding.drawerLayout.closeDrawers()
+            binding.filterNavLayout.applyProgress.isVisible = false
+            binding.filterNavLayout.apply.text = "Apply"
         }
 
         updateRange(priceMin!!, priceMax!!, priceMin!!, priceMax!!)
@@ -266,9 +287,8 @@ class TryOnFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
         }
 
         binding.productRecyclerLoader.isVisible = true
-        productViewModel.fetchProduct(page = currentPage)
-
-        binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+        viewModel.fetchAllBrands()
+        productViewModel.fetchProduct()
     }
 
     private fun updateRange(min: Float, max: Float, minValue: Float, maxValue: Float) {
@@ -406,13 +426,5 @@ class TryOnFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
         val canvas = Canvas(bitmap)
         view.draw(canvas)
         return bitmap
-    }
-
-    override fun onError(error: String, errorCode: Int) {
-
-    }
-
-    override fun onResults(resultBundle: FaceLandmarkerHelper.ResultBundle) {
-
     }
 }
