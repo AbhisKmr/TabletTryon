@@ -3,9 +3,12 @@ package com.mirrar.tablettryon.tools
 import android.annotation.SuppressLint
 import android.widget.RadioButton
 import androidx.core.view.isVisible
+import com.algolia.search.model.recommend.RecommendationModel
 import com.mirrar.tablettryon.databinding.FilterNavLayoutBinding
 import com.mirrar.tablettryon.products.viewModel.ProductViewModel
 import com.mirrar.tablettryon.tools.filter.FilterDataModel
+import com.mirrar.tablettryon.utility.AppConstraint.recommendationModel
+import com.mirrar.tablettryon.utility.GlobalProducts
 import com.mirrar.tablettryon.utility.HelperFunctions.rotateImage
 import com.mirrar.tablettryon.view.fragment.catalogue.adapter.FilterListAdapter
 import kotlinx.coroutines.CoroutineScope
@@ -71,6 +74,8 @@ class FilterManager(
             minPrince = 0f
             maxPrince = 10000f
             updateRange(minPrince, maxPrince)
+            GlobalProducts.clearAll()
+            GlobalProducts.updateProduct(recommendationModel?.recommendations ?: emptyList())
             applyFilter("low_to_high", minPrince, maxPrince, emptyList())
             productViewModel.fetchProduct()
         }
@@ -87,13 +92,15 @@ class FilterManager(
                 binding.root.findViewById(binding.sortbyDropdown.radioGroup.checkedRadioButtonId)
             )
 
-            val sorting = when(selectedIndex) {
-                 0 -> {
-                     "low_to_high"
+            val sorting = when (selectedIndex) {
+                0 -> {
+                    "low_to_high"
                 }
+
                 1 -> {
                     "high_to_low"
                 }
+
                 else -> {
                     "null"
                 }
@@ -113,6 +120,7 @@ class FilterManager(
                 max = maxPrince.toInt(),
                 brands = lst
             )
+            GlobalProducts.clearAll()
             applyFilter(sorting, minPrince, maxPrince, lst)
         }
     }
@@ -138,13 +146,15 @@ class FilterManager(
 
         this.filterListAdapter.updateSelection(brandList)
 
-        val sorting = when(sortingOrder) {
+        val sorting = when (sortingOrder) {
             "low_to_high" -> {
                 0
             }
+
             "high_to_low" -> {
                 1
             }
+
             else -> {
                 -1
             }
