@@ -7,14 +7,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.core.content.ContextCompat
-import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.mirrar.tablettryon.R
 import com.mirrar.tablettryon.databinding.CatalogueProductItemBinding
-import com.mirrar.tablettryon.utility.AppConstraint.recommendationModel
+import com.mirrar.tablettryon.products.model.product.Product
 import com.mirrar.tablettryon.utility.Bookmarks
-import com.mirrar.tablettryon.view.fragment.tryon.dataModel.Product
 
 class CatalogueProductAdapter(private val clickListener: (Int, Product) -> Unit) :
     RecyclerView.Adapter<CatalogueProductAdapter.ViewHolder>() {
@@ -60,7 +58,7 @@ class CatalogueProductAdapter(private val clickListener: (Int, Product) -> Unit)
 //            holder.binding.tag.setImageDrawable(null)
 //        }
         holder.binding.tag.visibility =
-            if (list[position].isRecommended) View.VISIBLE else View.INVISIBLE
+            if (list[position].recommended == true) View.VISIBLE else View.INVISIBLE
 
         updateHeartIcon(holder.binding.wishlist, p.isBookmarked)
 
@@ -91,6 +89,12 @@ class CatalogueProductAdapter(private val clickListener: (Int, Product) -> Unit)
         }
     }
 
+    fun addData(newProducts: List<Product>) {
+        val startPos = list.size
+        list.addAll(newProducts)
+        notifyItemRangeInserted(startPos, newProducts.size)
+    }
+
     override fun getItemCount(): Int = list.size
 
     @SuppressLint("NotifyDataSetChanged")
@@ -109,5 +113,11 @@ class CatalogueProductAdapter(private val clickListener: (Int, Product) -> Unit)
         }
 
         iv.setImageDrawable(drawable)
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun clear() {
+        this.list.clear()
+        notifyDataSetChanged()
     }
 }

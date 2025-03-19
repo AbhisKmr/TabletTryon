@@ -9,10 +9,20 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.view.GravityCompat
 import androidx.core.view.isVisible
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.drawerlayout.widget.DrawerLayout.DrawerListener
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.mirrar.tablettryon.databinding.FragmentCatalogueBinding
+import com.mirrar.tablettryon.network.ApiService
+import com.mirrar.tablettryon.network.Repository
+import com.mirrar.tablettryon.network.Resource
+import com.mirrar.tablettryon.network.Retrofit
+import com.mirrar.tablettryon.products.viewModel.ProductViewModel
+import com.mirrar.tablettryon.tools.FilterManager
 import com.mirrar.tablettryon.utility.AppConstraint.filterTryOn
 import com.mirrar.tablettryon.utility.AppConstraint.priceMax
 import com.mirrar.tablettryon.utility.AppConstraint.priceMin
@@ -22,13 +32,31 @@ import com.mirrar.tablettryon.view.fragment.ProductDetailsFragment
 import com.mirrar.tablettryon.view.fragment.catalogue.adapter.CatalogueProductAdapter
 import com.mirrar.tablettryon.view.fragment.catalogue.adapter.FilterChipAdapter
 import com.mirrar.tablettryon.view.fragment.catalogue.adapter.FilterListAdapter
+import com.mirrar.tablettryon.view.fragment.tryon.adapter.ProductAdapter
 import com.mirrar.tablettryon.view.fragment.tryon.viewModel.AlgoliaViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 
 class CatalogueFragment : Fragment() {
 
     private var _binding: FragmentCatalogueBinding? = null
     private val binding get() = _binding!!
+
+    private val response = Retrofit.getInstance()?.create(ApiService::class.java)
+    private val productViewModel: ProductViewModel by viewModels {
+        ProductViewModel.Factory(Repository((response!!)))
+    }
+
+    private var sortingOrder = "low_to_high"
+    private var currentPage = 0
+    private var totalProducts = 0
+    private var minPrice = 0
+    private var maxPrice = 0
+    private var isLoading: Boolean = false
+    private var brandList = mutableListOf<String>()
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -53,10 +81,12 @@ class CatalogueFragment : Fragment() {
         }
 
         binding.filterNavLayout.recyclerDropdownBrand.title.text = "Brand"
-        binding.filter.setOnClickListener {
+        binding.filterBtn.setOnClickListener {
             binding.drawerLayout.elevation = 100f
             binding.drawerLayout.openDrawer(GravityCompat.START)
         }
+
+        binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
 
         binding.drawerLayout.addDrawerListener(object : DrawerListener {
             override fun onDrawerSlide(drawerView: View, slideOffset: Float) {
@@ -76,125 +106,105 @@ class CatalogueFragment : Fragment() {
             }
         })
 
-        binding.filterChipRecycler.adapter = FilterChipAdapter()
-        val adapter = CatalogueProductAdapter { _, p ->
-//            ProductDetailsFragment.newInstance(p, {
-//                filterTryOn = p
-//                Handler().postDelayed({
-//                    requireActivity().onBackPressedDispatcher.onBackPressed()
-//                }, 500)
-//            }).show(childFragmentManager, "ProductDetailsFragment")
+        val adapter = CatalogueProductAdapter { i, p -> }
+
+        val filterManager = FilterManager(
+            binding.filterNavLayout,
+            productViewModel
+        ) { sorting, min, max, brandList ->
+            this.sortingOrder = sorting
+            this.currentPage = 0
+            this.totalProducts = 0
+            this.minPrice = min.toInt()
+            this.maxPrice = maxPrice
+            this.brandList.clear()
+            this.brandList.addAll(brandList)
+            adapter.clear()
+            binding.productRecycler.scrollToPosition(0)
         }
 
         binding.productRecycler.adapter = adapter
 
-        viewModel.product.observe(viewLifecycleOwner) { products ->
-//            products.forEach { product ->
-//                product.isBookmarked = Bookmarks.getBookmarks().contains(product)
-//            }
-            adapter.updateData(products)
+        binding.productRecycler.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
 
-            binding.filterNavLayout.applyProgress.isVisible = false
-            binding.filterNavLayout.apply.text = "Apply"
-            binding.drawerLayout.closeDrawers()
-        }
+                val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+                val visibleItemCount = layoutManager.childCount
+                val totalItemCount = layoutManager.itemCount
+                val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
 
-        binding.filterNavLayout.sortbyDropdown.clickView.setOnClickListener {
-            val vis = binding.filterNavLayout.sortbyDropdown.radioGroup.isVisible
-            binding.filterNavLayout.sortbyDropdown.radioGroup.isVisible = !vis
+                if (totalItemCount < 10) return
 
-            rotateImage(
-                binding.filterNavLayout.sortbyDropdown.dropArrow,
-                if (!vis) 180f else 0f,
-                0f,
-            )
-        }
+                if (!isLoading && totalItemCount > visibleItemCount &&
+                    (visibleItemCount + firstVisibleItemPosition) >= totalItemCount - 1 &&
+                    firstVisibleItemPosition >= 0
+                ) {
 
-        updateRange(priceMin!!, priceMax!!, priceMin!!, priceMax!!)
-
-        binding.filterNavLayout.priceRange.priceRange.addOnChangeListener { slider, _, _ ->
-            binding.filterNavLayout.priceRange.min.text = "Min: CHF${slider.values[0].toInt()}"
-            binding.filterNavLayout.priceRange.max.text = "Max: CHF${slider.values[1].toInt()}"
-            priceMin = slider.values[0]
-            priceMax = slider.values[1]
-        }
+                    if (maxPrice == 0) {
+                        maxPrice = 1000
+                    }
+                    isLoading = true
+                    binding.progressBar.isVisible = true
+                    productViewModel.fetchProduct(
+                        sortingOrder = sortingOrder,
+                        page = currentPage,
+                        min = minPrice,
+                        max = maxPrice,
+                        brands = brandList
+                    )
+                }
+            }
+        })
 
         viewModel.filter.observe(viewLifecycleOwner) {
             if (!it.isNullOrEmpty()) {
-
-                binding.filterNavLayout.apply.setOnClickListener { v ->
-                    val selectedIndex =
-                        binding.filterNavLayout.sortbyDropdown.radioGroup.indexOfChild(
-                            view.findViewById(binding.filterNavLayout.sortbyDropdown.radioGroup.checkedRadioButtonId)
-                        )
-
-                    if (it.none { iii -> iii.isSelected } && selectedIndex < 0) {
-                        Toast.makeText(
-                            requireContext(), "Please select filter first", Toast.LENGTH_SHORT
-                        ).show()
-                        return@setOnClickListener
-                    }
-
-                    binding.filterNavLayout.applyProgress.isVisible = true
-                    binding.filterNavLayout.apply.text = ""
-
-                    Handler().postDelayed({
-                        viewModel.fetchProducts(true, binding.progressBar, it, selectedIndex)
-                    }, 500)
-                }
-
-                binding.filterNavLayout.priceRange.clickView.setOnClickListener {
-                    val vis = binding.filterNavLayout.priceRange.optionParent.isVisible
-                    binding.filterNavLayout.priceRange.optionParent.isVisible = !vis
-
-                    rotateImage(
-                        binding.filterNavLayout.priceRange.dropArrow,
-                        if (!vis) 180f else 0f,
-                        0f,
-                    )
-                }
-
-                binding.filterNavLayout.recyclerDropdownBrand.clickView.setOnClickListener {
-                    val vis = binding.filterNavLayout.recyclerDropdownBrand.optionParent.isVisible
-                    binding.filterNavLayout.recyclerDropdownBrand.optionParent.isVisible = !vis
-
-                    rotateImage(
-                        binding.filterNavLayout.recyclerDropdownBrand.dropArrow,
-                        if (!vis) 180f else 0f,
-                        0f,
-                    )
-                }
-                val ad = FilterListAdapter(it) {
-
-                }
-                binding.filterNavLayout.recyclerDropdownBrand.options.adapter = ad
-
-
-                binding.filterNavLayout.reset.setOnClickListener { v ->
-                    it.forEach { pp -> pp.isSelected = false }
-                    binding.filterNavLayout.sortbyDropdown.radioGroup.clearCheck()
-                    priceMin = 0f
-                    priceMax = 1000f
-                    updateRange(priceMin!!, priceMax!!, priceMin!!, priceMax!!)
-
-                    viewModel.fetchProducts(true, binding.progressBar, it)
-                    ad.notifyDataSetChanged()
-                }
-
+                filterManager.updateBrandList(it)
             }
         }
 
-        viewModel.onlyRecommendation()
-        viewModel.fetchAllBrands()
-    }
+        viewModel.price.observe(viewLifecycleOwner) {
+            if (it == null) return@observe
+            minPrice = it.min().toInt()
+            maxPrice = it.max().toInt()
+            filterManager.updateRange(it.min().toFloat(), it.max().toFloat())
+        }
 
-    private fun updateRange(min: Float, max: Float, minValue: Float, maxValue: Float) {
-        binding.filterNavLayout.priceRange.priceRange.valueFrom = min
-        binding.filterNavLayout.priceRange.priceRange.valueTo = max
-        binding.filterNavLayout.priceRange.priceRange.values =
-            listOf(minValue, maxValue) // Set the initial range
-        binding.filterNavLayout.priceRange.min.text = "Min: CHF${minValue.toInt()}"
-        binding.filterNavLayout.priceRange.max.text = "Max: CHF${maxValue.toInt()}"
+        productViewModel.products.observe(viewLifecycleOwner) {
+            when (it) {
+                is Resource.Error -> {
+                    isLoading = false
+                    binding.progressBar.isVisible = false
+                }
+
+                is Resource.Loading -> {
+
+                }
+
+                is Resource.Success -> {
+                    isLoading = false
+                    binding.progressBar.isVisible = false
+
+                    if (totalProducts > currentPage * 10) {
+                        adapter.addData(it.data.products)
+                    } else {
+                        adapter.updateData(it.data.products)
+                    }
+
+                    currentPage++
+                    totalProducts = it.data.totalHits
+                }
+            }
+            binding.drawerLayout.closeDrawers()
+            binding.filterNavLayout.applyProgress.isVisible = false
+            binding.filterNavLayout.apply.text = "Apply"
+        }
+
+        viewModel.fetchAllBrands()
+        CoroutineScope(Dispatchers.Main).launch {
+            viewModel.fetchAllRecords()
+        }
+        productViewModel.fetchProduct()
     }
 
     companion object {

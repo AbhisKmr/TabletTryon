@@ -104,4 +104,6 @@ data class Product(
     val whiskyStyle: String,
     val wineRegion: Any,
     val year: String
-)
+) {
+    var isBookmarked = false
+}

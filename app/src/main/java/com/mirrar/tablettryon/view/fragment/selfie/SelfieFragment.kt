@@ -16,6 +16,7 @@ import androidx.navigation.fragment.findNavController
 import com.mirrar.tablettryon.R
 import com.mirrar.tablettryon.databinding.FragmentSelfieBinding
 import com.mirrar.tablettryon.products.model.product.Product
+import com.mirrar.tablettryon.utility.AppConstraint.recommendationModel
 import com.mirrar.tablettryon.utility.AppConstraint.userEmail
 import com.mirrar.tablettryon.utility.AppConstraint.userName
 import com.mirrar.tablettryon.utility.Bookmarks
@@ -145,7 +146,8 @@ class SelfieFragment(private val p: Product, private val bitmap: Bitmap) : Dialo
             withContext(Dispatchers.IO) {
                 EmailHelper.uploadBase64Image(bitmap) {
                     if (it != null) {
-                        val b = HelperFunctions.generateQRCode(it.url)
+                        val b = HelperFunctions.generateQRCode("https://glass-recommendations.mirrar.com/${recommendationModel?.uuid?:""}")
+//                        val b = HelperFunctions.generateQRCode(it.url)
                         if (b != null) {
                             GlobalScope.launch {
                                 withContext(Dispatchers.Main) {
