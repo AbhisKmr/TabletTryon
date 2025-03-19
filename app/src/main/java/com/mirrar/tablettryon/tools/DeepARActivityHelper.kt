@@ -1,6 +1,5 @@
 package com.mirrar.tablettryon.tools
 
-import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.widget.Toast
@@ -15,6 +14,7 @@ import androidx.lifecycle.lifecycleScope
 import com.mirrar.tablettryon.DeepARActivity
 import com.mirrar.tablettryon.R
 import com.mirrar.tablettryon.databinding.ActivityDeepAractivityBinding
+import com.mirrar.tablettryon.products.model.product.Product
 import com.mirrar.tablettryon.utility.Bookmarks
 import com.mirrar.tablettryon.utility.HelperFunctions.downloadAndSaveFile
 import com.mirrar.tablettryon.utility.HelperFunctions.rotateImage
@@ -24,17 +24,10 @@ import com.mirrar.tablettryon.view.fragment.bookmark.YouBookmarkFragment
 import com.mirrar.tablettryon.view.fragment.catalogue.CatalogueFragment
 import com.mirrar.tablettryon.view.fragment.catalogue.adapter.FilterListAdapter
 import com.mirrar.tablettryon.view.fragment.tryon.adapter.ProductAdapter
-import com.mirrar.tablettryon.view.fragment.tryon.dataModel.Product
 import com.mirrar.tablettryon.view.fragment.tryon.viewModel.AlgoliaViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import java.io.File
-import java.io.FileOutputStream
-import java.io.InputStream
 
 class DeepARActivityHelper(
     private val deepARActivity: DeepARActivity,
@@ -98,7 +91,7 @@ class DeepARActivityHelper(
 
         binding.details.setOnClickListener {
             if (selectedProduct != null) {
-                openDialogFragment(ProductDetailsFragment.newInstance(selectedProduct!!, {}))
+//                openDialogFragment(ProductDetailsFragment.newInstance(selectedProduct!!, {}))
             }
         }
 
@@ -133,7 +126,7 @@ class DeepARActivityHelper(
 
         binding.wishlist.setOnClickListener {
             if (selectedProduct != null) {
-                Bookmarks.addToBookmark(selectedProduct!!)
+//                Bookmarks.addToBookmark(selectedProduct!!)
             }
         }
 
@@ -156,11 +149,11 @@ class DeepARActivityHelper(
             deepARActivity.lifecycleScope.launch {
                 val path = withContext(Dispatchers.IO) {
                     val name = p.localItemCode.trim().replace(" ", "_")
-                    downloadAndSaveFile(deepARActivity, p.asset3DUrl ?: "none", "$name.deepar")
+                    downloadAndSaveFile(deepARActivity, p.asset2DUrl ?: "none", "$name.deepar")
                 }
                 applyEffect(path ?: "none")
             }
-            updateHeartIcon(Bookmarks.getBookmarks())
+//            updateHeartIcon(Bookmarks.getBookmarks())
         }
 
         binding.productRecycler.adapter = adapter
@@ -168,7 +161,7 @@ class DeepARActivityHelper(
         binding.productRecyclerLoader.isVisible = true
         viewModel.product.observe(deepARActivity) {
             binding.productRecyclerLoader.isVisible = false
-            adapter!!.updateData(it)
+//            adapter!!.updateData(it)
             // remove this
             binding.filterNavLayout.applyProgress.isVisible = false
             binding.filterNavLayout.apply.text = "Apply"
@@ -238,7 +231,7 @@ class DeepARActivityHelper(
                 return@observe
             }
 
-            updateHeartIcon(bookmarkedProducts)
+//            updateHeartIcon(bookmarkedProducts)
             binding.bookmarkCount.text = "${bookmarkedProducts.size}"
         }
 

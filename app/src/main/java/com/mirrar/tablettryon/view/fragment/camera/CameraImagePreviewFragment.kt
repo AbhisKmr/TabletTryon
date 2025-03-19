@@ -14,6 +14,7 @@ import com.mirrar.tablettryon.R
 import com.mirrar.tablettryon.databinding.FragmentCameraImagePreviewBinding
 import com.mirrar.tablettryon.tools.model.FaceRecommendationModel
 import com.mirrar.tablettryon.utility.AppConstraint.AR_BITMAP
+import com.mirrar.tablettryon.utility.AppConstraint.filterTryOn
 import com.mirrar.tablettryon.utility.AppConstraint.recommendationModel
 import com.mirrar.tablettryon.view.fragment.email.EmailPopupFragment
 import com.mirrar.tablettryon.view.fragment.email.EmailSavePopupFragment
@@ -40,6 +41,7 @@ class CameraImagePreviewFragment : Fragment() {
 
         val emailFragment = EmailSavePopupFragment.newInstance {
             Handler().postDelayed({
+                filterTryOn = null
 //                startActivity(Intent(requireActivity(), DeepARActivity::class.java))
                 findNavController().navigate(R.id.action_cameraImagePreviewFragment4_to_tryOnFragment)
             }, 100)

@@ -1,5 +1,6 @@
 package com.mirrar.tablettryon.network
 
+import com.mirrar.tablettryon.products.model.product.ApiProduct
 import com.mirrar.tablettryon.tools.model.FaceRecommendationModel
 import com.mirrar.tablettryon.view.fragment.email.dataModel.EmailRequest
 import com.mirrar.tablettryon.view.fragment.email.dataModel.EmailResponse
@@ -15,11 +16,13 @@ import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Headers
 import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.Part
+import retrofit2.http.Query
 
 
 interface ApiService {
@@ -56,4 +59,12 @@ interface ApiService {
     @Multipart
     @POST("process-glasses")
     fun getRecommendationBasedOnFace(@Part image: MultipartBody.Part): Call<FaceRecommendationModel>
+
+    @GET("filter-products")
+    suspend fun getFilteredProducts(
+        @Query("sort_order") sortOrder: String,
+        @Query("page") page: Int,
+        @Query("uuid") uuid: String,
+        @Query("brand") brands: List<String>
+    ): Response<ApiProduct>
 }

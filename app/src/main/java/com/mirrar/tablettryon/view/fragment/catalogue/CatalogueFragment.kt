@@ -99,7 +99,7 @@ class CatalogueFragment : Fragment() {
             binding.drawerLayout.closeDrawers()
         }
 
-        binding.filterNavLayout.sortbyDropdown.dropArrow.setOnClickListener {
+        binding.filterNavLayout.sortbyDropdown.clickView.setOnClickListener {
             val vis = binding.filterNavLayout.sortbyDropdown.radioGroup.isVisible
             binding.filterNavLayout.sortbyDropdown.radioGroup.isVisible = !vis
 
@@ -139,11 +139,11 @@ class CatalogueFragment : Fragment() {
                     binding.filterNavLayout.apply.text = ""
 
                     Handler().postDelayed({
-                        viewModel.fetchProducts(true, binding.progressBar,  it, selectedIndex)
+                        viewModel.fetchProducts(true, binding.progressBar, it, selectedIndex)
                     }, 500)
                 }
 
-                binding.filterNavLayout.priceRange.dropArrow.setOnClickListener {
+                binding.filterNavLayout.priceRange.clickView.setOnClickListener {
                     val vis = binding.filterNavLayout.priceRange.optionParent.isVisible
                     binding.filterNavLayout.priceRange.optionParent.isVisible = !vis
 
@@ -154,7 +154,7 @@ class CatalogueFragment : Fragment() {
                     )
                 }
 
-                binding.filterNavLayout.recyclerDropdownBrand.dropArrow.setOnClickListener {
+                binding.filterNavLayout.recyclerDropdownBrand.clickView.setOnClickListener {
                     val vis = binding.filterNavLayout.recyclerDropdownBrand.optionParent.isVisible
                     binding.filterNavLayout.recyclerDropdownBrand.optionParent.isVisible = !vis
 
@@ -177,7 +177,7 @@ class CatalogueFragment : Fragment() {
                     priceMax = 1000f
                     updateRange(priceMin!!, priceMax!!, priceMin!!, priceMax!!)
 
-                    viewModel.fetchProducts(true, binding.progressBar,  it)
+                    viewModel.fetchProducts(true, binding.progressBar, it)
                     ad.notifyDataSetChanged()
                 }
 

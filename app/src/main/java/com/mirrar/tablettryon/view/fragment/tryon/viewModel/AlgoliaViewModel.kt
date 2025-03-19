@@ -25,6 +25,7 @@ import com.mirrar.tablettryon.utility.AppConstraint
 import com.mirrar.tablettryon.utility.AppConstraint.priceMax
 import com.mirrar.tablettryon.utility.AppConstraint.priceMin
 import com.mirrar.tablettryon.utility.AppConstraint.recommendationModel
+import com.mirrar.tablettryon.utility.AppConstraint.recommendationProductList
 import com.mirrar.tablettryon.utility.Bookmarks
 
 class AlgoliaViewModel : ViewModel() {
@@ -114,6 +115,7 @@ class AlgoliaViewModel : ViewModel() {
             }
 
             itIsForRecommendation = true
+            recommendationProductList = lst
             _products.value = lst
         }
     }
@@ -130,11 +132,19 @@ class AlgoliaViewModel : ViewModel() {
         viewModelScope.launch {
             try {
                 val brd = bs?.filter { it.isSelected } ?: emptyList()
-                val filterString =
-                    brd.joinToString(separator = " OR ") { brand -> "brand:\"${brand.value}\"" }
+                val filterString = brd.joinToString(separator = " OR ") { brand ->
+                    "brand:\"${
+                        if (brand.value.contains(" ")) {
+                            "'${brand.value}'"
+                        } else {
+                            brand.value
+                        }
+                    }\""
+                }
                 val filterPrice = "priceDutyFree >= $priceMin AND priceDutyFree <= $priceMax"
 
-                val finalFilter = if (brd.isEmpty()) filterPrice else "$filterString AND $filterPrice"
+                val finalFilter =
+                    if (brd.isEmpty()) filterPrice else "$filterString AND $filterPrice"
 
                 val indexName = when (shortingIndex) {
                     0 -> "${AppConstraint.ALGOLIA_INDEX}-asc"

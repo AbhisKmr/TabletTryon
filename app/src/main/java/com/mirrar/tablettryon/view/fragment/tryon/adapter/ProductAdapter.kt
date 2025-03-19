@@ -8,8 +8,8 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.mirrar.tablettryon.databinding.ProductCardBinding
+import com.mirrar.tablettryon.products.model.product.Product
 import com.mirrar.tablettryon.utility.AppConstraint.filterTryOn
-import com.mirrar.tablettryon.view.fragment.tryon.dataModel.Product
 
 class ProductAdapter(private val clickListener: (Int, Product) -> Unit) :
     RecyclerView.Adapter<ProductAdapter.ViewHolder>() {
@@ -45,7 +45,7 @@ class ProductAdapter(private val clickListener: (Int, Product) -> Unit) :
 //            holder.binding.recommendationTag.isVisible = false
 //        }
 
-        holder.binding.recommendationTag.isVisible = list[position].isRecommended
+//        holder.binding.recommendationTag.isVisible = list[position].isRecommended
 
         holder.binding.selectorHighlight.isVisible = selectedIndex == position
 
@@ -84,31 +84,8 @@ class ProductAdapter(private val clickListener: (Int, Product) -> Unit) :
 
         this.list.clear()
         this.list.addAll(list)
-//        if (filterTryOn != null) {
-//            if (this.list.contains(filterTryOn)) {
-//                this.list.remove(filterTryOn)
-//            }
-//            this.list.add(0, filterTryOn!!)
-//            filterTryOn = null
-//            selectedIndex = 0
-//        }
+
         notifyDataSetChanged()
-    }
-
-    fun applyFilteredTryon() {
-        if (filterTryOn != null) {
-            if (this.list.contains(filterTryOn)) {
-                this.list.remove(filterTryOn)
-            }
-            this.list.add(0, filterTryOn!!)
-            filterTryOn = null
-
-            clickListener(0, list[0])
-            val oldPos = selectedIndex
-            selectedIndex = 0
-            notifyItemChanged(oldPos)
-            notifyItemChanged(selectedIndex)
-        }
     }
 
     fun addData(newProducts: List<Product>) {
@@ -130,16 +107,6 @@ class ProductAdapter(private val clickListener: (Int, Product) -> Unit) :
         }
         list.add(0, p)
         selectedIndex = 0
-        notifyDataSetChanged()
-    }
-
-    @SuppressLint("NotifyDataSetChanged")
-    fun updateAssetUrl(map: Map<String, String>) {
-        list.forEach {
-            if (map.contains(it.objectID)) {
-                it.triedOnImageUrl = map[it.objectID]
-            }
-        }
         notifyDataSetChanged()
     }
 }

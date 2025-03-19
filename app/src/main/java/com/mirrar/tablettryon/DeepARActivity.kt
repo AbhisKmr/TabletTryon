@@ -37,11 +37,11 @@ import com.mirrar.tablettryon.LoadImageHandlerThread.LOAD_BITMAP
 import com.mirrar.tablettryon.LoadImageHandlerThread.LOAD_DEFAULT_IMAGE_TASK
 import com.mirrar.tablettryon.LoadImageHandlerThread.REFRESH_IMAGE_TASK
 import com.mirrar.tablettryon.databinding.ActivityDeepAractivityBinding
+import com.mirrar.tablettryon.products.model.product.Product
 import com.mirrar.tablettryon.tools.DeepARActivityHelper
 import com.mirrar.tablettryon.utility.AppConstraint.AR_BITMAP
 import com.mirrar.tablettryon.utility.HelperFunctions.getNavigationBarHeight
 import com.mirrar.tablettryon.view.fragment.selfie.SelfieFragment
-import com.mirrar.tablettryon.view.fragment.tryon.dataModel.Product
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -460,11 +460,11 @@ class DeepARActivity : AppCompatActivity(), SurfaceHolder.Callback, AREventListe
 
     override fun screenshotTaken(p0: Bitmap?) {
         if (screenshot == DeepARActivityHelper.SCREENSHOT.SELFIE) {
-            openDialogFragment(
-                SelfieFragment.newInstance(
-                    selectedProduct!!, p0!!
-                )
-            )
+//            openDialogFragment(
+//                SelfieFragment.newInstance(
+//                    selectedProduct!!, p0!!
+//                )
+//            )
         }
 //        val now: CharSequence = DateFormat.format("yyyy_MM_dd_hh_mm_ss", Date())
 //        try {

@@ -24,11 +24,11 @@ class ProductListManager(
     init {
         algoliaViewModel.product.observe(context as LifecycleOwner) {
 
-            if (algoliaViewModel.loadMore) {
-                adapter.addData(it)
-            } else {
-                adapter.updateData(it)
-            }
+//            if (algoliaViewModel.loadMore) {
+//                adapter.addData(it)
+//            } else {
+//                adapter.updateData(it)
+//            }
             totalProducts.value = algoliaViewModel.nbHits
             currentPage++
         }

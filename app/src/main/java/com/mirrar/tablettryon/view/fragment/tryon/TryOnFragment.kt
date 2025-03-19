@@ -4,11 +4,10 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.os.Handler
-import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -23,36 +22,39 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.drawerlayout.widget.DrawerLayout.DrawerListener
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.CustomTarget
+import com.bumptech.glide.request.transition.Transition
 import com.google.mediapipe.examples.facelandmarker.FaceLandmarkerHelper
+import com.mirrar.tablettryon.products.viewModel.ProductViewModel
 import com.mirrar.tablettryon.R
 import com.mirrar.tablettryon.databinding.FragmentTryOnBinding
-import com.mirrar.tablettryon.network.CallApi
+import com.mirrar.tablettryon.network.ApiService
+import com.mirrar.tablettryon.network.Repository
+import com.mirrar.tablettryon.network.Resource
+import com.mirrar.tablettryon.network.Retrofit
+import com.mirrar.tablettryon.products.model.product.Product
 import com.mirrar.tablettryon.utility.AppConstraint.AR_BITMAP
 import com.mirrar.tablettryon.utility.AppConstraint.filterTryOn
 import com.mirrar.tablettryon.utility.AppConstraint.priceMax
 import com.mirrar.tablettryon.utility.AppConstraint.priceMin
-import com.mirrar.tablettryon.utility.AppConstraint.recommendationModel
 import com.mirrar.tablettryon.utility.Bookmarks
 import com.mirrar.tablettryon.utility.HelperFunctions.isValidUrl
 import com.mirrar.tablettryon.utility.HelperFunctions.rotateImage
 import com.mirrar.tablettryon.view.fragment.ClubAvoltaFragment
 import com.mirrar.tablettryon.view.fragment.ProductDetailsFragment
 import com.mirrar.tablettryon.view.fragment.bookmark.YouBookmarkFragment
-import com.mirrar.tablettryon.view.fragment.catalogue.adapter.FilterListAdapter
 import com.mirrar.tablettryon.view.fragment.email.EmailFragment
 import com.mirrar.tablettryon.view.fragment.selfie.SelfieFragment
 import com.mirrar.tablettryon.view.fragment.tryon.adapter.ProductAdapter
-import com.mirrar.tablettryon.view.fragment.tryon.dataModel.Product
-import com.mirrar.tablettryon.view.fragment.tryon.viewModel.AlgoliaViewModel
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.Runnable
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.IOException
@@ -64,6 +66,11 @@ class TryOnFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
     private val binding get() = _binding!!
 
     private var selectedProduct: Product? = null
+
+    private val response = Retrofit.getInstance()?.create(ApiService::class.java)
+    private val productViewModel: ProductViewModel by viewModels {
+        ProductViewModel.Factory(Repository((response!!)))
+    }
 
     private lateinit var faceLandmarkerHelper: FaceLandmarkerHelper
     private lateinit var backgroundExecutor: ScheduledExecutorService
@@ -90,9 +97,6 @@ class TryOnFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
         super.onViewCreated(view, savedInstanceState)
 
         binding.imagePreview.setImageBitmap(AR_BITMAP)
-
-
-        val viewModel = ViewModelProvider.create(this)[AlgoliaViewModel::class.java]
 
         binding.filterNavLayout.recyclerDropdownBrand.title.text = "Brand"
         binding.imageView3.setOnClickListener {
@@ -129,29 +133,29 @@ class TryOnFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
 
         binding.details.setOnClickListener {
             if (selectedProduct != null) {
-                openDialogFragment(ProductDetailsFragment.newInstance(selectedProduct!!, {}))
+//                openDialogFragment(ProductDetailsFragment.newInstance(selectedProduct!!, {}))
             }
         }
 
         binding.email.setOnClickListener {
             if (selectedProduct != null) {
-                openDialogFragment(
-                    EmailFragment.newInstance(
-                        selectedProduct!!,
-                        viewToBitmap(binding.cardView3)!!
-                    )
-                )
+//                openDialogFragment(
+//                    EmailFragment.newInstance(
+//                        selectedProduct!!,
+//                        viewToBitmap(binding.cardView3)!!
+//                    )
+//                )
             }
         }
 
         binding.next.setOnClickListener {
             if (selectedProduct != null) {
-                openDialogFragment(
-                    SelfieFragment.newInstance(
-                        selectedProduct!!,
-                        viewToBitmap(binding.cardView3)!!
-                    )
-                )
+//                openDialogFragment(
+//                    SelfieFragment.newInstance(
+//                        selectedProduct!!,
+//                        viewToBitmap(binding.cardView3)!!
+//                    )
+//                )
             }
         }
 
@@ -167,7 +171,7 @@ class TryOnFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
 
         binding.wishlist.setOnClickListener {
             if (selectedProduct != null) {
-                Bookmarks.addToBookmark(selectedProduct!!)
+//                Bookmarks.addToBookmark(selectedProduct!!)
             }
         }
 
@@ -186,7 +190,7 @@ class TryOnFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
             binding.productPrice.text =
                 "${p.currency} ${p.priceDutyFree}"
 
-            updateHeartIcon(Bookmarks.getBookmarks())
+//            updateHeartIcon(Bookmarks.getBookmarks())
             applyAR()
 
         }
@@ -205,14 +209,6 @@ class TryOnFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
 
                     isLoading = true
 
-                    viewModel.fetchProducts(
-                        false,
-                        progressBar = binding.progressBar,
-                        viewModel.filter.value ?: emptyList(),
-                        binding.filterNavLayout.sortbyDropdown.radioGroup.indexOfChild(
-                            view.findViewById(binding.filterNavLayout.sortbyDropdown.radioGroup.checkedRadioButtonId)
-                        )
-                    )
                 }
 
                 /* val layoutManager = recyclerView.layoutManager as? LinearLayoutManager
@@ -234,44 +230,22 @@ class TryOnFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
 
         binding.productRecyclerLoader.isVisible = true
 
-        viewModel.product.observe(viewLifecycleOwner) {
+        productViewModel.products.observe(viewLifecycleOwner) {
+            binding.productRecyclerLoader.isVisible = it is Resource.Loading
+            when (it) {
+                is Resource.Error -> {
 
-            if (it.isNullOrEmpty()) {
-//                adapter.clear()
-//                binding.emptyList.isVisible = true
-//                viewModel.pageCount = 1
-                return@observe
-            }
-            if (viewModel.itIsForRecommendation) {
-                updateProductList(viewModel, adapter, it.toMutableList())
-            } else if (recommendationModel != null) {
-                val map = mutableMapOf<String, String>()
-                it.forEach { obj -> map[obj.objectID] = obj.asset2DUrl.toString() }
-
-                CallApi.getMoreAssets(recommendationModel!!.uuid!!, map) { res ->
-                    it.forEach {
-                        if (res?.tryonOutputs!!.contains(it.objectID)) {
-                            it.triedOnImageUrl = res?.tryonOutputs?.get(it.objectID) ?: ""
-                        }
-                    }
-                    requireActivity().runOnUiThread(Runnable {
-                        updateProductList(viewModel, adapter, it.toMutableList())
-                    })
                 }
-            } else {
-                updateProductList(viewModel, adapter, it.toMutableList())
 
+                is Resource.Loading -> {
+
+                }
+
+                is Resource.Success -> {
+                    adapter.updateData(it.data.products)
+
+                }
             }
-
-            binding.filterNavLayout.applyProgress.isVisible = false
-            binding.filterNavLayout.apply.text = "Apply"
-            binding.drawerLayout.closeDrawers()
-            binding.emptyList.isVisible = false
-            isLoading = false
-
-            totalProducts.value = viewModel.nbHits
-            viewModel.pageCount++
-            applyAR()
         }
 
         binding.filterNavLayout.sortbyDropdown.clickView.setOnClickListener {
@@ -296,103 +270,18 @@ class TryOnFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
             priceMax = slider.values[1]
         }
 
-        viewModel.filter.observe(viewLifecycleOwner) {
-            if (!it.isNullOrEmpty()) {
-
-                binding.filterNavLayout.apply.setOnClickListener { v ->
-                    val selectedIndex =
-                        binding.filterNavLayout.sortbyDropdown.radioGroup.indexOfChild(
-                            view.findViewById(binding.filterNavLayout.sortbyDropdown.radioGroup.checkedRadioButtonId)
-                        )
-
-                    if (it.none { iii -> iii.isSelected } && selectedIndex < 0) {
-                        Toast.makeText(
-                            requireContext(), "Please select filter first", Toast.LENGTH_SHORT
-                        ).show()
-                        return@setOnClickListener
-                    }
-
-                    binding.filterNavLayout.applyProgress.isVisible = true
-                    binding.filterNavLayout.apply.text = ""
-
-                    Handler().postDelayed({
-                        adapter.clear()
-                        binding.productRecyclerLoader.isVisible = true
-                        viewModel.pageCount = 1
-                        viewModel.fetchProducts(false, binding.progressBar, it, selectedIndex)
-                    }, 500)
-                }
-
-                binding.filterNavLayout.priceRange.clickView.setOnClickListener {
-                    val vis = binding.filterNavLayout.priceRange.optionParent.isVisible
-                    binding.filterNavLayout.priceRange.optionParent.isVisible = !vis
-
-                    rotateImage(
-                        binding.filterNavLayout.priceRange.dropArrow,
-                        if (!vis) 180f else 0f,
-                        0f,
-                    )
-                }
-
-                binding.filterNavLayout.recyclerDropdownBrand.clickView.setOnClickListener {
-                    val vis = binding.filterNavLayout.recyclerDropdownBrand.optionParent.isVisible
-                    binding.filterNavLayout.recyclerDropdownBrand.optionParent.isVisible = !vis
-
-                    rotateImage(
-                        binding.filterNavLayout.recyclerDropdownBrand.dropArrow,
-                        if (!vis) 180f else 0f,
-                        0f,
-                    )
-                }
-                val ad = FilterListAdapter(it) {
-
-                }
-                binding.filterNavLayout.recyclerDropdownBrand.options.adapter = ad
-
-
-                binding.filterNavLayout.reset.setOnClickListener { v ->
-                    it.forEach { pp -> pp.isSelected = false }
-                    viewModel.onlyRecommendation()
-                    priceMin = 0f
-                    priceMax = 1000f
-                    binding.filterNavLayout.sortbyDropdown.radioGroup.clearCheck()
-                    updateRange(priceMin!!, priceMax!!, priceMin!!, priceMax!!)
-                    ad.notifyDataSetChanged()
-                }
-            }
-        }
-
         Bookmarks.bookmarks.observe(viewLifecycleOwner) { bookmarkedProducts ->
             if (bookmarkedProducts == null) {
                 return@observe
             }
 
-            updateHeartIcon(bookmarkedProducts)
+//            updateHeartIcon(bookmarkedProducts)
             binding.bookmarkCount.text = "${bookmarkedProducts.size}"
         }
 
-        viewModel.onlyRecommendation()
-        viewModel.fetchAllBrands()
+        productViewModel.fetchProduct()
 
         binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
-    }
-
-    private fun updateProductList(
-        viewModel: AlgoliaViewModel,
-        adapter: ProductAdapter,
-        list: MutableList<Product>
-    ) {
-        binding.productRecyclerLoader.isVisible = false
-        binding.progressBar.isVisible = false
-
-        if (filterTryOn != null) {
-            list.add(0, filterTryOn!!)
-        }
-        if (viewModel.loadMore) {
-            adapter.addData(list)
-        } else {
-            adapter.updateData(list)
-        }
     }
 
     private fun updateRange(min: Float, max: Float, minValue: Float, maxValue: Float) {
@@ -483,24 +372,36 @@ class TryOnFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
 
     private fun applyAR() {
         try {
-            if (isValidUrl(selectedProduct?.triedOnImageUrl)) {
-                GlobalScope.launch {
-                    val bb = withContext(Dispatchers.IO) {
-                        try {
-                            Glide
-                                .with(requireContext())
-                                .asBitmap()
-                                .load(selectedProduct?.triedOnImageUrl)
-                                .submit()
-                                .get()
-                        } catch (e: Exception) {
-                            AR_BITMAP
-                        }
-                    }
-                    withContext(Dispatchers.Main) {
-                        binding.imagePreview.setImageBitmap(bb)
-                    }
+            if (isValidUrl(selectedProduct?.triedOnUrl)) {
+                binding.lottieAnimation.isVisible = true
+                CoroutineScope(Dispatchers.IO).launch {
+                    Glide.with(requireContext())
+                        .asBitmap()
+                        .load(selectedProduct?.triedOnUrl)
+                        .into(object : CustomTarget<Bitmap>() {
+                            override fun onResourceReady(
+                                resource: Bitmap,
+                                transition: Transition<in Bitmap>?
+                            ) {
+                                CoroutineScope(Dispatchers.Main).launch {
+                                    binding.lottieAnimation.isVisible = false
+                                    binding.imagePreview.setImageBitmap(resource)
+                                }
+                            }
 
+                            override fun onLoadCleared(placeholder: Drawable?) {
+                                CoroutineScope(Dispatchers.Main).launch {
+                                    binding.lottieAnimation.isVisible = false
+                                }
+                            }
+
+                            override fun onLoadFailed(errorDrawable: Drawable?) {
+                                CoroutineScope(Dispatchers.Main).launch {
+                                    binding.lottieAnimation.isVisible = false
+                                    binding.imagePreview.setImageBitmap(AR_BITMAP)
+                                }
+                            }
+                        })
                 }
             } else
                 binding.imagePreview.setImageBitmap(AR_BITMAP)
