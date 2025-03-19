@@ -19,7 +19,6 @@ import com.mirrar.tablettryon.utility.Bookmarks
 import com.mirrar.tablettryon.utility.HelperFunctions.downloadAndSaveFile
 import com.mirrar.tablettryon.utility.HelperFunctions.rotateImage
 import com.mirrar.tablettryon.view.fragment.ClubAvoltaFragment
-import com.mirrar.tablettryon.view.fragment.ProductDetailsFragment
 import com.mirrar.tablettryon.view.fragment.bookmark.YouBookmarkFragment
 import com.mirrar.tablettryon.view.fragment.catalogue.CatalogueFragment
 import com.mirrar.tablettryon.view.fragment.catalogue.adapter.FilterListAdapter
@@ -39,6 +38,13 @@ class DeepARActivityHelper(
     private var selectedProduct: Product? = null
     private var adapter: ProductAdapter? = null
 
+    private var sortingOrder = "low_to_high"
+    private var currentPage = 0
+    private var totalProducts = 0
+    private var minPrice = 0
+    private var maxPrice = 0
+    private var brandList = mutableListOf<String>()
+
     private val assetsUrl = arrayOf(
         "https://github.com/AbhisKmr/alpha/raw/refs/heads/master/glass.deepar",
         "https://github.com/AbhisKmr/alpha/raw/refs/heads/master/glass2.deepar",
@@ -56,7 +62,15 @@ class DeepARActivityHelper(
         binding.catalogue.setOnClickListener {
             val transaction = deepARActivity.supportFragmentManager.beginTransaction()
             transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_MATCH_ACTIVITY_OPEN)
-            transaction.add(R.id.container, CatalogueFragment.newInstance())
+            transaction.add(R.id.container, CatalogueFragment.newInstance(
+                sortingOrder,
+                currentPage,
+                totalProducts,
+                minPrice,
+                maxPrice,
+                brandList
+            )
+            )
             transaction.addToBackStack(null)
             transaction.commit()
         }

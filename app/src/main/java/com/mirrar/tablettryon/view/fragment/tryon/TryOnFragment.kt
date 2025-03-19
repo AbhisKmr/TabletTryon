@@ -8,7 +8,6 @@ import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -26,13 +25,11 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
-import com.google.mediapipe.examples.facelandmarker.FaceLandmarkerHelper
 import com.mirrar.tablettryon.R
 import com.mirrar.tablettryon.databinding.FragmentTryOnBinding
 import com.mirrar.tablettryon.network.ApiService
@@ -44,14 +41,10 @@ import com.mirrar.tablettryon.products.viewModel.ProductViewModel
 import com.mirrar.tablettryon.tools.FilterManager
 import com.mirrar.tablettryon.utility.AppConstraint.AR_BITMAP
 import com.mirrar.tablettryon.utility.AppConstraint.filterTryOn
-import com.mirrar.tablettryon.utility.AppConstraint.priceMax
-import com.mirrar.tablettryon.utility.AppConstraint.priceMin
 import com.mirrar.tablettryon.utility.Bookmarks
 import com.mirrar.tablettryon.utility.GlobalProducts
 import com.mirrar.tablettryon.utility.HelperFunctions.isValidUrl
-import com.mirrar.tablettryon.utility.HelperFunctions.rotateImage
 import com.mirrar.tablettryon.view.fragment.ClubAvoltaFragment
-import com.mirrar.tablettryon.view.fragment.DialogLikeFragment
 import com.mirrar.tablettryon.view.fragment.ProductDetailsFragment
 import com.mirrar.tablettryon.view.fragment.bookmark.YouBookmarkFragment
 import com.mirrar.tablettryon.view.fragment.catalogue.CatalogueFragment
@@ -81,8 +74,8 @@ class TryOnFragment : Fragment() {
     private var totalProducts = 0
     private var minPrice = 0
     private var maxPrice = 0
-    private var isLoading: Boolean = false
     private var brandList = mutableListOf<String>()
+    private var isLoading: Boolean = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -133,7 +126,16 @@ class TryOnFragment : Fragment() {
             filterTryOn = null
             val transaction = childFragmentManager.beginTransaction()
             transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_MATCH_ACTIVITY_OPEN)
-            transaction.add(R.id.container, CatalogueFragment.newInstance())
+            transaction.add(
+                R.id.container, CatalogueFragment.newInstance(
+                    sortingOrder,
+                    currentPage,
+                    totalProducts,
+                    minPrice,
+                    maxPrice,
+                    brandList
+                )
+            )
             transaction.addToBackStack(null)
             transaction.commit()
 //            findNavController().navigate(R.id.action_tryOnFragment_to_catalogueFragment)

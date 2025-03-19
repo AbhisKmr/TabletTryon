@@ -2,11 +2,9 @@ package com.mirrar.tablettryon.view.fragment.catalogue
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.core.view.GravityCompat
 import androidx.core.view.isVisible
 import androidx.drawerlayout.widget.DrawerLayout
@@ -23,23 +21,22 @@ import com.mirrar.tablettryon.network.Resource
 import com.mirrar.tablettryon.network.Retrofit
 import com.mirrar.tablettryon.products.viewModel.ProductViewModel
 import com.mirrar.tablettryon.tools.FilterManager
-import com.mirrar.tablettryon.utility.AppConstraint.filterTryOn
-import com.mirrar.tablettryon.utility.AppConstraint.priceMax
-import com.mirrar.tablettryon.utility.AppConstraint.priceMin
-import com.mirrar.tablettryon.utility.Bookmarks
-import com.mirrar.tablettryon.utility.HelperFunctions.rotateImage
-import com.mirrar.tablettryon.view.fragment.ProductDetailsFragment
+import com.mirrar.tablettryon.utility.GlobalProducts
 import com.mirrar.tablettryon.view.fragment.catalogue.adapter.CatalogueProductAdapter
-import com.mirrar.tablettryon.view.fragment.catalogue.adapter.FilterChipAdapter
-import com.mirrar.tablettryon.view.fragment.catalogue.adapter.FilterListAdapter
-import com.mirrar.tablettryon.view.fragment.tryon.adapter.ProductAdapter
 import com.mirrar.tablettryon.view.fragment.tryon.viewModel.AlgoliaViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 
-class CatalogueFragment : Fragment() {
+class CatalogueFragment(
+    var sortingOrder: String,
+    var currentPage: Int,
+    var totalProducts: Int,
+    var minPrice: Int,
+    var maxPrice: Int,
+    var brandList: MutableList<String>
+) : Fragment() {
 
     private var _binding: FragmentCatalogueBinding? = null
     private val binding get() = _binding!!
@@ -49,14 +46,7 @@ class CatalogueFragment : Fragment() {
         ProductViewModel.Factory(Repository((response!!)))
     }
 
-    private var sortingOrder = "low_to_high"
-    private var currentPage = 0
-    private var totalProducts = 0
-    private var minPrice = 0
-    private var maxPrice = 0
     private var isLoading: Boolean = false
-    private var brandList = mutableListOf<String>()
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -145,7 +135,6 @@ class CatalogueFragment : Fragment() {
                         maxPrice = 1000
                     }
                     isLoading = true
-                    binding.progressBar.isVisible = true
                     productViewModel.fetchProduct(
                         sortingOrder = sortingOrder,
                         page = currentPage,
@@ -174,7 +163,6 @@ class CatalogueFragment : Fragment() {
             when (it) {
                 is Resource.Error -> {
                     isLoading = false
-                    binding.progressBar.isVisible = false
                 }
 
                 is Resource.Loading -> {
@@ -183,12 +171,11 @@ class CatalogueFragment : Fragment() {
 
                 is Resource.Success -> {
                     isLoading = false
-                    binding.progressBar.isVisible = false
 
                     if (totalProducts > currentPage * 10) {
-                        adapter.addData(it.data.products)
+                        GlobalProducts.addProduct(it.data.products)
                     } else {
-                        adapter.updateData(it.data.products)
+                        GlobalProducts.updateProduct(it.data.products)
                     }
 
                     currentPage++
@@ -200,6 +187,10 @@ class CatalogueFragment : Fragment() {
             binding.filterNavLayout.apply.text = "Apply"
         }
 
+        GlobalProducts.products.observe(viewLifecycleOwner) {
+            adapter.updateData(it)
+        }
+
         viewModel.fetchAllBrands()
         CoroutineScope(Dispatchers.Main).launch {
             viewModel.fetchAllRecords()
@@ -209,6 +200,20 @@ class CatalogueFragment : Fragment() {
 
     companion object {
         @JvmStatic
-        fun newInstance() = CatalogueFragment()
+        fun newInstance(
+            sortingOrder: String,
+            currentPage: Int,
+            totalProducts: Int,
+            minPrice: Int,
+            maxPrice: Int,
+            brandList: MutableList<String>
+        ) = CatalogueFragment(
+            sortingOrder,
+            currentPage,
+            totalProducts,
+            minPrice,
+            maxPrice,
+            brandList
+        )
     }
 }
