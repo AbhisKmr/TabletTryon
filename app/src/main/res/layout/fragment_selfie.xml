@@ -186,11 +186,22 @@
                 android:layout_marginStart="62dp"
                 android:layout_marginTop="40dp"
                 android:scaleType="centerCrop"
-                android:src="@drawable/qr_code"
                 app:layout_constraintBottom_toBottomOf="@+id/linearLayout3"
                 app:layout_constraintDimensionRatio="1:1"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/linearLayout3" />
+
+            <ProgressBar
+                android:id="@+id/qrLoader"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@+id/imageView4"
+                app:layout_constraintDimensionRatio="1:1"
+                app:layout_constraintEnd_toEndOf="@+id/imageView4"
+                app:layout_constraintStart_toStartOf="@+id/imageView4"
+                app:layout_constraintTop_toBottomOf="@+id/textView11"
+                tools:visibility="visible" />
 
             <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/guideline"
@@ -309,8 +320,8 @@
 
     <androidx.appcompat.widget.AppCompatEditText
         android:layout_width="match_parent"
-        android:elevation="12dp"
         android:layout_height="?actionBarSize"
+        android:elevation="12dp"
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent" />
 

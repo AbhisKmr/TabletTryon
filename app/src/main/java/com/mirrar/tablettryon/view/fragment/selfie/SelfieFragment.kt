@@ -30,8 +30,10 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import com.mirrar.tablettryon.view.fragment.email.dataModel.emailApi.Object
 import com.mirrar.tablettryon.view.fragment.selfie.adapter.SelfieAdapter
+import kotlinx.coroutines.CoroutineScope
+import kotlin.math.roundToInt
 
-class SelfieFragment(private val p: Product, private val bitmap: Bitmap) : DialogFragment() {
+class SelfieFragment : DialogFragment() {
 
     private var _binding: FragmentSelfieBinding? = null
     private val binding get() = _binding!!
@@ -66,12 +68,13 @@ class SelfieFragment(private val p: Product, private val bitmap: Bitmap) : Dialo
         super.onViewCreated(view, savedInstanceState)
 
         binding.cardView11.visibility =
-            if (Bookmarks.getBookmarks().isEmpty()) View.VISIBLE else View.INVISIBLE
+            if (recommendationModel?.recommendations?.isEmpty() == true) View.VISIBLE else View.INVISIBLE
         binding.linearLayout.visibility =
-            if (Bookmarks.getBookmarks().isEmpty()) View.VISIBLE else View.INVISIBLE
-        binding.imageRecycler.isVisible = Bookmarks.getBookmarks().isNotEmpty()
+            if (recommendationModel?.recommendations?.isEmpty() == true) View.VISIBLE else View.INVISIBLE
+        binding.imageRecycler.isVisible = recommendationModel?.recommendations?.isNotEmpty() == true
 
-        binding.imageRecycler.adapter = SelfieAdapter(Bookmarks.getBookmarks())
+        binding.imageRecycler.adapter =
+            SelfieAdapter(recommendationModel?.recommendations ?: emptyList())
         binding.closeView.setOnClickListener {
             dismissDialog()
         }
@@ -88,13 +91,6 @@ class SelfieFragment(private val p: Product, private val bitmap: Bitmap) : Dialo
             requireActivity().finish()
 //            findNavController().popBackStack(R.id.homeFragment, false)
         }
-
-        binding.modelPreview.setImageBitmap(bitmap)
-
-        binding.brand.text = p.brand
-        binding.productCode.text = p.localItemCode
-        binding.productPrice.text =
-            "${p.currency} ${p.priceDutyFree}"
 
         if (userEmail != null) {
             binding.email.setText(userEmail)
@@ -121,11 +117,12 @@ class SelfieFragment(private val p: Product, private val bitmap: Bitmap) : Dialo
                 return@setOnClickListener
             }
 
-            val objs = listOf(
+            val objs = recommendationModel?.recommendations?.map {
                 Object(
-                    p.brand, p.imageUrlBase!!, p.priceDutyFree.toInt(), p.productUrl ?: "", ""
+                    it.brand, it.imageUrlBase ?: "",
+                    it.priceDutyFree.roundToInt(), it.productUrl ?: "", it.triedOnUrl ?: ""
                 )
-            )
+            } ?: emptyList()
 
             EmailHelper.sendDynamicEmail(
                 SendEmailApiRequest(
@@ -141,23 +138,17 @@ class SelfieFragment(private val p: Product, private val bitmap: Bitmap) : Dialo
                 })
         }
 
-        lifecycleScope.launch {
-
-            withContext(Dispatchers.IO) {
-                EmailHelper.uploadBase64Image(bitmap) {
-                    if (it != null) {
-                        val b = HelperFunctions.generateQRCode("https://glass-recommendations.mirrar.com/${recommendationModel?.uuid?:""}")
+        binding.qrLoader.isVisible = true
+        CoroutineScope(Dispatchers.IO).launch {
+            val b =
+                HelperFunctions.generateQRCode("https://glass-recommendations.mirrar.com/${recommendationModel?.uuid ?: ""}")
 //                        val b = HelperFunctions.generateQRCode(it.url)
-                        if (b != null) {
-                            GlobalScope.launch {
-                                withContext(Dispatchers.Main) {
-                                    try {
-                                        binding.imageView4.setImageBitmap(b)
-                                    } catch (e: Exception) {
-                                    }
-                                }
-                            }
-                        }
+            if (b != null) {
+                CoroutineScope(Dispatchers.Main).launch {
+                    try {
+                        binding.qrLoader.isVisible = false
+                        binding.imageView4.setImageBitmap(b)
+                    } catch (e: Exception) {
                     }
                 }
             }
@@ -171,6 +162,6 @@ class SelfieFragment(private val p: Product, private val bitmap: Bitmap) : Dialo
 
     companion object {
         @JvmStatic
-        fun newInstance(p: Product, bitmap: Bitmap) = SelfieFragment(p, bitmap)
+        fun newInstance() = SelfieFragment()
     }
 }

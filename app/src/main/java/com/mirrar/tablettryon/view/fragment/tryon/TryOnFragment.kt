@@ -145,10 +145,7 @@ class TryOnFragment : Fragment() {
         binding.next.setOnClickListener {
             if (selectedProduct != null) {
                 openDialogFragment(
-                    SelfieFragment.newInstance(
-                        selectedProduct!!,
-                        viewToBitmap(binding.cardView3)!!
-                    )
+                    SelfieFragment.newInstance()
                 )
             }
         }
