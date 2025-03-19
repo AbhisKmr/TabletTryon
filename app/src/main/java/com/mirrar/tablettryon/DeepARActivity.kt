@@ -87,7 +87,6 @@ class DeepARActivity : AppCompatActivity(), SurfaceHolder.Callback, AREventListe
 
     private var recording = false
     private var currentSwitchRecording = false
-    private var isCurrentModeCamera = true
 
     private var width = 0
     private var height = 0
@@ -418,30 +417,7 @@ class DeepARActivity : AppCompatActivity(), SurfaceHolder.Callback, AREventListe
         handlerThread.start()
 
         binding.switchMode.setOnClickListener {
-            if (!isCurrentModeCamera) {
-                deepAR!!.changeLiveMode(true)
-                setupCamera()
-                setColorAndBackgroundTextView(
-                    binding.liveTxt,
-                    R.color.white,
-                    R.drawable.switch_txt_background
-                )
-                binding.preview.isVisible = false
-
-                setColorAndBackgroundTextView(binding.staticTxt, R.color.black, 0)
-            } else {
-                deepAR!!.changeLiveMode(false)
-                deepAR!!.setOffscreenRendering(width, height)
-                setColorAndBackgroundTextView(binding.liveTxt, R.color.black, 0)
-                setColorAndBackgroundTextView(
-                    binding.staticTxt,
-                    R.color.white,
-                    R.drawable.switch_txt_background
-                )
-                binding.staticTxt.setBackgroundResource(R.drawable.switch_txt_background)
-                binding.preview.isVisible = true
-            }
-            isCurrentModeCamera = !isCurrentModeCamera
+            finish()
         }
     }
 
@@ -522,14 +498,6 @@ class DeepARActivity : AppCompatActivity(), SurfaceHolder.Callback, AREventListe
     }
 
     override fun initialized() {
-        if (deepAR != null && !isCurrentModeCamera) {
-            handlerThread.setImageReceiver(deepAR)
-            // Load default image
-            val msg = Message.obtain(handlerThread.handler)
-            msg.what = LOAD_DEFAULT_IMAGE_TASK
-            msg.sendToTarget()
-            refreshImage()
-        }
         //jumpstart masks
         deepAR!!.switchEffect("effect", getFilterPath(effects!!.get(currentEffect)))
 

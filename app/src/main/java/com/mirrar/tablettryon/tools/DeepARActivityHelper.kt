@@ -71,7 +71,7 @@ class DeepARActivityHelper(
                 minPrice,
                 maxPrice,
                 brandList
-            ){ i, p -> }
+            ) { i, p -> }
             )
             transaction.addToBackStack(null)
             transaction.commit()
