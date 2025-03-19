@@ -81,7 +81,7 @@
     <ImageView
         android:id="@+id/filterBtn"
         android:layout_width="wrap_content"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="48dp"
         android:src="@drawable/catalogue_filter_btn"
         app:layout_constraintBottom_toBottomOf="@+id/filterChipRecycler"
@@ -112,7 +112,7 @@
         android:backgroundTint="@color/white"
         app:cardCornerRadius="48dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/filterChipRecycler"
+        app:layout_constraintTop_toBottomOf="@+id/filterBtn"
         app:strokeColor="@color/chip_gray"
         app:strokeWidth="1dp"
         tools:layout_editor_absoluteX="48dp">
@@ -125,4 +125,15 @@
             app:spanCount="2"
             tools:listitem="@layout/catalogue_product_item" />
     </com.google.android.material.card.MaterialCardView>
+
+    <ProgressBar
+        android:id="@+id/productLoading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/materialCardView"
+        tools:visibility="visible" />
 </androidx.constraintlayout.widget.ConstraintLayout>

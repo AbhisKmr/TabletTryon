@@ -30,12 +30,12 @@ import kotlinx.coroutines.launch
 
 
 class CatalogueFragment(
-    var sortingOrder: String,
-    var currentPage: Int,
-    var totalProducts: Int,
-    var minPrice: Int,
-    var maxPrice: Int,
-    var brandList: MutableList<String>
+    var sortingOrder: String = "null",
+    var currentPage: Int = 0,
+    var totalProducts: Int = 1,
+    var minPrice: Int = 0,
+    var maxPrice: Int = 1000,
+    var brandList: MutableList<String> = mutableListOf()
 ) : Fragment() {
 
     private var _binding: FragmentCatalogueBinding? = null
@@ -135,6 +135,7 @@ class CatalogueFragment(
                         maxPrice = 1000
                     }
                     isLoading = true
+                    binding.productLoading.isVisible = true
                     productViewModel.fetchProduct(
                         sortingOrder = sortingOrder,
                         page = currentPage,
@@ -150,6 +151,14 @@ class CatalogueFragment(
             if (!it.isNullOrEmpty()) {
                 filterManager.updateBrandList(it)
             }
+
+            filterManager.updatePreselection(
+                sortingOrder,
+                currentPage,
+                minPrice,
+                maxPrice,
+                brandList
+            )
         }
 
         viewModel.price.observe(viewLifecycleOwner) {
@@ -163,6 +172,7 @@ class CatalogueFragment(
             when (it) {
                 is Resource.Error -> {
                     isLoading = false
+                    binding.productLoading.isVisible = false
                 }
 
                 is Resource.Loading -> {
@@ -171,7 +181,7 @@ class CatalogueFragment(
 
                 is Resource.Success -> {
                     isLoading = false
-
+                    binding.productLoading.isVisible = false
                     if (totalProducts > currentPage * 10) {
                         GlobalProducts.addProduct(it.data.products)
                     } else {
@@ -195,7 +205,7 @@ class CatalogueFragment(
         CoroutineScope(Dispatchers.Main).launch {
             viewModel.fetchAllRecords()
         }
-        productViewModel.fetchProduct()
+//        productViewModel.fetchProduct()
     }
 
     companion object {

@@ -3,7 +3,6 @@ package com.mirrar.tablettryon.tools
 import android.annotation.SuppressLint
 import android.widget.RadioButton
 import androidx.core.view.isVisible
-import com.mirrar.tablettryon.R
 import com.mirrar.tablettryon.databinding.FilterNavLayoutBinding
 import com.mirrar.tablettryon.products.viewModel.ProductViewModel
 import com.mirrar.tablettryon.tools.filter.FilterDataModel
@@ -124,6 +123,43 @@ class FilterManager(
         this.filterDataModels.addAll(filterDataModels)
 
         filterListAdapter.notifyDataSetChanged()
+    }
+
+    fun updatePreselection(
+        sortingOrder: String,
+        currentPage: Int,
+        minPrice: Int,
+        maxPrice: Int,
+        brandList: MutableList<String>
+    ) {
+        this.minPrince = minPrice.toFloat()
+        this.maxPrince = maxPrice.toFloat()
+        updateRange(minPrince, maxPrince)
+
+        this.filterListAdapter.updateSelection(brandList)
+
+        val sorting = when(sortingOrder) {
+            "low_to_high" -> {
+                0
+            }
+            "high_to_low" -> {
+                1
+            }
+            else -> {
+                -1
+            }
+        }
+
+        selectRadioButtonByIndex(sorting)
+    }
+
+    private fun selectRadioButtonByIndex(index: Int) {
+        if (index in 0 until binding.sortbyDropdown.radioGroup.childCount) {
+            val radioButton = binding.sortbyDropdown.radioGroup.getChildAt(index) as? RadioButton
+            radioButton?.let {
+                binding.sortbyDropdown.radioGroup.check(it.id)
+            }
+        }
     }
 
     fun updateRange(min: Float, max: Float) {

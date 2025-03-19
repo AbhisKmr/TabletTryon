@@ -1,5 +1,6 @@
 package com.mirrar.tablettryon.view.fragment.catalogue.adapter
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -36,4 +37,12 @@ class FilterListAdapter(private val lst: List<FilterDataModel>, val onSelect : (
     }
 
     override fun getItemCount(): Int = lst.size
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun updateSelection(brandList: MutableList<String>) {
+        this.lst.forEach {
+            it.isSelected = brandList.contains(it.value)
+        }
+        notifyDataSetChanged()
+    }
 }
