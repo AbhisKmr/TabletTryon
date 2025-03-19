@@ -22,6 +22,7 @@ import kotlinx.coroutines.runBlocking
 import com.algolia.search.model.search.Query
 import com.mirrar.tablettryon.tools.filter.FilterDataModel
 import com.mirrar.tablettryon.utility.AppConstraint
+import com.mirrar.tablettryon.utility.AppConstraint.emailProduct
 import com.mirrar.tablettryon.utility.AppConstraint.priceMax
 import com.mirrar.tablettryon.utility.AppConstraint.priceMin
 import com.mirrar.tablettryon.utility.AppConstraint.recommendationModel
@@ -114,6 +115,8 @@ class AlgoliaViewModel : ViewModel() {
             }
 
             itIsForRecommendation = true
+            emailProduct.clear()
+            emailProduct.addAll(lst)
             _products.value = lst
         }
     }

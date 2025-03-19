@@ -15,6 +15,9 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.mirrar.tablettryon.R
 import com.mirrar.tablettryon.databinding.FragmentSelfieBinding
+import com.mirrar.tablettryon.tools.model.Recommendation
+import com.mirrar.tablettryon.utility.AppConstraint.emailProduct
+import com.mirrar.tablettryon.utility.AppConstraint.recommendationModel
 import com.mirrar.tablettryon.utility.AppConstraint.userEmail
 import com.mirrar.tablettryon.utility.AppConstraint.userName
 import com.mirrar.tablettryon.utility.Bookmarks
@@ -65,12 +68,12 @@ class SelfieFragment(private val p: Product, private val bitmap: Bitmap) : Dialo
         super.onViewCreated(view, savedInstanceState)
 
         binding.cardView11.visibility =
-            if (Bookmarks.getBookmarks().isEmpty()) View.VISIBLE else View.INVISIBLE
+            if (emailProduct.isEmpty()) View.VISIBLE else View.INVISIBLE
         binding.linearLayout.visibility =
-            if (Bookmarks.getBookmarks().isEmpty()) View.VISIBLE else View.INVISIBLE
-        binding.imageRecycler.isVisible = Bookmarks.getBookmarks().isNotEmpty()
+            if (emailProduct.isEmpty()) View.VISIBLE else View.INVISIBLE
+        binding.imageRecycler.isVisible = emailProduct.isNotEmpty()
 
-        binding.imageRecycler.adapter = SelfieAdapter(Bookmarks.getBookmarks())
+        binding.imageRecycler.adapter = SelfieAdapter(emailProduct)
         binding.closeView.setOnClickListener {
             dismissDialog()
         }
@@ -105,30 +108,34 @@ class SelfieFragment(private val p: Product, private val bitmap: Bitmap) : Dialo
 
         binding.send.setOnClickListener {
 
-            if (binding.name.text.trim().isEmpty()) {
+            if (binding.name.text?.trim()?.isEmpty() == true) {
                 binding.name.error = "Required"
                 return@setOnClickListener
             }
 
-            if (binding.email.text.trim().isEmpty()) {
+            if (binding.email.text?.trim()?.isEmpty() == true) {
                 binding.email.error = "Required"
                 return@setOnClickListener
             }
 
-            if (!EmailHelper.isValidEmail(binding.email.text.trim().toString())) {
+            if (!EmailHelper.isValidEmail(binding.email.text?.trim().toString())) {
                 binding.email.error = "Invalid email"
                 return@setOnClickListener
             }
 
-            val objs = listOf(
+            val lst = emailProduct.map { prod ->
                 Object(
-                    p.brand, p.imageUrlBase!!, p.priceDutyFree.toInt(), p.productUrl ?: "", ""
+                    prod.brand,
+                    prod.imageUrlBase!!,
+                    prod.priceDutyFree.toInt(),
+                    prod.productUrl ?: "",
+                    prod.triedOnImageUrl ?: ""
                 )
-            )
+            }
 
             EmailHelper.sendDynamicEmail(
                 SendEmailApiRequest(
-                    binding.email.text.toString(), binding.name.text.toString(), objs, "selfie"
+                    binding.email.text.toString(), binding.name.text.toString(), lst, "selfie"
                 ), {
                     if (it != null) {
                         dismissDialog()
@@ -145,7 +152,8 @@ class SelfieFragment(private val p: Product, private val bitmap: Bitmap) : Dialo
             withContext(Dispatchers.IO) {
                 EmailHelper.uploadBase64Image(bitmap) {
                     if (it != null) {
-                        val b = HelperFunctions.generateQRCode(it.url)
+                        val b =
+                            HelperFunctions.generateQRCode("http://glass-recommendations.mirrar.com/${recommendationModel?.uuid}")
                         if (b != null) {
                             GlobalScope.launch {
                                 withContext(Dispatchers.Main) {

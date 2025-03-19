@@ -50,9 +50,10 @@
                 android:layout_gravity="center"
                 android:fontFamily="@font/manrope_extra_bold"
                 android:gravity="center"
-                android:text="We are finding recommendation based on your look"
+                android:maxLines="1"
+                android:text="Discover Your Best Look with Personalized AI!"
                 android:textColor="@color/black"
-                android:textSize="16sp" />
+                android:textSize="14sp" />
 
             <TextView
                 android:layout_width="match_parent"
@@ -72,6 +73,7 @@
                 android:background="@drawable/edit_text_border"
                 android:gravity="center_vertical"
                 android:hint="john doe"
+                android:maxLines="1"
                 android:paddingHorizontal="16dp" />
 
             <TextView
@@ -92,6 +94,7 @@
                 android:background="@drawable/edit_text_border"
                 android:gravity="center_vertical"
                 android:hint="abc@gmail.com"
+                android:maxLines="1"
                 android:paddingHorizontal="16dp" />
 
             <androidx.cardview.widget.CardView

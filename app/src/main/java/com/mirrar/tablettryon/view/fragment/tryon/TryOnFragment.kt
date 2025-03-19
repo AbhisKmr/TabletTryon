@@ -67,6 +67,7 @@ class TryOnFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
 
     private lateinit var faceLandmarkerHelper: FaceLandmarkerHelper
     private lateinit var backgroundExecutor: ScheduledExecutorService
+    private lateinit var adapter: ProductAdapter
 
     private var currentPage = 0
     private val totalProducts = MutableLiveData<Int>()
@@ -119,6 +120,7 @@ class TryOnFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
         })
 
         binding.catalogue.setOnClickListener {
+            filterTryOn = null
             findNavController().navigate(R.id.action_tryOnFragment_to_catalogueFragment)
         }
 
@@ -177,7 +179,7 @@ class TryOnFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
             openDialogFragment(ClubAvoltaFragment.newInstance())
         }
 
-        val adapter = ProductAdapter { i, p ->
+        adapter = ProductAdapter { i, p ->
             selectedProduct = p
             binding.brand.text = p.brand
             binding.productCode.text = p.localItemCode
@@ -273,6 +275,7 @@ class TryOnFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
         }
 
         binding.filterNavLayout.sortbyDropdown.clickView.setOnClickListener {
+            filterTryOn = null
             val vis = binding.filterNavLayout.sortbyDropdown.radioGroup.isVisible
             binding.filterNavLayout.sortbyDropdown.radioGroup.isVisible = !vis
 
@@ -518,6 +521,11 @@ class TryOnFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
     }
 
     override fun onResults(resultBundle: FaceLandmarkerHelper.ResultBundle) {
+
+    }
+
+    override fun onResume() {
+        super.onResume()
 
     }
 }
