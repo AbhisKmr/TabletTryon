@@ -11,6 +11,7 @@ object Bookmarks {
     fun addToBookmark(product: Product) {
         val currentList = _bookmarks.value ?: mutableListOf()
         if (!currentList.contains(product)) {
+            product.isBookmarked = true
             currentList.add(product)
             _bookmarks.value = currentList
         } else {
@@ -21,6 +22,7 @@ object Bookmarks {
     fun removeBookmark(product: Product) {
         val currentList = _bookmarks.value ?: mutableListOf()
         if (currentList.contains(product)) {
+            product.isBookmarked = false
             currentList.remove(product)
             _bookmarks.value = currentList
         }
