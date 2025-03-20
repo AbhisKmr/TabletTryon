@@ -6,6 +6,7 @@ data class Product(
     val alcoholByVolume: String,
     val appellation: String,
     val asset2DUrl: String?,
+    val asset3DUrl: String?,
     val benefits: String,
     val brand: String,
     val brandColour: String,

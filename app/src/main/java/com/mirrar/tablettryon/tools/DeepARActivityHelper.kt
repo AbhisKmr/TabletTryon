@@ -44,6 +44,19 @@ class DeepARActivityHelper(
     private var selectedProduct: Product? = null
     private var adapter: ProductAdapter? = null
 
+    private val assetsUrl = arrayOf(
+        "https://github.com/AbhisKmr/alpha/raw/refs/heads/master/glass.deepar",
+        "https://github.com/AbhisKmr/alpha/raw/refs/heads/master/glass2.deepar",
+        "https://github.com/AbhisKmr/alpha/raw/refs/heads/master/glass3.deepar",
+        "https://github.com/AbhisKmr/alpha/raw/refs/heads/master/glass4.deepar",
+        "https://github.com/AbhisKmr/alpha/raw/refs/heads/master/glass5.deepar",
+        "https://github.com/AbhisKmr/alpha/raw/refs/heads/master/glass6.deepar",
+        "https://github.com/AbhisKmr/alpha/raw/refs/heads/master/glass7.deepar",
+        "https://github.com/AbhisKmr/alpha/raw/refs/heads/master/glass8.deepar",
+        "https://github.com/AbhisKmr/alpha/raw/refs/heads/master/glass9.deepar",
+        "https://github.com/AbhisKmr/alpha/raw/refs/heads/master/glass10.deepar",
+    )
+
     private var sortingOrder = "low_to_high"
     private var currentPage = 0
     private var totalProducts = 0
@@ -153,7 +166,14 @@ class DeepARActivityHelper(
             CoroutineScope(Dispatchers.IO).launch {
                 val name = p.localItemCode.trim().replace(" ", "_")
                 val path =
-                    downloadAndSaveFile(deepARActivity, p.asset2DUrl ?: "none", "$name.deepar")
+                    downloadAndSaveFile(deepARActivity, p.asset3DUrl ?: "none", "$name.deepar")
+
+//                val path =
+//                    downloadAndSaveFile(
+//                        deepARActivity,
+//                        assetsUrl[i % assetsUrl.size],
+//                        "$name.deepar"
+//                    )
 
                 applyEffect(path ?: "none")
 

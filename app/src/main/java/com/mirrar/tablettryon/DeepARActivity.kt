@@ -23,6 +23,7 @@ import android.view.View
 import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.camera.core.AspectRatio
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.Preview
@@ -253,10 +254,12 @@ class DeepARActivity : AppCompatActivity(), SurfaceHolder.Callback, AREventListe
         }
 
         val cameraResolution = Size(width, height)
-        val cameraSelector = CameraSelector.Builder().requireLensFacing(lensFacing).build()
+        val cameraSelector = CameraSelector.Builder().requireLensFacing(lensFacing)
+            .build()
 
         if (useExternalCameraTexture) {
             val preview = Preview.Builder()
+                .setTargetAspectRatio(AspectRatio.RATIO_DEFAULT)
                 //.setTargetResolution(cameraResolution)
                 .build()
 
