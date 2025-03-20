@@ -11,7 +11,6 @@ import android.annotation.SuppressLint
 import android.content.pm.ActivityInfo
 import android.graphics.Bitmap
 import android.media.Image
-import android.net.Uri
 import android.os.Bundle
 import android.os.Message
 import android.util.DisplayMetrics
@@ -30,12 +29,9 @@ import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.createBitmap
-import androidx.core.view.isVisible
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.LifecycleOwner
 import com.google.common.util.concurrent.ListenableFuture
-import com.mirrar.tablettryon.LoadImageHandlerThread.LOAD_BITMAP
-import com.mirrar.tablettryon.LoadImageHandlerThread.LOAD_DEFAULT_IMAGE_TASK
 import com.mirrar.tablettryon.LoadImageHandlerThread.REFRESH_IMAGE_TASK
 import com.mirrar.tablettryon.databinding.ActivityDeepAractivityBinding
 import com.mirrar.tablettryon.network.ApiService
@@ -47,14 +43,10 @@ import com.mirrar.tablettryon.tools.DeepARActivityHelper
 import com.mirrar.tablettryon.utility.AppConstraint.AR_BITMAP
 import com.mirrar.tablettryon.utility.HelperFunctions.getNavigationBarHeight
 import com.mirrar.tablettryon.view.fragment.selfie.SelfieFragment
-import java.io.File
-import java.io.FileOutputStream
-import java.io.IOException
 import java.nio.Buffer
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.util.concurrent.ExecutionException
-
 
 class DeepARActivity : AppCompatActivity(), SurfaceHolder.Callback, AREventListener {
 
@@ -79,8 +71,6 @@ class DeepARActivity : AppCompatActivity(), SurfaceHolder.Callback, AREventListe
 
     private var currentEffect = 0
 
-    private val screenOrientation = 0
-
     private var effects: ArrayList<String>? = null
     private var selectedProduct: Product? = null
     private var screenshot = DeepARActivityHelper.SCREENSHOT.SELFIE
@@ -90,8 +80,6 @@ class DeepARActivity : AppCompatActivity(), SurfaceHolder.Callback, AREventListe
 
     private var width = 0
     private var height = 0
-
-    private val videoFileName: File? = null
 
     private lateinit var handlerThread: LoadImageHandlerThread
     private lateinit var deepARActivityHelper: DeepARActivityHelper
@@ -107,6 +95,11 @@ class DeepARActivity : AppCompatActivity(), SurfaceHolder.Callback, AREventListe
         width = AR_BITMAP?.width ?: 0
         height = AR_BITMAP?.height ?: 0
         initialize()
+
+        // only for demo
+        binding.imageView.setOnClickListener {
+            gotoNext()
+        }
     }
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
@@ -123,44 +116,12 @@ class DeepARActivity : AppCompatActivity(), SurfaceHolder.Callback, AREventListe
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        if (this::deepARActivityHelper.isInitialized) {
-//            deepARActivityHelper.onResume()
-        }
-    }
-
     private fun initialize() {
         initializeDeepAR()
         initializeFilters()
         initalizeViews()
     }
 
-    private fun printInitialImage() {
-        val msg = Message.obtain(handlerThread.handler)
-        msg.what = LOAD_BITMAP
-        msg.obj = AR_BITMAP
-        msg.sendToTarget()
-    }
-
-    private fun saveBitmapToCache(bitmap: Bitmap): Uri? {
-        val cacheDir: File = getCacheDir()
-        val imageFile = File(
-            cacheDir,
-            "image_" + System.currentTimeMillis() + ".jpg"
-        )
-
-        try {
-            FileOutputStream(imageFile).use { fos ->
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos) // Compress and write bitmap
-                fos.flush()
-                return Uri.fromFile(imageFile) // Return local URI
-            }
-        } catch (e: IOException) {
-            e.printStackTrace()
-            return null
-        }
-    }
 
     private fun initializeFilters() {
         effects = ArrayList()
@@ -431,7 +392,7 @@ class DeepARActivity : AppCompatActivity(), SurfaceHolder.Callback, AREventListe
     }
 
     override fun surfaceChanged(p0: SurfaceHolder, p1: Int, p2: Int, p3: Int) {
-        deepAR!!.setRenderSurface(p0.getSurface(), width, height);
+        deepAR!!.setRenderSurface(p0.surface, width, height);
     }
 
     override fun surfaceDestroyed(p0: SurfaceHolder) {
@@ -446,35 +407,10 @@ class DeepARActivity : AppCompatActivity(), SurfaceHolder.Callback, AREventListe
 
     override fun screenshotTaken(p0: Bitmap?) {
         if (screenshot == DeepARActivityHelper.SCREENSHOT.SELFIE) {
-//            openDialogFragment(
-//                SelfieFragment.newInstance(
-//                    selectedProduct!!, p0!!
-//                )
-//            )
+            openDialogFragment(
+                SelfieFragment.newInstance()
+            )
         }
-//        val now: CharSequence = DateFormat.format("yyyy_MM_dd_hh_mm_ss", Date())
-//        try {
-//            val imageFile = File(
-//                getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
-//                "image_$now.jpg"
-//            )
-//            val outputStream = FileOutputStream(imageFile)
-//            val quality = 100
-//            p0!!.compress(Bitmap.CompressFormat.JPEG, quality, outputStream)
-//            outputStream.flush()
-//            outputStream.close()
-//            val mediaScanIntent = Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE)
-//            val contentUri = Uri.fromFile(imageFile)
-//            mediaScanIntent.setData(contentUri)
-//            sendBroadcast(mediaScanIntent)
-//            Toast.makeText(
-//                this,
-//                "Screenshot " + imageFile.name + " saved.",
-//                Toast.LENGTH_SHORT
-//            ).show()
-//        } catch (e: Throwable) {
-//            e.printStackTrace()
-//        }
     }
 
     override fun videoRecordingStarted() {

@@ -9,7 +9,6 @@ import androidx.core.view.isVisible
 import androidx.drawerlayout.widget.DrawerLayout.DrawerListener
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentTransaction
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -17,22 +16,16 @@ import androidx.recyclerview.widget.RecyclerView
 import com.mirrar.tablettryon.DeepARActivity
 import com.mirrar.tablettryon.R
 import com.mirrar.tablettryon.databinding.ActivityDeepAractivityBinding
-import com.mirrar.tablettryon.network.ApiService
-import com.mirrar.tablettryon.network.Repository
 import com.mirrar.tablettryon.network.Resource
-import com.mirrar.tablettryon.network.Retrofit
 import com.mirrar.tablettryon.products.model.product.Product
 import com.mirrar.tablettryon.products.viewModel.ProductViewModel
 import com.mirrar.tablettryon.utility.Bookmarks
 import com.mirrar.tablettryon.utility.GlobalProducts
 import com.mirrar.tablettryon.utility.HelperFunctions.downloadAndSaveFile
-import com.mirrar.tablettryon.utility.HelperFunctions.rotateImage
 import com.mirrar.tablettryon.view.fragment.ClubAvoltaFragment
 import com.mirrar.tablettryon.view.fragment.ProductDetailsFragment
 import com.mirrar.tablettryon.view.fragment.bookmark.YouBookmarkFragment
 import com.mirrar.tablettryon.view.fragment.catalogue.CatalogueFragment
-import com.mirrar.tablettryon.view.fragment.catalogue.adapter.FilterListAdapter
-import com.mirrar.tablettryon.view.fragment.email.EmailFragment
 import com.mirrar.tablettryon.view.fragment.tryon.adapter.ProductAdapter
 import com.mirrar.tablettryon.view.fragment.tryon.viewModel.AlgoliaViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -71,7 +64,10 @@ class DeepARActivityHelper(
                 minPrice,
                 maxPrice,
                 brandList
-            ) { i, p -> }
+            ) { i, p ->
+                adapter?.scrollToPosition(i)
+                binding.productRecycler.scrollToPosition(i)
+            }
             )
             transaction.addToBackStack(null)
             transaction.commit()
@@ -146,6 +142,7 @@ class DeepARActivityHelper(
         }
 
         adapter = ProductAdapter { i, p ->
+            binding.lottieAnimation.isVisible = true
             applyEffect("none")
             selectedProduct = p
             binding.brand.text = p.brand
@@ -153,12 +150,16 @@ class DeepARActivityHelper(
             binding.productPrice.text =
                 "${p.currency} ${p.priceDutyFree}"
 
-            deepARActivity.lifecycleScope.launch {
-                val path = withContext(Dispatchers.IO) {
-                    val name = p.localItemCode.trim().replace(" ", "_")
+            CoroutineScope(Dispatchers.IO).launch {
+                val name = p.localItemCode.trim().replace(" ", "_")
+                val path =
                     downloadAndSaveFile(deepARActivity, p.asset2DUrl ?: "none", "$name.deepar")
-                }
+
                 applyEffect(path ?: "none")
+
+                deepARActivity.runOnUiThread {
+                    binding.lottieAnimation.isVisible = false
+                }
             }
             updateHeartIcon(Bookmarks.getBookmarks())
         }
