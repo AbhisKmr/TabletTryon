@@ -373,9 +373,12 @@ class DeepARActivity : AppCompatActivity(), SurfaceHolder.Callback, AREventListe
         deepARActivityHelper = DeepARActivityHelper(this, productViewModel, {
             deepAR!!.switchEffect("effect", it)
         }, { s, p ->
-            screenshot = s
-            selectedProduct = p
-            deepAR?.takeScreenshot()
+//            screenshot = s
+//            selectedProduct = p
+//            deepAR?.takeScreenshot()
+            openDialogFragment(
+                SelfieFragment.newInstance()
+            )
         })
         handlerThread = LoadImageHandlerThread(this)
         handlerThread.start()
@@ -409,11 +412,7 @@ class DeepARActivity : AppCompatActivity(), SurfaceHolder.Callback, AREventListe
     }
 
     override fun screenshotTaken(p0: Bitmap?) {
-        if (screenshot == DeepARActivityHelper.SCREENSHOT.SELFIE) {
-            openDialogFragment(
-                SelfieFragment.newInstance()
-            )
-        }
+
     }
 
     override fun videoRecordingStarted() {

@@ -285,7 +285,7 @@ class DeepARActivityHelper(
                 return@observe
             }
 
-//            updateHeartIcon(bookmarkedProducts)
+            updateHeartIcon(bookmarkedProducts)
             binding.bookmarkCount.text = "${bookmarkedProducts.size}"
         }
         GlobalProducts.products.observe(deepARActivity) {
