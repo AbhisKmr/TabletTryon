@@ -70,9 +70,9 @@ class ProductDetailsFragment(
             dismissDialog()
         }
 
-        val url = getImageUrlFromProduct(product)
+//        val url = getImageUrlFromProduct(product)
 
-        Glide.with(requireContext()).load(url).into(binding.thumb)
+//        Glide.with(requireContext()).load(url).into(binding.thumb)
 
         binding.productDetailsLayout.brand.text = product.brand
         binding.productDetailsLayout.productCode.text = product.localItemCode
@@ -99,9 +99,39 @@ class ProductDetailsFragment(
         binding.email.setOnClickListener {
             openDialogFragment(EmailPopupFragment.newInstance("product-details", product))
         }
+//        6534509
+
+        val url = mutableListOf<String>()
+        if (product.imageUrlBase != null) {
+            url.add(product.imageUrlBase)
+        }
+
+        if (product.triedOnUrl != null) {
+            url.add(product.triedOnUrl)
+        }
+
+        if (product.imageSmall != null) {
+            url.add(product.imageSmall)
+        }
+
+        if (product.imageThumbnail != null) {
+            url.add(product.imageThumbnail)
+        }
+
+        if (product.imageExtra1 != null) {
+            url.add(product.imageExtra1)
+        }
+
+        if (product.imageExtra2 != null) {
+            url.add(product.imageExtra2)
+        }
+
+//        if (product.asset2DUrl != null) {
+//            url.add(product.asset2DUrl)
+//        }
 
         binding.viewPager.adapter =
-            CardSLideAdapter(arrayOf(product.productUrl ?: "", product.imageUrlBase ?: ""))
+            CardSLideAdapter(url.toTypedArray())
 
         TabLayoutMediator(binding.tablayout, binding.viewPager) { tab, position -> }.attach()
     }
