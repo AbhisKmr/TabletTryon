@@ -4,16 +4,17 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentTransaction
 import com.bumptech.glide.Glide
+import com.google.android.material.tabs.TabLayoutMediator
 import com.mirrar.tablettryon.R
 import com.mirrar.tablettryon.databinding.FragmentProductDetailsBinding
 import com.mirrar.tablettryon.products.model.product.Product
+import com.mirrar.tablettryon.tools.faceDetector.mlkit.CardSLideAdapter
 import com.mirrar.tablettryon.utility.Bookmarks
 import com.mirrar.tablettryon.utility.HelperFunctions.getImageUrlFromProduct
 import com.mirrar.tablettryon.view.fragment.email.EmailPopupFragment
@@ -26,7 +27,7 @@ class ProductDetailsFragment(
 
     private var _binding: FragmentProductDetailsBinding? = null
     private val binding get() = _binding!!
-
+    
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -99,6 +100,10 @@ class ProductDetailsFragment(
             openDialogFragment(EmailPopupFragment.newInstance("product-details", product))
         }
 
+        binding.viewPager.adapter =
+            CardSLideAdapter(arrayOf(product.productUrl ?: "", product.imageUrlBase ?: ""))
+
+        TabLayoutMediator(binding.tablayout, binding.viewPager) { tab, position -> }.attach()
     }
 
     private fun setSeeMoreFunctionality(
