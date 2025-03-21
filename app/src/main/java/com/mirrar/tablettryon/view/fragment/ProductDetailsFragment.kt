@@ -107,9 +107,9 @@ class ProductDetailsFragment(
             url.add(product.imageUrlBase!!)
         }
 
-        if (isValidUrl(product.triedOnUrl)) {
-            url.add(product.triedOnUrl!!)
-        }
+//        if (isValidUrl(product.triedOnUrl)) {
+//            url.add(product.triedOnUrl!!)
+//        }
 
         if (isValidUrl(product.imageSmall)) {
             url.add(product.imageSmall!!)
