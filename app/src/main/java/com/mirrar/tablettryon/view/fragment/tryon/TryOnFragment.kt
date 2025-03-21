@@ -152,7 +152,7 @@ class TryOnFragment : Fragment() {
 
         binding.cardView2.setOnClickListener {
             if (Bookmarks.getBookmarks().isEmpty()) {
-                Toast.makeText(requireContext(), "Wishlist is empty", Toast.LENGTH_SHORT).apply {
+                Toast.makeText(requireContext(), "Click on heart to wishlist products first.", Toast.LENGTH_SHORT).apply {
                     setGravity(Gravity.TOP or Gravity.RIGHT, 200, 10)
                 }.show()
                 return@setOnClickListener
@@ -189,6 +189,7 @@ class TryOnFragment : Fragment() {
         }
 
         binding.catalogue.setOnClickListener {
+            binding.catalogue.isEnabled = false
             val transaction = childFragmentManager.beginTransaction()
             transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_MATCH_ACTIVITY_OPEN)
             transaction.add(
@@ -206,6 +207,7 @@ class TryOnFragment : Fragment() {
             )
             transaction.addToBackStack(null)
             transaction.commit()
+            binding.catalogue.postDelayed({ binding.catalogue.isEnabled = true }, 500)
 //            findNavController().navigate(R.id.action_tryOnFragment_to_catalogueFragment)
         }
 
