@@ -29,6 +29,7 @@ import androidx.navigation.fragment.findNavController
 import com.mirrar.tablettryon.R
 import com.mirrar.tablettryon.databinding.FragmentCameraBinding
 import com.mirrar.tablettryon.utility.AppConstraint.AR_BITMAP
+import com.mirrar.tablettryon.utility.AppConstraint.cameraRatio
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.util.concurrent.ExecutorService
@@ -125,6 +126,7 @@ class CameraFragment : Fragment() {
                 cameraProvider.bindToLifecycle(
                     viewLifecycleOwner, cameraSelector, preview, imageCapture
                 )
+                cameraRatio = binding.previewView.width/binding.previewView.height.toFloat()
             } catch (exc: Exception) {
                 Log.e(TAG, "Use Case Binding Failed", exc)
             }

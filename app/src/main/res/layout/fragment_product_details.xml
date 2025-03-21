@@ -40,10 +40,41 @@
                 android:layout_height="0dp"
                 android:background="#FBFBFF"
                 android:scaleType="centerCrop"
+                android:visibility="gone"
                 app:layout_constraintHeight_percent=".5"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:layout_editor_absoluteX="76dp"
                 tools:src="@drawable/glass_preview" />
+
+            <RelativeLayout
+                android:id="@+id/rele"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                app:layout_constraintHeight_percent=".5"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <androidx.viewpager2.widget.ViewPager2
+                    android:id="@+id/viewPager"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/white" />
+
+                <com.google.android.material.tabs.TabLayout
+                    android:id="@+id/tablayout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentBottom="true"
+                    android:layout_gravity="bottom"
+                    android:layout_marginBottom="12dp"
+                    android:background="@android:color/transparent"
+                    app:tabBackground="@drawable/tab_pager_selector"
+                    app:tabGravity="center"
+                    app:tabIndicatorHeight="0dp"
+                    app:tabPaddingEnd="10dp"
+                    app:tabPaddingStart="10dp" />
+            </RelativeLayout>
 
             <ScrollView
                 android:layout_width="match_parent"
@@ -51,7 +82,7 @@
                 android:layout_marginHorizontal="76dp"
                 android:scrollbars="none"
                 app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
-                app:layout_constraintTop_toBottomOf="@+id/thumb">
+                app:layout_constraintTop_toBottomOf="@+id/rele">
 
                 <include
                     android:id="@+id/product_details_layout"

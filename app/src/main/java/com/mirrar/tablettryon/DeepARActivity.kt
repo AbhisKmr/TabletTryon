@@ -42,6 +42,7 @@ import com.mirrar.tablettryon.products.model.product.Product
 import com.mirrar.tablettryon.products.viewModel.ProductViewModel
 import com.mirrar.tablettryon.tools.DeepARActivityHelper
 import com.mirrar.tablettryon.utility.AppConstraint.AR_BITMAP
+import com.mirrar.tablettryon.utility.AppConstraint.cameraRatio
 import com.mirrar.tablettryon.utility.HelperFunctions.getNavigationBarHeight
 import com.mirrar.tablettryon.view.fragment.selfie.SelfieFragment
 import java.nio.Buffer
@@ -87,14 +88,6 @@ class DeepARActivity : AppCompatActivity(), SurfaceHolder.Callback, AREventListe
 
     override fun onStart() {
         super.onStart()
-        val cameraResolutionPreset = CameraResolutionPreset.P1920x1080
-        val nav = getNavigationBarHeight(this)
-
-        binding.cameraSourcePreview.width = cameraResolutionPreset.height
-        binding.cameraSourcePreview.height = cameraResolutionPreset.width - nav
-        binding.cameraSourcePreview.invalidate()
-        width = AR_BITMAP?.width ?: 0
-        height = AR_BITMAP?.height ?: 0
         initialize()
 
         // only for demo
@@ -242,8 +235,9 @@ class DeepARActivity : AppCompatActivity(), SurfaceHolder.Callback, AREventListe
 
     private fun bindImageAnalysis(cameraProvider: ProcessCameraProvider) {
         val cameraResolutionPreset = CameraResolutionPreset.P1920x1080
-        val width: Int ///= binding.surface.width
-        val height: Int// = binding.surface.height
+
+        val width: Int
+        val height: Int
         val orientation = getScreenOrientation()
         if (orientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE || orientation == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
             width = cameraResolutionPreset.width
@@ -253,14 +247,14 @@ class DeepARActivity : AppCompatActivity(), SurfaceHolder.Callback, AREventListe
             height = cameraResolutionPreset.width
         }
 
-        val cameraResolution = Size(width, height)
+        val cameraResolution = Size((height * cameraRatio).toInt(), height)
         val cameraSelector = CameraSelector.Builder().requireLensFacing(lensFacing)
             .build()
 
         if (useExternalCameraTexture) {
             val preview = Preview.Builder()
                 .setTargetAspectRatio(AspectRatio.RATIO_DEFAULT)
-                //.setTargetResolution(cameraResolution)
+//                .setTargetResolution(cameraResolution)
                 .build()
 
             cameraProvider.unbindAll()
@@ -289,6 +283,7 @@ class DeepARActivity : AppCompatActivity(), SurfaceHolder.Callback, AREventListe
             )
             cameraProvider.unbindAll()
             cameraProvider.bindToLifecycle(this as LifecycleOwner, cameraSelector, imageAnalysis)
+
         }
     }
 
@@ -373,9 +368,12 @@ class DeepARActivity : AppCompatActivity(), SurfaceHolder.Callback, AREventListe
         deepARActivityHelper = DeepARActivityHelper(this, productViewModel, {
             deepAR!!.switchEffect("effect", it)
         }, { s, p ->
-            screenshot = s
-            selectedProduct = p
-            deepAR?.takeScreenshot()
+//            screenshot = s
+//            selectedProduct = p
+//            deepAR?.takeScreenshot()
+            openDialogFragment(
+                SelfieFragment.newInstance()
+            )
         })
         handlerThread = LoadImageHandlerThread(this)
         handlerThread.start()
@@ -409,11 +407,7 @@ class DeepARActivity : AppCompatActivity(), SurfaceHolder.Callback, AREventListe
     }
 
     override fun screenshotTaken(p0: Bitmap?) {
-        if (screenshot == DeepARActivityHelper.SCREENSHOT.SELFIE) {
-            openDialogFragment(
-                SelfieFragment.newInstance()
-            )
-        }
+
     }
 
     override fun videoRecordingStarted() {
@@ -451,16 +445,15 @@ class DeepARActivity : AppCompatActivity(), SurfaceHolder.Callback, AREventListe
     }
 
     override fun frameAvailable(frame: Image?) {
-        if (frame != null) {
-            val planes: Array<Image.Plane> = frame.getPlanes()
-            val buffer: Buffer = planes[0].buffer.rewind()
-            val pixelStride = planes[0].pixelStride
-            val rowStride = planes[0].rowStride
-            val rowPadding = rowStride - pixelStride * width
-            val bitmap = createBitmap(width + rowPadding / pixelStride, height)
-            bitmap.copyPixelsFromBuffer(buffer)
-            binding.preview.setImageBitmap(bitmap)
-        }
+//        if (frame != null) {
+//            val planes: Array<Image.Plane> = frame.getPlanes()
+//            val buffer: Buffer = planes[0].buffer.rewind()
+//            val pixelStride = planes[0].pixelStride
+//            val rowStride = planes[0].rowStride
+//            val rowPadding = rowStride - pixelStride * width
+//            val bitmap = createBitmap(width + rowPadding / pixelStride, height)
+//            bitmap.copyPixelsFromBuffer(buffer)
+//        }
     }
 
     override fun error(p0: ARErrorType?, p1: String?) {

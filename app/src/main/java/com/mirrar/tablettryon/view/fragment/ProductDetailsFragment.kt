@@ -4,18 +4,20 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentTransaction
 import com.bumptech.glide.Glide
+import com.google.android.material.tabs.TabLayoutMediator
 import com.mirrar.tablettryon.R
 import com.mirrar.tablettryon.databinding.FragmentProductDetailsBinding
 import com.mirrar.tablettryon.products.model.product.Product
+import com.mirrar.tablettryon.tools.faceDetector.mlkit.CardSLideAdapter
 import com.mirrar.tablettryon.utility.Bookmarks
 import com.mirrar.tablettryon.utility.HelperFunctions.getImageUrlFromProduct
+import com.mirrar.tablettryon.utility.HelperFunctions.isValidUrl
 import com.mirrar.tablettryon.view.fragment.email.EmailPopupFragment
 
 class ProductDetailsFragment(
@@ -26,7 +28,7 @@ class ProductDetailsFragment(
 
     private var _binding: FragmentProductDetailsBinding? = null
     private val binding get() = _binding!!
-
+    
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -69,9 +71,9 @@ class ProductDetailsFragment(
             dismissDialog()
         }
 
-        val url = getImageUrlFromProduct(product)
+//        val url = getImageUrlFromProduct(product)
 
-        Glide.with(requireContext()).load(url).into(binding.thumb)
+//        Glide.with(requireContext()).load(url).into(binding.thumb)
 
         binding.productDetailsLayout.brand.text = product.brand
         binding.productDetailsLayout.productCode.text = product.localItemCode
@@ -98,7 +100,41 @@ class ProductDetailsFragment(
         binding.email.setOnClickListener {
             openDialogFragment(EmailPopupFragment.newInstance("product-details", product))
         }
+//        6534509
 
+        val url = mutableListOf<String>()
+        if (isValidUrl(product.imageUrlBase)) {
+            url.add(product.imageUrlBase!!)
+        }
+
+//        if (isValidUrl(product.triedOnUrl)) {
+//            url.add(product.triedOnUrl!!)
+//        }
+
+        if (isValidUrl(product.imageSmall)) {
+            url.add(product.imageSmall!!)
+        }
+
+        if (isValidUrl(product.imageThumbnail)) {
+            url.add(product.imageThumbnail!!)
+        }
+
+        if (isValidUrl(product.imageExtra1)) {
+            url.add(product.imageExtra1!!)
+        }
+
+        if (isValidUrl(product.imageExtra2)) {
+            url.add(product.imageExtra2!!)
+        }
+
+//        if (product.asset2DUrl != null) {
+//            url.add(product.asset2DUrl)
+//        }
+
+        binding.viewPager.adapter =
+            CardSLideAdapter(url.toTypedArray())
+
+        TabLayoutMediator(binding.tablayout, binding.viewPager) { tab, position -> }.attach()
     }
 
     private fun setSeeMoreFunctionality(
