@@ -68,6 +68,7 @@ class DeepARActivityHelper(
     init {
 
         binding.catalogue.setOnClickListener {
+            binding.catalogue.isEnabled = false
             val transaction = deepARActivity.supportFragmentManager.beginTransaction()
             transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_MATCH_ACTIVITY_OPEN)
             transaction.add(R.id.container, CatalogueFragment.newInstance(
@@ -84,6 +85,8 @@ class DeepARActivityHelper(
             )
             transaction.addToBackStack(null)
             transaction.commit()
+            binding.catalogue.postDelayed({ binding.catalogue.isEnabled = true }, 500)
+
         }
 
 
@@ -132,7 +135,7 @@ class DeepARActivityHelper(
 
         binding.cardView2.setOnClickListener {
             if (Bookmarks.getBookmarks().isEmpty()) {
-                Toast.makeText(deepARActivity, "Wishlist is empty", Toast.LENGTH_SHORT).apply {
+                Toast.makeText(deepARActivity, "Click on heart to wishlist products first.", Toast.LENGTH_SHORT).apply {
                     setGravity(Gravity.TOP or Gravity.RIGHT, 200, 10)
                 }.show()
                 return@setOnClickListener
