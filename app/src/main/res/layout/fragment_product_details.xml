@@ -57,7 +57,7 @@
                     android:id="@+id/viewPager"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    app:tabBackground="@drawable/tab_pager_selector" />
+                    android:background="@color/primery_purple" />
 
                 <com.google.android.material.tabs.TabLayout
                     android:id="@+id/tablayout"
@@ -68,7 +68,7 @@
                     android:layout_alignParentBottom="true"
                     android:layout_gravity="bottom"
                     android:layout_marginBottom="12dp"
-                    android:background="@color/white"
+                    android:background="@android:color/transparent"
                     app:tabBackground="@drawable/tab_pager_selector"
                     app:tabGravity="center"
                     app:tabIndicatorHeight="0dp"

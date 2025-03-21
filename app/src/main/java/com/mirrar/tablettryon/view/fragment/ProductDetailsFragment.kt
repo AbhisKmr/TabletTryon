@@ -17,6 +17,7 @@ import com.mirrar.tablettryon.products.model.product.Product
 import com.mirrar.tablettryon.tools.faceDetector.mlkit.CardSLideAdapter
 import com.mirrar.tablettryon.utility.Bookmarks
 import com.mirrar.tablettryon.utility.HelperFunctions.getImageUrlFromProduct
+import com.mirrar.tablettryon.utility.HelperFunctions.isValidUrl
 import com.mirrar.tablettryon.view.fragment.email.EmailPopupFragment
 
 class ProductDetailsFragment(
@@ -102,28 +103,28 @@ class ProductDetailsFragment(
 //        6534509
 
         val url = mutableListOf<String>()
-        if (product.imageUrlBase != null) {
-            url.add(product.imageUrlBase)
+        if (isValidUrl(product.imageUrlBase)) {
+            url.add(product.imageUrlBase!!)
         }
 
-        if (product.triedOnUrl != null) {
-            url.add(product.triedOnUrl)
+        if (isValidUrl(product.triedOnUrl)) {
+            url.add(product.triedOnUrl!!)
         }
 
-        if (product.imageSmall != null) {
-            url.add(product.imageSmall)
+        if (isValidUrl(product.imageSmall)) {
+            url.add(product.imageSmall!!)
         }
 
-        if (product.imageThumbnail != null) {
-            url.add(product.imageThumbnail)
+        if (isValidUrl(product.imageThumbnail)) {
+            url.add(product.imageThumbnail!!)
         }
 
-        if (product.imageExtra1 != null) {
-            url.add(product.imageExtra1)
+        if (isValidUrl(product.imageExtra1)) {
+            url.add(product.imageExtra1!!)
         }
 
-        if (product.imageExtra2 != null) {
-            url.add(product.imageExtra2)
+        if (isValidUrl(product.imageExtra2)) {
+            url.add(product.imageExtra2!!)
         }
 
 //        if (product.asset2DUrl != null) {
