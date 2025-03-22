@@ -17,6 +17,10 @@ class ProductRepository(
         }
     }
 
+    suspend fun deleteAll() {
+        productDao.deleteAll()
+    }
+
     fun getCharactersSorted(): Flow<List<Product>> =
         productDao.getProductsSortedAsc()
 }

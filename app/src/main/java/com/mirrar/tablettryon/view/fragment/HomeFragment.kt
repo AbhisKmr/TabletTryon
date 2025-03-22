@@ -1,10 +1,15 @@
 package com.mirrar.tablettryon.view.fragment
 
+import android.annotation.SuppressLint
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.viewModels
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.fragment.app.viewModels
@@ -14,15 +19,16 @@ import com.mirrar.tablettryon.database.ProductDataViewModel
 import com.mirrar.tablettryon.database.ProductDatabase
 import com.mirrar.tablettryon.database.ProductRepository
 import com.mirrar.tablettryon.databinding.FragmentHomeBinding
-import com.mirrar.tablettryon.products.viewModel.ProductViewModel
-import com.mirrar.tablettryon.utility.HelperFunctions.getActionBarSize
-import com.mirrar.tablettryon.utility.HelperFunctions.getDisplaySize
-import com.mirrar.tablettryon.utility.HelperFunctions.getNavigationBarHeight
+
 
 class HomeFragment : Fragment() {
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
+
+    private var holdHandler: Handler? = null
+    private var executionHandler: Handler? = null
+    private var isHolding = false
 
     private val database by lazy { ProductDatabase.getDatabase(requireContext()) }
     private val repository by lazy { ProductRepository(database.getProductDao()) }
@@ -39,10 +45,10 @@ class HomeFragment : Fragment() {
         return binding.root
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onViewCreated(v: View, savedInstanceState: Bundle?) {
         super.onViewCreated(v, savedInstanceState)
 
-        productViewModel.downloadList()
 //        characterViewModel.list.observe(viewLifecycleOwner) {
 //            it.forEach { p ->
 //                println(p.name)
@@ -60,14 +66,64 @@ class HomeFragment : Fragment() {
             transaction.commit()
         }
 
-        binding.club.setOnClickListener {
-            val dis = getDisplaySize(requireContext())
-            val bar = getActionBarSize(requireContext())
-            val nav = getNavigationBarHeight(requireContext())
-            binding.reso.text = "w: ${dis.first} || h: ${dis.second + nav} || nav: $nav"
-            //displayMetrics.widthPixels, displayMetrics.heightPixels
+//        binding.club.setOnClickListener {
+//            val dis = getDisplaySize(requireContext())
+//            val bar = getActionBarSize(requireContext())
+//            val nav = getNavigationBarHeight(requireContext())
+//            binding.reso.text = "w: ${dis.first} || h: ${dis.second + nav} || nav: $nav"
+//            //displayMetrics.widthPixels, displayMetrics.heightPixels
+//        }
+
+        binding.club.setOnTouchListener { _, event ->
+            when (event.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    isHolding = true
+                    startHoldTimer()
+                }
+
+                MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                }
+            }
+            true
         }
     }
+
+    private fun stopTimers() {
+        holdHandler?.removeCallbacksAndMessages(null)
+        executionHandler?.removeCallbacksAndMessages(null)
+    }
+
+    private fun startHoldTimer() {
+        holdHandler = Handler(Looper.getMainLooper())
+        holdHandler?.postDelayed({
+            if (isHolding) {
+                isHolding = false
+                stopTimers()
+                showYesNoDialog()
+            }
+        }, 3000)
+    }
+
+
+    private fun showYesNoDialog() {
+        AlertDialog.Builder(requireContext())
+            .setTitle("Confirmation")
+            .setMessage("Are you sure you want to proceed? This will reset all local data.")
+            .setPositiveButton("Yes") { dialog, _ ->
+                productViewModel.downloadList()
+                dialog.dismiss()
+            }
+            .setNegativeButton("No") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .setNeutralButton("Delete all") { dialog, _ ->
+                productViewModel.deleteAll()
+                dialog.dismiss()
+            }
+            .setCancelable(false) // Prevent dismissing by tapping outside
+            .show()
+    }
+
 
     override fun onDestroyView() {
         super.onDestroyView()

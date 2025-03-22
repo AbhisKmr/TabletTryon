@@ -14,8 +14,13 @@ class ProductDataViewModel(private val repository: ProductRepository) : ViewMode
 
     fun downloadList() {
         viewModelScope.launch {
-            println("init")
             repository.downloadData()
+        }
+    }
+
+    fun deleteAll() {
+        viewModelScope.launch {
+            repository.deleteAll()
         }
     }
 
