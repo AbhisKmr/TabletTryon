@@ -1,7 +1,11 @@
 package com.mirrar.tablettryon.products.model.product
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
+@Entity(tableName = "product_table")
 data class Product(
-    val _highlightResult: HighlightResult,
+//    val _highlightResult: HighlightResult,
     val age: String,
     val alcoholByVolume: String,
     val appellation: String,
@@ -30,7 +34,6 @@ data class Product(
     val finish: String,
     val flavour: String,
     val fragranceBottleType: String,
-    val fragranceNotes: Any,
     val fragranceNotesBase: String,
     val fragranceNotesHeart: String,
     val fragranceNotesTop: String,
@@ -47,7 +50,6 @@ data class Product(
     val recommended: Boolean?,
     val ingredients: String,
     val isNovelty: Boolean,
-    val limitedEdition: Any,
     val liquorColour: String,
     val localItemCode: String,
     val makeUpType: String,
@@ -55,19 +57,17 @@ data class Product(
     val metaKeywords: String,
     val name: String,
     val numberOfPieces: String,
+    @PrimaryKey(autoGenerate = false)
     val objectID: String,
     val olfactoryFamily: String,
     val packSizeText: String,
     val packagingType: String,
-    val parentProductId: Any,
     val priceDutyFree: Float,
     val priceDutyPaid: Float,
     val productUrl: String?,
-    val quotaCategory: Any,
     val reasonsToBuy: String,
     val rsvCode: String,
     val sapCode: String,
-    val shortDescription: Any,
     val size: String,
     val sizeVariant: Boolean,
     val skinCareType: String,
@@ -83,27 +83,17 @@ data class Product(
     val tastingNotesFinish: String,
     val tastingNotesNose: String,
     val tastingNotesPalate: String,
-    val travelExclusive: Any,
     val triedOnUrl: String?,
-    val ukHexColourCode1: Any,
     val updatedAt: String,
     val virtualTryOn: String,
     val volumeContribution: String,
     val volumeInMl: String,
-    val watchCaseColour: Any,
-    val watchCaseMaterial: Any,
-    val watchDigitalAnalogue: Any,
-    val watchFaceDiameter: Any,
     val watchShape: String,
-    val watchStrapColour: Any,
     val watchStrapMaterial: String,
     val waterResistant: String,
     val waterproof: String,
-    val weight: Any,
     val whiskeyVtoStyle: String,
-    val whiskyRegion: Any,
     val whiskyStyle: String,
-    val wineRegion: Any,
     val year: String
 ) {
     var isBookmarked = false
