@@ -40,7 +40,7 @@ class FilterManager(
                 rotateImage(
                     binding.sortbyDropdown.dropArrow,
                     if (!vis) 180f else 0f,
-                    0f,
+                    if (vis) 180f else 0f,
                 )
             }
         }
@@ -52,7 +52,7 @@ class FilterManager(
             rotateImage(
                 binding.priceRange.dropArrow,
                 if (!vis) 180f else 0f,
-                0f,
+                if (vis) 180f else 0f,
             )
         }
 
@@ -63,7 +63,7 @@ class FilterManager(
             rotateImage(
                 binding.recyclerDropdownBrand.dropArrow,
                 if (!vis) 180f else 0f,
-                0f,
+                if (vis) 180f else 0f,
             )
         }
 
