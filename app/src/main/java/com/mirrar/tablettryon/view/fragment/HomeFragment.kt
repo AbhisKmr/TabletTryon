@@ -15,6 +15,7 @@ import androidx.fragment.app.FragmentTransaction
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.mirrar.tablettryon.R
+import com.mirrar.tablettryon.database.DownloadState
 import com.mirrar.tablettryon.database.ProductDataViewModel
 import com.mirrar.tablettryon.database.ProductDatabase
 import com.mirrar.tablettryon.database.ProductRepository
@@ -74,6 +75,25 @@ class HomeFragment : Fragment() {
 //            //displayMetrics.widthPixels, displayMetrics.heightPixels
 //        }
 
+        productViewModel.downloadState.observe(viewLifecycleOwner) { state ->
+            when (state) {
+                is DownloadState.Progress -> {
+                    binding.progress.visibility = View.VISIBLE
+                    binding.txtPercent.text = "${state.percentage}%"
+                }
+
+                is DownloadState.Success -> {
+                    binding.progress.visibility = View.GONE
+                    binding.txtPercent.text = "${state.products.size}%"
+                }
+
+                is DownloadState.Error -> {
+                    binding.progress.visibility = View.GONE
+                    binding.txtPercent.text = state.message
+                }
+            }
+        }
+
         binding.club.setOnTouchListener { _, event ->
             when (event.action) {
                 MotionEvent.ACTION_DOWN -> {
@@ -110,7 +130,7 @@ class HomeFragment : Fragment() {
             .setTitle("Confirmation")
             .setMessage("Are you sure you want to proceed? This will reset all local data.")
             .setPositiveButton("Yes") { dialog, _ ->
-                productViewModel.downloadList()
+                productViewModel.startDownload()
                 dialog.dismiss()
             }
             .setNegativeButton("No") { dialog, _ ->

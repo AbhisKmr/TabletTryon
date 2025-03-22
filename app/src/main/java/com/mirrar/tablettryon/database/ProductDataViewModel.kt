@@ -1,6 +1,7 @@
 package com.mirrar.tablettryon.database
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.asLiveData
@@ -11,10 +12,14 @@ class ProductDataViewModel(private val repository: ProductRepository) : ViewMode
 
 //    val list: LiveData<List<ProductData>> = repository.getCharactersSorted().asLiveData()
 
+    private val _downloadState = MutableLiveData<DownloadState>()
+    val downloadState: LiveData<DownloadState> get() = _downloadState
 
-    fun downloadList() {
+    fun startDownload() {
         viewModelScope.launch {
-            repository.downloadData()
+            repository.downloadDataWithProgress().collect { state ->
+                _downloadState.value = state
+            }
         }
     }
 

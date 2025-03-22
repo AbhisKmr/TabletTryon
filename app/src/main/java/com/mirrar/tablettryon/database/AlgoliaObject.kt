@@ -9,6 +9,8 @@ import com.algolia.search.model.search.Query
 import com.google.gson.GsonBuilder
 import com.mirrar.tablettryon.products.model.product.Product
 import com.mirrar.tablettryon.utility.AppConstraint
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 
 class AlgoliaObject {
     private val client = ClientSearch(
@@ -20,26 +22,23 @@ class AlgoliaObject {
     private val index = client.initIndex(IndexName(AppConstraint.ALGOLIA_INDEX))
     private val gson = GsonBuilder().create()
 
-    suspend fun fetchAllRecords(): List<Product> {
+    suspend fun fetchAllRecords(): Flow<FetchProgress> = flow {
         val products = mutableListOf<Product>()
         var currentPage = 0
-        var totalPages = 1 // Set initial value to enter the loop
+        var totalPages = 1
 
         println("Starting to fetch records from Algolia")
 
         try {
-            // Continue until we've processed all pages or hit a safety limit
-            while (currentPage < totalPages) { // Safety limit of 100 pages
+            while (currentPage < totalPages) {
                 println("Fetching page $currentPage")
 
                 val query = Query("").apply {
                     page = currentPage
-                    hitsPerPage = 50 // Increase for efficiency
+                    hitsPerPage = 1000
                 }
 
                 val response = index.search(query)
-
-                // Update totalPages based on response
                 totalPages = response.nbPages
                 println("Total pages: $totalPages, Current page: $currentPage")
 
@@ -53,7 +52,6 @@ class AlgoliaObject {
 
                 val parsedProducts = hits.mapNotNull { hit ->
                     try {
-                        println(hit.json.toString())
                         gson.fromJson(hit.json.toString(), Product::class.java)
                     } catch (e: Exception) {
                         println("Failed to parse product: ${e.message}")
@@ -61,19 +59,29 @@ class AlgoliaObject {
                     }
                 }
 
-                println("Successfully parsed ${parsedProducts.size} products from this page")
                 products.addAll(parsedProducts)
+                println("Successfully parsed ${parsedProducts.size} products from this page")
+
+                // Emit progress as a percentage
+                val progress = ((currentPage + 1) * 100) / totalPages
+                emit(FetchProgress.Progress(progress.coerceAtMost(100)))
 
                 currentPage++
             }
 
             println("Completed fetching all records. Total products: ${products.size}")
-            return products
+            emit(FetchProgress.Success(products))
 
         } catch (e: Exception) {
             println("Error fetching records from Algolia: ${e.message}")
             e.printStackTrace()
-            return emptyList() // Return empty list on error
+            emit(FetchProgress.Error("Failed to fetch data: ${e.message}"))
         }
     }
+}
+
+sealed class FetchProgress {
+    data class Progress(val percentage: Int) : FetchProgress()
+    data class Success(val products: List<Product>) : FetchProgress()
+    data class Error(val message: String) : FetchProgress()
 }
