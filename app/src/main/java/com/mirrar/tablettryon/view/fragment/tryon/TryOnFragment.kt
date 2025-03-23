@@ -9,6 +9,7 @@ import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -31,6 +32,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
+import com.google.mediapipe.tasks.vision.core.RunningMode
 import com.mirrar.tablettryon.DeepARActivity
 import com.mirrar.tablettryon.R
 import com.mirrar.tablettryon.databinding.FragmentTryOnBinding
@@ -41,6 +43,7 @@ import com.mirrar.tablettryon.network.Retrofit
 import com.mirrar.tablettryon.products.model.product.Product
 import com.mirrar.tablettryon.products.viewModel.ProductViewModel
 import com.mirrar.tablettryon.tools.FilterManager
+import com.mirrar.tablettryon.tools.faceDetector.mediapipe.FaceLandmarkerHelper
 import com.mirrar.tablettryon.utility.AppConstraint.AR_BITMAP
 import com.mirrar.tablettryon.utility.Bookmarks
 import com.mirrar.tablettryon.utility.GlobalProducts
@@ -57,13 +60,18 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.IOException
+import java.util.concurrent.Executors
+import java.util.concurrent.ScheduledExecutorService
 
-class TryOnFragment : Fragment() {
+class TryOnFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
 
     private var _binding: FragmentTryOnBinding? = null
     private val binding get() = _binding!!
 
     private var selectedProduct: Product? = null
+
+    private lateinit var faceLandmarkerHelper: FaceLandmarkerHelper
+    private lateinit var backgroundExecutor: ScheduledExecutorService
 
     private val response = Retrofit.getInstance()?.create(ApiService::class.java)
     private val productViewModel: ProductViewModel by viewModels {
@@ -152,7 +160,11 @@ class TryOnFragment : Fragment() {
 
         binding.cardView2.setOnClickListener {
             if (Bookmarks.getBookmarks().isEmpty()) {
-                Toast.makeText(requireContext(), "Click on heart to wishlist products first.", Toast.LENGTH_SHORT).apply {
+                Toast.makeText(
+                    requireContext(),
+                    "Click on heart to wishlist products first.",
+                    Toast.LENGTH_SHORT
+                ).apply {
                     setGravity(Gravity.TOP or Gravity.RIGHT, 200, 10)
                 }.show()
                 return@setOnClickListener
@@ -341,70 +353,9 @@ class TryOnFragment : Fragment() {
         fragment.show(childFragmentManager, fragment.tag)
     }
 
-    private val pickImageLauncher = registerForActivityResult(
-        ActivityResultContracts.GetContent()
-    ) { uri: Uri? ->
-        uri?.let {
-            handleImageSelection(it)
-        }
-    }
-
-    private val permissionLauncher =
-        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
-            if (isGranted) {
-                openGallery()
-            } else {
-                Toast.makeText(requireContext(), "Permission Denied", Toast.LENGTH_SHORT).show()
-            }
-        }
-
-    private fun checkPermissionAndOpenGallery() {
-        val permission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            Manifest.permission.READ_MEDIA_IMAGES
-        } else {
-            Manifest.permission.READ_EXTERNAL_STORAGE
-        }
-
-        when {
-            ContextCompat.checkSelfPermission(
-                requireContext(),
-                permission
-            ) == PackageManager.PERMISSION_GRANTED -> {
-                openGallery()
-            }
-
-            shouldShowRequestPermissionRationale(permission) -> {
-                showPermissionRationale(permission)
-            }
-
-            else -> {
-                permissionLauncher.launch(permission)
-            }
-        }
-    }
-
-    private fun showPermissionRationale(permission: String) {
-        AlertDialog.Builder(requireContext())
-            .setTitle("Permission Needed")
-            .setMessage("This app requires access to your gallery to select images.")
-            .setPositiveButton("OK") { _, _ ->
-                permissionLauncher.launch(permission)
-            }
-            .setNegativeButton("Cancel", null)
-            .show()
-    }
-
-    private fun openGallery() {
-        pickImageLauncher.launch("image/*")
-    }
-
-    private fun handleImageSelection(uri: Uri) {
-        //binding.imagePreview.setImageURI(uri)
-        applyAR()
-        Toast.makeText(requireContext(), "Image Selected: $uri", Toast.LENGTH_SHORT).show()
-    }
-
     private fun applyAR() {
+        runMediapipeOnBitmap(AR_BITMAP!!)
+        /*
         try {
             if (isValidUrl(selectedProduct?.triedOnUrl)) {
                 binding.lottieAnimation.isVisible = true
@@ -443,6 +394,43 @@ class TryOnFragment : Fragment() {
         } catch (e: IOException) {
             e.printStackTrace()
         }
+
+         */
+    }
+
+    private fun runMediapipeOnBitmap(bitmap: Bitmap) {
+
+        binding.overlay.clear()
+        backgroundExecutor = Executors.newSingleThreadScheduledExecutor()
+        backgroundExecutor.execute {
+
+            faceLandmarkerHelper =
+                FaceLandmarkerHelper(
+                    context = requireContext(),
+                    runningMode = RunningMode.IMAGE,
+                    minFaceDetectionConfidence = FaceLandmarkerHelper.DEFAULT_FACE_DETECTION_CONFIDENCE,
+                    minFaceTrackingConfidence = FaceLandmarkerHelper.DEFAULT_FACE_TRACKING_CONFIDENCE,
+                    minFacePresenceConfidence = FaceLandmarkerHelper.DEFAULT_FACE_PRESENCE_CONFIDENCE,
+                    maxNumFaces = 1,
+                    currentDelegate = FaceLandmarkerHelper.DEFAULT_FACE_DETECTION_CONFIDENCE.toInt()
+                )
+
+            faceLandmarkerHelper.detectImage(bitmap)?.let { result ->
+                activity?.runOnUiThread {
+                    Log.i("faceLandmarkerHelper", result.result.faceLandmarks().size.toString())
+
+                    binding.overlay.setResults(
+                        result.result,
+                        bitmap.height,
+                        bitmap.width,
+                        RunningMode.IMAGE
+                    )
+
+                }
+            } ?: run { Log.e("faceLandmarkerHelper", "Error running face landmarker.") }
+
+            faceLandmarkerHelper.clearFaceLandmarker()
+        }
     }
 
     private fun viewToBitmap(view: View): Bitmap? {
@@ -453,5 +441,13 @@ class TryOnFragment : Fragment() {
         val canvas = Canvas(bitmap)
         view.draw(canvas)
         return bitmap
+    }
+
+    override fun onError(error: String, errorCode: Int) {
+
+    }
+
+    override fun onResults(resultBundle: FaceLandmarkerHelper.ResultBundle) {
+
     }
 }
