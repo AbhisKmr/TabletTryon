@@ -21,6 +21,7 @@ import com.mirrar.tablettryon.database.ProductDatabase
 import com.mirrar.tablettryon.database.ProductRepository
 import com.mirrar.tablettryon.databinding.FragmentHomeBinding
 import com.mirrar.tablettryon.products.model.product.Product
+import com.mirrar.tablettryon.tools.FirebaseHelper
 import com.mirrar.tablettryon.utility.HelperFunctions.downloadAndSaveFile
 import com.mirrar.tablettryon.utility.HelperFunctions.getFileNameAndExtension
 import com.mirrar.tablettryon.utility.HelperFunctions.isValidUrl
@@ -36,9 +37,12 @@ class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
 
+    private val firebaseHelper = FirebaseHelper()
+
     private var holdHandler: Handler? = null
     private var executionHandler: Handler? = null
     private var isHolding = false
+    private var tnc: String = ""
 
     private val database by lazy { ProductDatabase.getDatabase(requireContext()) }
     private val repository by lazy { ProductRepository(database.getProductDao()) }
@@ -58,17 +62,6 @@ class HomeFragment : Fragment() {
     @SuppressLint("ClickableViewAccessibility")
     override fun onViewCreated(v: View, savedInstanceState: Bundle?) {
         super.onViewCreated(v, savedInstanceState)
-
-        binding.button.setOnClickListener {
-            val transaction = childFragmentManager.beginTransaction()
-            transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_MATCH_ACTIVITY_OPEN)
-            transaction.add(R.id.container, DialogLikeFragment.newInstance({
-                requireActivity().onBackPressedDispatcher.onBackPressed()
-                findNavController().navigate(R.id.cameraFragment)
-            }))
-            transaction.addToBackStack(null)
-            transaction.commit()
-        }
 
         productViewModel.downloadState.observe(viewLifecycleOwner) { state ->
             when (state) {
@@ -100,6 +93,7 @@ class HomeFragment : Fragment() {
                 }
             }
         }
+
         binding.club.setOnTouchListener { _, event ->
             when (event.action) {
                 MotionEvent.ACTION_DOWN -> {
@@ -111,6 +105,25 @@ class HomeFragment : Fragment() {
                 }
             }
             true
+        }
+
+        firebaseHelper.getTermAndCondition {
+            CoroutineScope(Dispatchers.Main).launch {
+                try {
+                    tnc = it ?: ""
+                    binding.button.setOnClickListener {
+                        val transaction = childFragmentManager.beginTransaction()
+                        transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_MATCH_ACTIVITY_OPEN)
+                        transaction.add(R.id.container, DialogLikeFragment.newInstance(tnc, {
+                            requireActivity().onBackPressedDispatcher.onBackPressed()
+                            findNavController().navigate(R.id.cameraFragment)
+                        }))
+                        transaction.addToBackStack(null)
+                        transaction.commit()
+                    }
+                } catch (e: Exception) {
+                }
+            }
         }
     }
 

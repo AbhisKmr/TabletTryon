@@ -17,12 +17,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 
-class DialogLikeFragment(val onNext : () -> Unit) : Fragment() {
+class DialogLikeFragment(private val tncTxt: String, val onNext: () -> Unit) : Fragment() {
 
     private var _binding: CustomAlertLayoutBinding? = null
     private val binding get() = _binding!!
-
-    private val firebaseHelper = FirebaseHelper()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -51,29 +49,15 @@ class DialogLikeFragment(val onNext : () -> Unit) : Fragment() {
         enterTransition = android.transition.Fade()
         exitTransition = android.transition.Fade()
 
+        binding.tnc.text = Html.fromHtml( tncTxt, Html.FROM_HTML_MODE_COMPACT)
         binding.loader.isVisible = binding.tnc.text.isEmpty()
-        observer()
-    }
-
-    private fun observer() {
-        firebaseHelper.getTermAndCondition {
-            CoroutineScope(Dispatchers.Main).launch {
-                try {
-
-
-                    binding.loader.isVisible = false
-                    binding.tnc.text = Html.fromHtml(it, Html.FROM_HTML_MODE_COMPACT)
-
-                    binding.button.setOnClickListener {
-                        if (!binding.checkbox.isChecked) {
-                            binding.checkbox.error = "Please accept the terms to proceed."
-                            return@setOnClickListener
-                        }
-
-                        onNext()
-                    }
-                } catch (e: Exception) {}
+        binding.button.setOnClickListener {
+            if (!binding.checkbox.isChecked) {
+                binding.checkbox.error = "Please accept the terms to proceed."
+                return@setOnClickListener
             }
+
+            onNext()
         }
     }
 
@@ -86,6 +70,6 @@ class DialogLikeFragment(val onNext : () -> Unit) : Fragment() {
 
     companion object {
         @JvmStatic
-        fun newInstance(o : () -> Unit) = DialogLikeFragment(o)
+        fun newInstance(s: String, o: () -> Unit) = DialogLikeFragment(s, o)
     }
 }
