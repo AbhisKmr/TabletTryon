@@ -24,12 +24,17 @@ import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.mirrar.tablettryon.R
 import com.mirrar.tablettryon.databinding.FragmentCameraBinding
 import com.mirrar.tablettryon.utility.AppConstraint.AR_BITMAP
 import com.mirrar.tablettryon.utility.AppConstraint.cameraRatio
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.util.concurrent.ExecutorService
@@ -45,6 +50,8 @@ class CameraFragment : Fragment() {
     private lateinit var outputDirectory: File
     private lateinit var cameraExecutor: ExecutorService
     private lateinit var previewView: PreviewView
+
+    private var timerJob: Job? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -68,8 +75,26 @@ class CameraFragment : Fragment() {
         outputDirectory = getOutputDirectory()
 
         binding.button.setOnClickListener {
-            takePhoto()
+            startCountdownTimer()
         }
+    }
+
+    private fun startCountdownTimer() {
+        binding.timerIndicator.isVisible = true
+        timerJob?.cancel()
+
+        timerJob = lifecycleScope.launch {
+            for (secondsLeft in 3 downTo 1) {
+                binding.timerTxt.text = secondsLeft.toString()
+                delay(1000)
+            }
+            executeFunction()
+        }
+    }
+
+    private fun executeFunction() {
+        binding.timerIndicator.isVisible = false
+        takePhoto()
     }
 
     fun compressBitmapLosslessly(original: Bitmap): Bitmap? {
@@ -92,6 +117,7 @@ class CameraFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        timerJob?.cancel()
         _binding = null
     }
 
@@ -126,7 +152,7 @@ class CameraFragment : Fragment() {
                 cameraProvider.bindToLifecycle(
                     viewLifecycleOwner, cameraSelector, preview, imageCapture
                 )
-                cameraRatio = binding.previewView.width/binding.previewView.height.toFloat()
+                cameraRatio = binding.previewView.width / binding.previewView.height.toFloat()
             } catch (exc: Exception) {
                 Log.e(TAG, "Use Case Binding Failed", exc)
             }
@@ -143,12 +169,12 @@ class CameraFragment : Fragment() {
                     super.onCaptureSuccess(image)
 
                     val bitmap = (
-                        imageProxyToBitmap(
-                            image,
-                            rotationDegrees = 270f,
-                            flipHorizontal = true
-                        )
-                    )
+                            imageProxyToBitmap(
+                                image,
+                                rotationDegrees = 270f,
+                                flipHorizontal = true
+                            )
+                            )
                     image.close()
                     AR_BITMAP = bitmap
                     findNavController().navigate(R.id.action_cameraFragment_to_cameraImagePreviewFragment4)
