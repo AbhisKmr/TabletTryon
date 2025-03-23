@@ -33,6 +33,16 @@ object HelperFunctions {
         }
     }
 
+    fun getFileNameAndExtension(url: String): Pair<String, String> {
+        val regex = ".*/([^/?#]+)(?:\\?.*)?".toRegex()
+        val match = regex.find(url)?.groupValues?.get(1) ?: return "" to ""
+
+        val fileName = match.substringBeforeLast(".")
+        val extension = match.substringAfterLast(".", "")
+
+        return fileName to extension
+    }
+
     fun downloadAndSaveFile(context: Context, fileUrl: String, fileName: String): String? {
         return try {
             val directory = context.cacheDir

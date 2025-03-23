@@ -16,16 +16,15 @@ import com.algolia.search.model.Attribute
 import com.algolia.search.model.IndexName
 import com.algolia.search.model.ObjectID
 import com.google.gson.GsonBuilder
-import com.mirrar.tablettryon.view.fragment.tryon.dataModel.Product
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import com.algolia.search.model.search.Query
+import com.mirrar.tablettryon.products.model.product.Product
 import com.mirrar.tablettryon.tools.filter.FilterDataModel
 import com.mirrar.tablettryon.utility.AppConstraint
 import com.mirrar.tablettryon.utility.AppConstraint.priceMax
 import com.mirrar.tablettryon.utility.AppConstraint.priceMin
 import com.mirrar.tablettryon.utility.AppConstraint.recommendationModel
-import com.mirrar.tablettryon.utility.AppConstraint.recommendationProductList
 import com.mirrar.tablettryon.utility.Bookmarks
 import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.jsonPrimitive
@@ -110,7 +109,6 @@ class AlgoliaViewModel : ViewModel() {
 
             recommendedObjects.results.forEach {
                 val p = GsonBuilder().create().fromJson(it.toString(), Product::class.java)
-                    .apply { isRecommended = true }
 
                 recommendationModel?.recommendations?.forEach { pod ->
                     if (pod.objectID == p.objectID) {
@@ -121,7 +119,6 @@ class AlgoliaViewModel : ViewModel() {
             }
 
             itIsForRecommendation = true
-            recommendationProductList = lst
             _products.value = lst
         }
     }
@@ -212,7 +209,7 @@ class AlgoliaViewModel : ViewModel() {
         while (true) {
             val response = index.search(Query("").apply {
                 page = currentPage
-                hitsPerPage = 1000
+                hitsPerPage = 10000
                 attributesToRetrieve = listOf(Attribute("priceDutyFree"))
             })
 

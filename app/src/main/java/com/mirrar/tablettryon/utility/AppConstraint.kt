@@ -2,9 +2,7 @@ package com.mirrar.tablettryon.utility
 
 import android.graphics.Bitmap
 import android.util.Size
-import com.algolia.search.model.recommend.RecommendationModel
 import com.mirrar.tablettryon.tools.model.FaceRecommendationModel
-import com.mirrar.tablettryon.view.fragment.tryon.dataModel.Product
 
 object AppConstraint {
     var IMAGE_RENDER_SIZE = Size(0,0)
@@ -18,7 +16,6 @@ object AppConstraint {
 
     var AR_BITMAP: Bitmap? = null
     var recommendationModel: FaceRecommendationModel? = null
-    var recommendationProductList: List<Product>? = null
 
     var userName: String? = null
     var userEmail: String? = null
