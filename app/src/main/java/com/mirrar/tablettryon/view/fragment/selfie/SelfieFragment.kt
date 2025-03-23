@@ -119,12 +119,14 @@ class SelfieFragment : DialogFragment() {
 
             binding.sendProgress.isVisible = true
             binding.sendTv.text = ""
-            EmailHelper.sendDynamicEmail(requireContext(),
+            EmailHelper.sendDynamicEmail(
+                requireContext(),
                 "selfie"
             ) {
                 binding.sendProgress.isVisible = false
                 binding.sendTv.text = "Send"
                 if (it != null) {
+                    requireActivity().finish()
 //                    dismissDialog()
                 } else {
                     Toast.makeText(

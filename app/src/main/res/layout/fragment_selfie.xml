@@ -238,6 +238,7 @@
                     android:background="@drawable/edit_text_border"
                     android:gravity="center_vertical"
                     android:hint="Name"
+                    android:inputType="textPersonName"
                     android:paddingHorizontal="16dp"
                     android:textSize="14sp" />
 
@@ -250,6 +251,7 @@
                     android:background="@drawable/edit_text_border"
                     android:gravity="center_vertical"
                     android:hint="Email"
+                    android:inputType="textEmailAddress"
                     android:paddingHorizontal="16dp"
                     android:textSize="14sp" />
 
@@ -311,9 +313,9 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="84dp"
-                android:paddingHorizontal="24dp"
-                android:maxLines="@integer/material_motion_duration_long_1"
                 android:gravity="center"
+                android:maxLines="@integer/material_motion_duration_long_1"
+                android:paddingHorizontal="24dp"
                 android:text="Go Back"
                 android:textColor="@color/white" />
 
