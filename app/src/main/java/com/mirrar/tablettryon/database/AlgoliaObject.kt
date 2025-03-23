@@ -22,7 +22,7 @@ class AlgoliaObject {
     private val index = client.initIndex(IndexName(AppConstraint.ALGOLIA_INDEX))
     private val gson = GsonBuilder().create()
 
-    suspend fun fetchAllRecords(): Flow<FetchProgress> = flow {
+    fun fetchAllRecords(): Flow<FetchProgress> = flow {
         val products = mutableListOf<Product>()
         var currentPage = 0
         var totalPages = 1

@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
+import com.mirrar.tablettryon.products.model.product.Product
 import kotlinx.coroutines.launch
 
 class ProductDataViewModel(private val repository: ProductRepository) : ViewModel() {
@@ -20,6 +21,12 @@ class ProductDataViewModel(private val repository: ProductRepository) : ViewMode
             repository.downloadDataWithProgress().collect { state ->
                 _downloadState.value = state
             }
+        }
+    }
+
+    fun updateProduct(p: Product) {
+        viewModelScope.launch {
+            repository.updateProduct(p)
         }
     }
 

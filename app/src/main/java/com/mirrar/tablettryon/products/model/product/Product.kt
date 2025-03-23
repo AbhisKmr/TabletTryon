@@ -97,4 +97,11 @@ data class Product(
     val year: String
 ) {
     var isBookmarked = false
+    var asset2DUrlPath: String? = null
+    var imageExtra1Path: String? = null
+    var imageExtra2Path: String? = null
+    var imageSmallPath: String? = null
+    var imageThumbnailPath: String? = null
+    var imageUrlBasePath: String? = null
+    var asset3DUrlPath: String? = null
 }

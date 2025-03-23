@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Update
 import androidx.room.Upsert
 import com.mirrar.tablettryon.products.model.product.Product
 import kotlinx.coroutines.flow.Flow
@@ -43,6 +44,9 @@ interface ProductDao {
 
     @Upsert
     suspend fun upsertProduct(product: Product)
+
+    @Update
+    suspend fun updateSingleProduct(product: Product)
 
     @Query("SELECT * FROM product_table WHERE name LIKE '%' || :name || '%'")
     fun getProductsByName(name: String): Flow<List<Product>>

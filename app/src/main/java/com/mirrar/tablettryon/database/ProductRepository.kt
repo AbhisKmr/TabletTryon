@@ -24,6 +24,10 @@ class ProductRepository(
         }
     }
 
+    suspend fun updateProduct(p: Product) {
+        productDao.updateSingleProduct(p)
+    }
+
     suspend fun deleteAll() {
         productDao.deleteAll()
     }

@@ -8,11 +8,11 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.mirrar.tablettryon.R
 import com.mirrar.tablettryon.database.DownloadState
@@ -20,6 +20,15 @@ import com.mirrar.tablettryon.database.ProductDataViewModel
 import com.mirrar.tablettryon.database.ProductDatabase
 import com.mirrar.tablettryon.database.ProductRepository
 import com.mirrar.tablettryon.databinding.FragmentHomeBinding
+import com.mirrar.tablettryon.products.model.product.Product
+import com.mirrar.tablettryon.utility.HelperFunctions.downloadAndSaveFile
+import com.mirrar.tablettryon.utility.HelperFunctions.getFileNameAndExtension
+import com.mirrar.tablettryon.utility.HelperFunctions.isValidUrl
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 class HomeFragment : Fragment() {
@@ -50,12 +59,6 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(v: View, savedInstanceState: Bundle?) {
         super.onViewCreated(v, savedInstanceState)
 
-//        characterViewModel.list.observe(viewLifecycleOwner) {
-//            it.forEach { p ->
-//                println(p.name)
-//            }
-//        }
-
         binding.button.setOnClickListener {
             val transaction = childFragmentManager.beginTransaction()
             transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_MATCH_ACTIVITY_OPEN)
@@ -67,14 +70,6 @@ class HomeFragment : Fragment() {
             transaction.commit()
         }
 
-//        binding.club.setOnClickListener {
-//            val dis = getDisplaySize(requireContext())
-//            val bar = getActionBarSize(requireContext())
-//            val nav = getNavigationBarHeight(requireContext())
-//            binding.reso.text = "w: ${dis.first} || h: ${dis.second + nav} || nav: $nav"
-//            //displayMetrics.widthPixels, displayMetrics.heightPixels
-//        }
-
         productViewModel.downloadState.observe(viewLifecycleOwner) { state ->
             when (state) {
                 is DownloadState.Progress -> {
@@ -83,8 +78,20 @@ class HomeFragment : Fragment() {
                 }
 
                 is DownloadState.Success -> {
-                    binding.progress.visibility = View.GONE
-                    binding.txtPercent.text = "${state.products.size}%"
+                    binding.progress.visibility = View.VISIBLE
+
+                    lifecycleScope.launch {
+                        for (i in state.products.indices) {
+                            binding.txtPercent.text = "${((i * 100) / state.products.size)}%"
+
+                            withContext(Dispatchers.IO) {
+                                saveFileToLocal(state.products[i])
+                            }
+                        }
+
+                        binding.progress.visibility = View.GONE
+                        binding.txtPercent.text = "${state.products.size}%"
+                    }
                 }
 
                 is DownloadState.Error -> {
@@ -93,7 +100,6 @@ class HomeFragment : Fragment() {
                 }
             }
         }
-
         binding.club.setOnTouchListener { _, event ->
             when (event.action) {
                 MotionEvent.ACTION_DOWN -> {
@@ -144,6 +150,34 @@ class HomeFragment : Fragment() {
             .show()
     }
 
+    private suspend fun saveFileToLocal(p: Product) = withContext(Dispatchers.IO) {
+        val asset2DUrlPath = async { urlToFilePath(p.asset2DUrl) }.await()
+        val imageExtra1Path = async { urlToFilePath(p.imageExtra1) }.await()
+        val imageExtra2Path = async { urlToFilePath(p.imageExtra2) }.await()
+        val imageSmallPath = async { urlToFilePath(p.imageSmall) }.await()
+        val imageThumbnailPath = async { urlToFilePath(p.imageThumbnail) }.await()
+        val imageUrlBasePath = async { urlToFilePath(p.imageUrlBase) }.await()
+        val asset3DUrlPath = async { urlToFilePath(p.asset3DUrl) }.await()
+
+        p.asset2DUrlPath = asset2DUrlPath
+        p.imageExtra1Path = imageExtra1Path
+        p.imageExtra2Path = imageExtra2Path
+        p.imageSmallPath = imageSmallPath
+        p.imageThumbnailPath = imageThumbnailPath
+        p.imageUrlBasePath = imageUrlBasePath
+        p.asset3DUrlPath = asset3DUrlPath
+
+        productViewModel.updateProduct(p)
+    }
+
+    private fun urlToFilePath(url: String?): String? {
+        if (url == null || !isValidUrl(url)) {
+            return null
+        }
+
+        val (name, extension) = getFileNameAndExtension(url)
+        return downloadAndSaveFile(requireContext(), url, "${name}.${extension}")
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()
