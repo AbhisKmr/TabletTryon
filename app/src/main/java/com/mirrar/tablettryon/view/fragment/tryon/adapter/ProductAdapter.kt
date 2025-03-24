@@ -47,6 +47,7 @@ class ProductAdapter(private val clickListener: (Int, Product) -> Unit) :
         holder.binding.recommendationTag.isVisible = list[position].recommended == true
 
         holder.binding.selectorHighlight.isVisible = selectedIndex == position
+        holder.binding.nonSelectorHighlight.isVisible = selectedIndex != position
 
         val url = if (!list[position].imageSmall.isNullOrBlank()) {
             list[position].imageSmall

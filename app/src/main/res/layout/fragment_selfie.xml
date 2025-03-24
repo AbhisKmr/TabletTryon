@@ -282,7 +282,7 @@
                     android:elevation="0dp"
                     android:textAllCaps="false"
                     android:textColor="@color/white"
-                    app:cardBackgroundColor="@color/primery_purple"
+                    app:cardBackgroundColor="@color/black"
                     app:cardCornerRadius="8dp"
                     app:cardElevation="0dp">
 
