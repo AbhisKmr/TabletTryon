@@ -58,7 +58,7 @@ object HelperFunctions {
             val response = client.newCall(request).execute()
 
             if (!response.isSuccessful) {
-                Log.e("Download", "Failed to download file: ${response.message}")
+                Log.e("Download", "Failed to download file (${fileName}): ${response.message}")
                 return null
             }
 
@@ -119,6 +119,24 @@ object HelperFunctions {
         } else {
             0
         }
+    }
+
+    fun clearAppCache(context: Context) {
+        try {
+            val cacheDir = context.cacheDir
+            cacheDir?.let { deleteDir(it) }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    fun deleteDir(dir: File): Boolean {
+        if (dir.isDirectory) {
+            dir.listFiles()?.forEach { child ->
+                deleteDir(child)
+            }
+        }
+        return dir.delete()
     }
 
     fun rotateImage(imageView: ImageView, angle: Float = 180f, startAngle: Float = 0f) {

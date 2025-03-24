@@ -9,6 +9,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.fragment.app.viewModels
@@ -22,6 +23,8 @@ import com.mirrar.tablettryon.database.ProductRepository
 import com.mirrar.tablettryon.databinding.FragmentHomeBinding
 import com.mirrar.tablettryon.products.model.product.Product
 import com.mirrar.tablettryon.tools.FirebaseHelper
+import com.mirrar.tablettryon.utility.AppSharedPref
+import com.mirrar.tablettryon.utility.HelperFunctions.clearAppCache
 import com.mirrar.tablettryon.utility.HelperFunctions.downloadAndSaveFile
 import com.mirrar.tablettryon.utility.HelperFunctions.getFileNameAndExtension
 import com.mirrar.tablettryon.utility.HelperFunctions.isValidUrl
@@ -38,6 +41,7 @@ class HomeFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val firebaseHelper = FirebaseHelper()
+    private lateinit var appSharedPref: AppSharedPref
 
     private var holdHandler: Handler? = null
     private var executionHandler: Handler? = null
@@ -63,33 +67,57 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(v: View, savedInstanceState: Bundle?) {
         super.onViewCreated(v, savedInstanceState)
 
+        appSharedPref = AppSharedPref(requireActivity())
+
+        val appAlreadyStart = appSharedPref.getBoolean("appStart")
+
+        changeGotoView(appAlreadyStart)
+
+        if (!appAlreadyStart) {
+            binding.start.setOnClickListener {
+                onStartDownload()
+            }
+        }
+
         productViewModel.downloadState.observe(viewLifecycleOwner) { state ->
             when (state) {
                 is DownloadState.Progress -> {
+                    binding.downloadText.visibility = View.VISIBLE
+                    binding.percentText.visibility = View.VISIBLE
                     binding.progress.visibility = View.VISIBLE
-                    binding.txtPercent.text = "${state.percentage}%"
+                    binding.percentText.text = "${state.percentage}%"
+                    binding.progress.progress = state.percentage
                 }
 
                 is DownloadState.Success -> {
-                    binding.progress.visibility = View.VISIBLE
+//                    binding.progress.visibility = View.VISIBLE
 
                     lifecycleScope.launch {
+                        binding.downloadText.text = "Preparing assets..."
                         for (i in state.products.indices) {
-                            binding.txtPercent.text = "${((i * 100) / state.products.size)}%"
+                            binding.progress.progress = ((i * 100) / state.products.size)
+                            binding.percentText.text = "${((i * 100) / state.products.size)}%"
 
                             withContext(Dispatchers.IO) {
                                 saveFileToLocal(state.products[i])
                             }
                         }
 
+//                        binding.progress.visibility = View.GONE
+//                        binding.txtPercent.text = "${state.products.size}%"
+                        afterStartDownload()
+                        binding.downloadText.text = "Downloading..."
+                        binding.downloadText.visibility = View.GONE
+                        binding.percentText.visibility = View.GONE
                         binding.progress.visibility = View.GONE
-                        binding.txtPercent.text = "${state.products.size}%"
+                        appSharedPref.putBoolean("appStart", true)
+                        changeGotoView(true)
                     }
                 }
 
                 is DownloadState.Error -> {
-                    binding.progress.visibility = View.GONE
-                    binding.txtPercent.text = state.message
+//                    binding.progress.visibility = View.GONE
+//                    binding.txtPercent.text = state.message
                 }
             }
         }
@@ -127,6 +155,29 @@ class HomeFragment : Fragment() {
         }
     }
 
+    private fun onStartDownload() {
+        binding.downloadText.text = "Downloading..."
+        whenStartDownload()
+        productViewModel.startDownload()
+    }
+
+    private fun changeGotoView(dataDownloaded: Boolean) {
+        binding.goToApp.isVisible = dataDownloaded
+        binding.firstAppSetup.isVisible = !dataDownloaded
+    }
+
+    private fun whenStartDownload() {
+        binding.start.isVisible = false
+        binding.message.text =
+            "Setting things up... Please wait while we download the necessary assets. This may take a moment."
+    }
+
+    private fun afterStartDownload() {
+        binding.start.isVisible = true
+        binding.message.text =
+            "Welcome! This is the first step to setting up the app. Tap 'Setup' to begin, and please be patient while we download the necessary assets."
+    }
+
     private fun stopTimers() {
         holdHandler?.removeCallbacksAndMessages(null)
         executionHandler?.removeCallbacksAndMessages(null)
@@ -149,16 +200,18 @@ class HomeFragment : Fragment() {
             .setTitle("Confirmation")
             .setMessage("Are you sure you want to proceed? This will reset all local data.")
             .setPositiveButton("Yes") { dialog, _ ->
-                productViewModel.startDownload()
+                clearAppCache(requireContext())
+                changeGotoView(false)
+                onStartDownload()
                 dialog.dismiss()
             }
             .setNegativeButton("No") { dialog, _ ->
                 dialog.dismiss()
             }
-            .setNeutralButton("Delete all") { dialog, _ ->
-                productViewModel.deleteAll()
-                dialog.dismiss()
-            }
+//            .setNeutralButton("Delete all") { dialog, _ ->
+//                productViewModel.deleteAll()
+//                dialog.dismiss()
+//            }
             .setCancelable(false) // Prevent dismissing by tapping outside
             .show()
     }
