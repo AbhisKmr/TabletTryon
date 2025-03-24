@@ -189,7 +189,8 @@ class HomeFragment : Fragment() {
         }
 
         val (name, extension) = getFileNameAndExtension(url)
-        return downloadAndSaveFile(requireContext(), url, "${name}.${extension}")
+        val ext = if (extension.equals("webp", ignoreCase = true)) "png" else extension
+        return downloadAndSaveFile(requireContext(), url, "${name}.${ext}")
     }
 
     override fun onDestroyView() {

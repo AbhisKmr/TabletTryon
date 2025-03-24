@@ -1,13 +1,9 @@
 package com.mirrar.tablettryon.view.fragment.tryon
 
-import android.Manifest
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Canvas
-import android.graphics.drawable.Drawable
-import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.Gravity
@@ -15,8 +11,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.core.view.isVisible
@@ -29,10 +23,8 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.bumptech.glide.request.target.CustomTarget
-import com.bumptech.glide.request.transition.Transition
 import com.google.mediapipe.tasks.vision.core.RunningMode
+import com.google.mediapipe.tasks.vision.facelandmarker.FaceLandmarkerResult
 import com.mirrar.tablettryon.DeepARActivity
 import com.mirrar.tablettryon.R
 import com.mirrar.tablettryon.databinding.FragmentTryOnBinding
@@ -47,7 +39,6 @@ import com.mirrar.tablettryon.tools.faceDetector.mediapipe.FaceLandmarkerHelper
 import com.mirrar.tablettryon.utility.AppConstraint.AR_BITMAP
 import com.mirrar.tablettryon.utility.Bookmarks
 import com.mirrar.tablettryon.utility.GlobalProducts
-import com.mirrar.tablettryon.utility.HelperFunctions.isValidUrl
 import com.mirrar.tablettryon.view.fragment.ClubAvoltaFragment
 import com.mirrar.tablettryon.view.fragment.ProductDetailsFragment
 import com.mirrar.tablettryon.view.fragment.bookmark.YouBookmarkFragment
@@ -59,9 +50,18 @@ import com.mirrar.tablettryon.view.fragment.tryon.viewModel.AlgoliaViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.io.IOException
+import org.opencv.android.Utils
+import org.opencv.core.Core
+import org.opencv.core.Mat
+import org.opencv.core.Point
+import org.opencv.core.Scalar
+import org.opencv.core.Size
+import org.opencv.imgproc.Imgproc
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
+import kotlin.math.atan2
+import kotlin.math.pow
+import kotlin.math.sqrt
 
 class TryOnFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
 
@@ -85,6 +85,10 @@ class TryOnFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
     private var maxPrice = 0
     private var brandList = mutableListOf<String>()
     private var isLoading: Boolean = false
+
+    init {
+        System.loadLibrary("opencv_java4")
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -419,17 +423,136 @@ class TryOnFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
                 activity?.runOnUiThread {
                     Log.i("faceLandmarkerHelper", result.result.faceLandmarks().size.toString())
 
-                    binding.overlay.setResults(
+                    renderSunglassesOnFace(
+                        AR_BITMAP!!,
                         result.result,
-                        bitmap.height,
-                        bitmap.width,
-                        RunningMode.IMAGE
+                        "/data/user/0/com.mirrar.tablettryon/cache/6534509.png"
                     )
+//                    binding.overlay.setResults(
+//                        result.result,
+//                        bitmap.height,
+//                        bitmap.width,
+//                        RunningMode.IMAGE
+//                    )
 
                 }
             } ?: run { Log.e("faceLandmarkerHelper", "Error running face landmarker.") }
 
             faceLandmarkerHelper.clearFaceLandmarker()
+        }
+    }
+
+    private fun renderSunglassesOnFace(
+        imageBitmap: Bitmap,
+        faceLandmarkerResult: FaceLandmarkerResult,
+        sunglassesPath: String
+    ) {
+        // Convert imageBitmap to OpenCV Mat
+        val originalMat = Mat()
+        Utils.bitmapToMat(imageBitmap, originalMat)
+
+        // Load sunglasses WebP with alpha
+        val options = BitmapFactory.Options().apply { inPreferredConfig = Bitmap.Config.ARGB_8888 }
+        val sunglassesBitmap = BitmapFactory.decodeFile(sunglassesPath, options) ?: return
+
+        // Convert to OpenCV Mat
+        val sunglassesMat = Mat()
+        Utils.bitmapToMat(sunglassesBitmap, sunglassesMat)
+
+        // Ensure 4-channel BGRA for transparency
+        if (sunglassesMat.channels() == 3) {
+            Imgproc.cvtColor(sunglassesMat, sunglassesMat, Imgproc.COLOR_BGR2BGRA)
+        }
+
+        // Get face landmarks
+        val landmarks = faceLandmarkerResult.faceLandmarks()[0]
+        val leftEyeOuterCorner = landmarks[33]
+        val rightEyeOuterCorner = landmarks[263]
+        val leftEyebrowUpperMid = landmarks[282]
+        val rightEyebrowUpperMid = landmarks[52]
+        val noseTop = landmarks[6]
+
+        // Calculate sunglasses position and size
+        val faceWidth = sqrt(
+            (rightEyeOuterCorner.x() - leftEyeOuterCorner.x()).pow(2) +
+                    (rightEyeOuterCorner.y() - leftEyeOuterCorner.y()).pow(2)
+        ) * 1.5
+        val sunglassesScale = faceWidth / sunglassesMat.cols()
+
+        // Calculate rotation angle
+        val dx = rightEyeOuterCorner.x() - leftEyeOuterCorner.x()
+        val dy = rightEyeOuterCorner.y() - leftEyeOuterCorner.y()
+        val angle = Math.toDegrees(atan2(dy.toDouble(), dx.toDouble()))
+
+        // Calculate center position for sunglasses
+        val centerX = (leftEyeOuterCorner.x() + rightEyeOuterCorner.x()) / 2
+        val centerY = (leftEyebrowUpperMid.y() + rightEyebrowUpperMid.y()) / 2 +
+                (noseTop.y() - (leftEyebrowUpperMid.y() + rightEyebrowUpperMid.y()) / 2) * 0.2
+
+        // Transform sunglasses: scale and rotate
+        val transformationMatrix = Imgproc.getRotationMatrix2D(
+            Point(sunglassesMat.cols() / 2.0, sunglassesMat.rows() / 2.0),
+            angle,
+            sunglassesScale
+        )
+
+        val transformedSunglasses = Mat()
+        Imgproc.warpAffine(
+            sunglassesMat,
+            transformedSunglasses,
+            transformationMatrix,
+            Size(sunglassesMat.cols() * sunglassesScale, sunglassesMat.rows() * sunglassesScale),
+            Imgproc.INTER_LINEAR,
+            Core.BORDER_CONSTANT,
+            Scalar(0.0, 0.0, 0.0, 0.0)  // Ensure transparency is preserved
+        )
+
+        // Convert center position to integer coordinates
+        val posX = (centerX - transformedSunglasses.cols() / 2).toInt()
+        val posY = (centerY - transformedSunglasses.rows() / 2).toInt()
+
+        // **Add Shadow for Realism**
+        val shadowMat = transformedSunglasses.clone()
+        Core.multiply(shadowMat, Scalar(0.2, 0.2, 0.2, 1.0), shadowMat) // Darken for shadow effect
+        Imgproc.GaussianBlur(shadowMat, shadowMat, Size(15.0, 15.0), 10.0)
+
+        // Apply shadow slightly lower for realism
+        overlayImage(originalMat, shadowMat, posX + 5, posY + 5)
+
+        // Overlay sunglasses onto face with alpha blending
+        overlayImage(originalMat, transformedSunglasses, posX, posY)
+
+        // Convert result back to Bitmap
+        val resultBitmap =
+            Bitmap.createBitmap(originalMat.cols(), originalMat.rows(), Bitmap.Config.ARGB_8888)
+        Utils.matToBitmap(originalMat, resultBitmap)
+
+//        binding.imagePreview.setImageBitmap(resultBitmap)
+    }
+
+    private fun overlayImage(background: Mat, foreground: Mat, x: Int, y: Int) {
+        for (row in 0 until foreground.rows()) {
+            for (col in 0 until foreground.cols()) {
+                if (y + row >= background.rows() || x + col >= background.cols()) continue // Bounds check
+
+                val fgPixel = foreground.get(row, col) ?: continue
+                val bgPixel = background.get(y + row, x + col) ?: continue
+
+                if (fgPixel.size < 4) continue // Ensure it's a 4-channel pixel
+
+                val alpha = fgPixel[3] / 255.0 // Extract alpha channel (0-1 range)
+
+                if (alpha > 0) { // Apply only if there's some transparency
+                    val blendedPixel = floatArrayOf(
+                        (fgPixel[0] * alpha + bgPixel[0] * (1 - alpha)).toFloat(), // Blue
+                        (fgPixel[1] * alpha + bgPixel[1] * (1 - alpha)).toFloat(), // Green
+                        (fgPixel[2] * alpha + bgPixel[2] * (1 - alpha)).toFloat(), // Red
+                        (fgPixel[3] + bgPixel[3] * (1 - alpha)).toFloat()  // Preserve alpha blending
+                    )
+
+                    background.put(y + row, x + col, blendedPixel)
+                }
+            }
         }
     }
 

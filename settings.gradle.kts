@@ -16,3 +16,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "TabletTryon"
 include(":app")
+include(":opencv")
