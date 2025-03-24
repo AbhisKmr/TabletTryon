@@ -170,15 +170,15 @@ class DeepARActivityHelper(
 
             CoroutineScope(Dispatchers.IO).launch {
                 val name = p.localItemCode.trim().replace(" ", "_")
-//                val path =
-//                    downloadAndSaveFile(deepARActivity, p.asset3DUrl ?: "none", "$name.deepar")
-                println(p.asset3DUrl)
                 val path =
-                    downloadAndSaveFile(
-                        deepARActivity,
-                        assetsUrl[i % assetsUrl.size],
-                        "$name.deepar"
-                    )
+                    downloadAndSaveFile(deepARActivity, p.asset3DUrlPath ?: "none", "$name.deepar")
+                println(p.asset3DUrl)
+//                val path =
+//                    downloadAndSaveFile(
+//                        deepARActivity,
+//                        assetsUrl[i % assetsUrl.size],
+//                        "$name.deepar"
+//                    )
 
                 applyEffect(path ?: "none")
 
