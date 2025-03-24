@@ -4,13 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/primery_purple"
+    android:background="@color/black"
     tools:context=".view.fragment.HomeFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout3"
         android:layout_width="match_parent"
         android:layout_height="100dp"
+        android:visibility="gone"
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
@@ -28,16 +29,23 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <ImageView
+        android:id="@+id/imageView6"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:src="@drawable/avolta_banner"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <androidx.cardview.widget.CardView
         android:id="@+id/cardView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_marginTop="12dp"
         android:clipChildren="true"
         android:elevation="0dp"
-        app:cardCornerRadius="44dp"
         app:cardElevation="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/constraintLayout3">
+        app:layout_constraintTop_toBottomOf="@+id/imageView6">
 
         <ImageView
             android:layout_width="match_parent"
@@ -60,7 +68,8 @@
         android:id="@+id/goToApp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone">
+        android:visibility="gone"
+        tools:visibility="visible">
 
         <ImageView
             android:id="@+id/imageView"
@@ -114,11 +123,11 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="100dp"
             android:backgroundTint="@color/primery_purple"
-            android:paddingHorizontal="24dp"
-            android:paddingVertical="17dp"
+            android:paddingHorizontal="44dp"
+            android:paddingVertical="18dp"
             android:text="Get Started!"
             android:textColor="@color/white"
-            android:textSize="18sp"
+            android:textSize="24sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
@@ -132,7 +141,8 @@
         android:paddingHorizontal="24sp"
         android:paddingBottom="?actionBarSize"
         app:layout_constraintBottom_toBottomOf="@+id/cardView"
-        app:layout_constraintTop_toTopOf="@+id/view">
+        app:layout_constraintTop_toTopOf="@+id/view"
+        tools:visibility="gone">
 
         <Button
             android:id="@+id/start"

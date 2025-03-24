@@ -122,7 +122,7 @@ class HomeFragment : Fragment() {
             }
         }
 
-        binding.club.setOnTouchListener { _, event ->
+        binding.imageView6.setOnTouchListener { _, event ->
             when (event.action) {
                 MotionEvent.ACTION_DOWN -> {
                     isHolding = true
