@@ -50,7 +50,7 @@
                 android:layout_gravity="center"
                 android:fontFamily="@font/manrope_extra_bold"
                 android:gravity="center"
-                android:text="Discover Your Best Look with Personalized AI"
+                android:text="Share an email to receive your favorite\nsunglasses in your inbox."
                 android:textColor="@color/black"
                 android:textSize="16sp" />
 
