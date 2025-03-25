@@ -42,6 +42,7 @@ import com.mirrar.tablettryon.products.model.product.Product
 import com.mirrar.tablettryon.products.viewModel.ProductViewModel
 import com.mirrar.tablettryon.tools.FilterManager
 import com.mirrar.tablettryon.utility.AppConstraint.AR_BITMAP
+import com.mirrar.tablettryon.utility.AppConstraint.IS_3D_ENABLED
 import com.mirrar.tablettryon.utility.Bookmarks
 import com.mirrar.tablettryon.utility.GlobalProducts
 import com.mirrar.tablettryon.utility.HelperFunctions.isValidUrl
@@ -121,6 +122,7 @@ class TryOnFragment : Fragment() {
             }
         })
 
+        binding.switchMode.isVisible = IS_3D_ENABLED
         binding.switchMode.setOnClickListener {
             startActivity(Intent(requireActivity(), DeepARActivity::class.java))
         }

@@ -29,6 +29,7 @@ class FirebaseHelper {
                 AppConstraint.WELCOME_MESSAGE = snapshot.child("welcomeMsg").getValue<String>() ?: ""
                 AppConstraint.CLUB_AVOLTA = snapshot.child("clubAvoltaUrl").getValue<String>() ?: ""
                 AppConstraint.ALGOLIA_INDEX = snapshot.child("algoliaIndex").getValue<String>() ?: ""
+                AppConstraint.IS_3D_ENABLED = snapshot.child("is3DEnabled").getValue<Boolean>() ?: false
 
                 res(snapshot.child("termAndCondition").getValue<String>())
             }
