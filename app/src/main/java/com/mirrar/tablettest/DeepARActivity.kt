@@ -1,4 +1,4 @@
-package com.mirrar.tablettest
+package com.mirrar.tablettryon
 
 import ai.deepar.ar.ARErrorType
 import ai.deepar.ar.AREventListener
@@ -29,19 +29,25 @@ import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.createBitmap
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.LifecycleOwner
 import com.google.common.util.concurrent.ListenableFuture
-import com.mirrar.tablettest.LoadImageHandlerThread.REFRESH_IMAGE_TASK
-import com.mirrar.tablettest.databinding.ActivityDeepAractivityBinding
-import com.mirrar.tablettest.network.ApiService
-import com.mirrar.tablettest.network.Repository
-import com.mirrar.tablettest.network.Retrofit
-import com.mirrar.tablettest.products.model.product.Product
-import com.mirrar.tablettest.products.viewModel.ProductViewModel
-import com.mirrar.tablettest.tools.DeepARActivityHelper
-import com.mirrar.tablettest.utility.AppConstraint.cameraRatio
-import com.mirrar.tablettest.view.fragment.selfie.SelfieFragment
+import com.mirrar.tablettryon.LoadImageHandlerThread.REFRESH_IMAGE_TASK
+import com.mirrar.tablettryon.databinding.ActivityDeepAractivityBinding
+import com.mirrar.tablettryon.network.ApiService
+import com.mirrar.tablettryon.network.Repository
+import com.mirrar.tablettryon.network.Retrofit
+import com.mirrar.tablettryon.products.model.product.Product
+import com.mirrar.tablettryon.products.viewModel.ProductViewModel
+import com.mirrar.tablettryon.tools.DeepARActivityHelper
+import com.mirrar.tablettryon.utility.AppConstraint.AR_BITMAP
+import com.mirrar.tablettryon.utility.AppConstraint.cameraRatio
+import com.mirrar.tablettryon.utility.HelperFunctions.getActionBarSize
+import com.mirrar.tablettryon.utility.HelperFunctions.getDisplaySize
+import com.mirrar.tablettryon.utility.HelperFunctions.getNavigationBarHeight
+import com.mirrar.tablettryon.view.fragment.selfie.SelfieFragment
+import java.nio.Buffer
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.util.concurrent.ExecutionException
@@ -201,7 +207,7 @@ class DeepARActivity : AppCompatActivity(), SurfaceHolder.Callback, AREventListe
 
     private fun initializeDeepAR() {
         deepAR = DeepAR(this)
-        deepAR!!.setLicenseKey("a2102d850782ded72fbf7cde175120cb64d0bb1d429ea479618639179c9a11a3f12aa85638744656")
+        deepAR!!.setLicenseKey("481d108d9fd5fb5b79df82672e8dbda5b6cda17b51792d499f381ea175594739a57fee2e095a55ae")
 //        deepAR!!.setLicenseKey("cc16573f53818d7fa2aa31a48ceb013150e01360d5726afb536c6885ae2cf4fa071952baef77e7b5")
         deepAR!!.initialize(this, this)
 
@@ -242,6 +248,14 @@ class DeepARActivity : AppCompatActivity(), SurfaceHolder.Callback, AREventListe
             width = cameraResolutionPreset.height
             height = cameraResolutionPreset.width
         }
+
+        val dis = getDisplaySize(this)
+        val bar = getActionBarSize(this)
+        val nav = getNavigationBarHeight(this)
+
+        println("W:${binding.cardView3.width} || h:${binding.cardView3.height}")
+        println("d-W:${dis.first} || d-h:${dis.second}")
+        println("nav:${nav} || bar:${bar}")
 
         val cameraResolution = Size((height * cameraRatio).toInt(), height)
         val cameraSelector = CameraSelector.Builder().requireLensFacing(lensFacing)

@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/background"
-    tools:context="com.mirrar.tablettest.DeepARActivity">
+    tools:context=".DeepARActivity">
 
 
     <ImageView
@@ -130,17 +130,17 @@
         app:layout_constraintHeight_percent=".7"
         app:layout_constraintTop_toBottomOf="@+id/cardView2">
 
-<!--        <com.mirrar.tablettest.tools.CameraSourcePreview-->
-<!--            android:id="@+id/cameraSourcePreview"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="match_parent">-->
+        <com.mirrar.tablettryon.tools.CameraSourcePreview
+            android:id="@+id/cameraSourcePreview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
             <SurfaceView
                 android:id="@+id/surface"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
 
-<!--        </com.mirrar.tablettest.tools.CameraSourcePreview>-->
+        </com.mirrar.tablettryon.tools.CameraSourcePreview>
 
         <ImageView
             android:layout_width="match_parent"
