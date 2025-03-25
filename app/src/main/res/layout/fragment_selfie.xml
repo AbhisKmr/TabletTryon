@@ -25,7 +25,7 @@
         android:clipChildren="true"
         android:focusable="true"
         app:cardCornerRadius="64dp"
-        app:layout_constraintHeight_percent=".8"
+        app:layout_constraintHeight_percent=".7"
         app:layout_constraintTop_toTopOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -61,23 +61,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:layout_marginTop="44dp"
+                    android:layout_marginTop="20dp"
                     android:fontFamily="@font/manrope_extra_bold"
-                    android:text="Your style"
-                    android:textColor="@color/white"
-                    android:textSize="26sp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginTop="-8dp"
-                    android:fontFamily="@font/manrope_extra_bold"
-                    android:maxLines="1"
-                    android:text="Lorem ipsum simply dummy text"
+                    android:text="Thank you for exploring your perfect look!"
                     android:textColor="@color/black"
-                    android:textSize="16sp"
-                    android:visibility="gone" />
+                    android:textSize="22sp" />
 
             </LinearLayout>
 
@@ -157,9 +145,9 @@
             </LinearLayout>
 
             <TextView
+                android:id="@+id/textView14"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="44dp"
                 android:fontFamily="@font/manrope_bold"
                 android:gravity="center"
                 android:text="Receive your style on your mobile via QR code / Email"
@@ -172,7 +160,7 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:background="@drawable/curv_store_gray"
+                android:background="@drawable/edit_text_border"
                 app:layout_constraintBottom_toBottomOf="@+id/linearLayout3"
                 app:layout_constraintDimensionRatio="1:1"
                 app:layout_constraintEnd_toStartOf="@+id/guideline"
@@ -231,14 +219,14 @@
                 android:id="@+id/linearLayout3"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
                 android:layout_marginEnd="62dp"
-                android:background="@drawable/curv_store_gray"
+                android:background="@drawable/edit_text_border"
                 android:orientation="vertical"
                 android:padding="32dp"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="@+id/guideline"
-                app:layout_constraintTop_toBottomOf="@+id/cardView6">
+                app:layout_constraintTop_toBottomOf="@+id/textView14">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -315,24 +303,24 @@
     <LinearLayout
         android:id="@+id/linearLayout6"
         android:layout_width="wrap_content"
-        android:layout_height="84dp"
-        android:layout_marginBottom="80dp"
+        android:layout_height="74dp"
+        android:layout_marginTop="32dp"
         android:orientation="horizontal"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout">
 
         <androidx.cardview.widget.CardView
             android:id="@+id/imageView2"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             app:cardBackgroundColor="@color/text_black"
             app:cardCornerRadius="84dp">
 
             <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="84dp"
+                android:layout_height="match_parent"
                 android:gravity="center"
                 android:maxLines="@integer/material_motion_duration_long_1"
                 android:paddingHorizontal="24dp"
@@ -344,14 +332,14 @@
         <androidx.cardview.widget.CardView
             android:id="@+id/finish"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_marginStart="44dp"
             app:cardBackgroundColor="@color/text_black"
             app:cardCornerRadius="84dp">
 
             <TextView
                 android:layout_width="84dp"
-                android:layout_height="84dp"
+                android:layout_height="match_parent"
                 android:gravity="center"
                 android:text="Exit"
                 android:textColor="@color/white" />
@@ -361,14 +349,17 @@
     </LinearLayout>
 
     <ImageView
+        android:id="@+id/imageView7"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:src="@drawable/avolta_banner"
+        android:scaleType="fitEnd"
+        android:src="@drawable/club_avolta_web"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/constraintLayout"
-        app:layout_constraintStart_toStartOf="@+id/constraintLayout"
-        app:layout_constraintTop_toBottomOf="@+id/constraintLayout" />
+        app:layout_constraintStart_toStartOf="@+id/constraintLayout" />
 
     <androidx.appcompat.widget.AppCompatEditText
+        android:id="@+id/appCompatEditText"
         android:layout_width="match_parent"
         android:layout_height="?actionBarSize"
         android:elevation="12dp"
