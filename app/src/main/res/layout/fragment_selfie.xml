@@ -53,6 +53,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
+                app:layout_constraintBottom_toTopOf="@+id/imageRecycler"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/cardView6">
@@ -98,12 +99,13 @@
                 android:layout_height="0dp"
                 android:layout_marginHorizontal="24dp"
                 android:orientation="horizontal"
+                android:layout_marginTop="80dp"
                 android:visibility="gone"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 app:layout_constraintBottom_toBottomOf="@+id/cardView6"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/linearLayout5"
+                app:layout_constraintTop_toTopOf="parent"
                 tools:listitem="@layout/selfie_item"
                 tools:visibility="visible" />
 
@@ -153,6 +155,7 @@
                 android:text="Receive your style on your mobile via QR code / Email"
                 android:textColor="@color/text_black"
                 android:textSize="16sp"
+                app:layout_constraintBottom_toBottomOf="@+id/cardView6"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/cardView6" />
@@ -164,7 +167,7 @@
                 app:layout_constraintBottom_toBottomOf="@+id/linearLayout3"
                 app:layout_constraintDimensionRatio="1:1"
                 app:layout_constraintEnd_toStartOf="@+id/guideline"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/imageRecycler"
                 app:layout_constraintTop_toTopOf="@+id/linearLayout3">
 
                 <TextView
@@ -186,6 +189,7 @@
                     android:layout_height="0dp"
                     android:layout_marginVertical="12dp"
                     android:scaleType="centerCrop"
+                    android:padding="12dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintDimensionRatio="1:1"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -220,11 +224,10 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="32dp"
-                android:layout_marginEnd="62dp"
                 android:background="@drawable/edit_text_border"
                 android:orientation="vertical"
                 android:padding="32dp"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/imageRecycler"
                 app:layout_constraintStart_toStartOf="@+id/guideline"
                 app:layout_constraintTop_toBottomOf="@+id/textView14">
 
