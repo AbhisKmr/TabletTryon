@@ -43,6 +43,8 @@ import com.mirrar.tablettryon.products.viewModel.ProductViewModel
 import com.mirrar.tablettryon.tools.DeepARActivityHelper
 import com.mirrar.tablettryon.utility.AppConstraint.AR_BITMAP
 import com.mirrar.tablettryon.utility.AppConstraint.cameraRatio
+import com.mirrar.tablettryon.utility.HelperFunctions.getActionBarSize
+import com.mirrar.tablettryon.utility.HelperFunctions.getDisplaySize
 import com.mirrar.tablettryon.utility.HelperFunctions.getNavigationBarHeight
 import com.mirrar.tablettryon.view.fragment.selfie.SelfieFragment
 import java.nio.Buffer
@@ -246,6 +248,14 @@ class DeepARActivity : AppCompatActivity(), SurfaceHolder.Callback, AREventListe
             width = cameraResolutionPreset.height
             height = cameraResolutionPreset.width
         }
+
+        val dis = getDisplaySize(this)
+        val bar = getActionBarSize(this)
+        val nav = getNavigationBarHeight(this)
+
+        println("W:${binding.cardView3.width} || h:${binding.cardView3.height}")
+        println("d-W:${dis.first} || d-h:${dis.second}")
+        println("nav:${nav} || bar:${bar}")
 
         val cameraResolution = Size((height * cameraRatio).toInt(), height)
         val cameraSelector = CameraSelector.Builder().requireLensFacing(lensFacing)
