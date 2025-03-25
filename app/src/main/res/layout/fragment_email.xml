@@ -7,7 +7,7 @@
     android:background="#BA111111"
     android:clickable="true"
     android:focusable="true"
-    tools:context=".view.fragment.email.EmailFragment">
+    tools:context="com.mirrar.tablettest.view.fragment.email.EmailFragment">
 
     <View
         android:id="@+id/closeView"
