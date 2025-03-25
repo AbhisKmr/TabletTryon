@@ -13,7 +13,7 @@ class CameraSourcePreview(
 ) : ViewGroup(context, att) {
 
     @get:JvmName("getWidthProperty")
-    var width = 1356//IMAGE_RENDER_SIZE.width
+    var width = 1356 - 42//IMAGE_RENDER_SIZE.width
 //    W:1356 || h:1525
     @get:JvmName("getHeightProperty")
     var height = 2220-(112+84)//IMAGE_RENDER_SIZE.height
