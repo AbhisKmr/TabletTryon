@@ -177,8 +177,7 @@ class CameraFragment : Fragment() {
                             )
                             )
                     image.close()
-                    AR_BITMAP =
-                        drawableToBitmap(requireContext().resources.getDrawable(R.drawable.tryon_image)) //bitmap
+                    AR_BITMAP = bitmap
                     findNavController().navigate(R.id.action_cameraFragment_to_cameraImagePreviewFragment4)
 
 //                    Toast.makeText(requireContext(), "Image Captured!", Toast.LENGTH_SHORT).show()
