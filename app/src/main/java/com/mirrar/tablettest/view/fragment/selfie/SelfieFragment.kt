@@ -2,6 +2,7 @@ package com.mirrar.tablettest.view.fragment.selfie
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -28,7 +29,7 @@ class SelfieFragment : DialogFragment() {
 
     private var _binding: FragmentSelfieBinding? = null
     private val binding get() = _binding!!
-    private val scrollOffset = 50
+    private val scrollOffset = 100
 
     override fun onDestroyView() {
         super.onDestroyView()
@@ -76,17 +77,16 @@ class SelfieFragment : DialogFragment() {
         }
 
         try {
-            if (binding.imageRecycler.childCount > 0) {
-                binding.imageRecycler.postDelayed({
-                    binding.imageRecycler.smoothScrollBy(scrollOffset, 0)
-                }, 500)
+            binding.imageRecycler.postDelayed({
+                binding.imageRecycler.smoothScrollBy(scrollOffset, 0)
+            }, 500)
 
 
-                binding.imageRecycler.postDelayed({
-                    binding.imageRecycler.smoothScrollBy(-scrollOffset, 0)
-                }, 1000)
-            }
+            binding.imageRecycler.postDelayed({
+                binding.imageRecycler.smoothScrollBy(-scrollOffset, 0)
+            }, 1000)
         } catch (e: Exception) {
+            Log.e("Exception", "onViewCreated: ${e.localizedMessage}", )
         }
 
 
