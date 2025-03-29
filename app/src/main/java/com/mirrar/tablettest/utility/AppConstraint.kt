@@ -25,4 +25,6 @@ object AppConstraint {
     var priceMax: Float? = 10000f
 
     var cameraRatio = 1f
+
+    var totalProducts = 0
 }

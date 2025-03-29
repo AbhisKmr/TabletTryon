@@ -20,6 +20,8 @@ class ProductAdapter(private val clickListener: (Int, Product) -> Unit) :
     private val list = mutableListOf<Product>()
     private var selectedIndex = -1
 
+    private var onLoading = false
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         this.ctx = parent.context
         return ViewHolder(
@@ -43,6 +45,8 @@ class ProductAdapter(private val clickListener: (Int, Product) -> Unit) :
 //        } else {
 //            holder.binding.recommendationTag.isVisible = false
 //        }
+
+        holder.binding.progress.isVisible = position == list.size - 1 && onLoading
 
         holder.binding.recommendationTag.isVisible = list[position].recommended == true
 
@@ -75,6 +79,7 @@ class ProductAdapter(private val clickListener: (Int, Product) -> Unit) :
 
     @SuppressLint("NotifyDataSetChanged")
     fun updateData(list: List<Product>) {
+        onLoading = false
         if (selectedIndex > list.size) {
             selectedIndex = -1
         } else if (list.isNotEmpty()) {
@@ -98,6 +103,11 @@ class ProductAdapter(private val clickListener: (Int, Product) -> Unit) :
     fun clear() {
         this.list.clear()
         notifyDataSetChanged()
+    }
+
+    fun onLoading(b: Boolean) {
+        onLoading = b
+        notifyItemChanged(list.size - 1)
     }
 
     @SuppressLint("NotifyDataSetChanged")

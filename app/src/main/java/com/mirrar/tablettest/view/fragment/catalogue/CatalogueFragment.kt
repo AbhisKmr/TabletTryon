@@ -24,6 +24,7 @@ import com.mirrar.tablettest.network.Retrofit
 import com.mirrar.tablettest.products.model.product.Product
 import com.mirrar.tablettest.products.viewModel.ProductViewModel
 import com.mirrar.tablettest.tools.FilterManager
+import com.mirrar.tablettest.utility.AppConstraint.totalProducts
 import com.mirrar.tablettest.utility.GlobalProducts
 import com.mirrar.tablettest.view.fragment.ProductDetailsFragment
 import com.mirrar.tablettest.view.fragment.catalogue.adapter.CatalogueProductAdapter
@@ -36,7 +37,6 @@ import kotlinx.coroutines.launch
 class CatalogueFragment(
     var sortingOrder: String = "null",
     var currentPage: Int = 0,
-    var totalProducts: Int = 1,
     var minPrice: Int = 0,
     var maxPrice: Int = 1000,
     var brandList: MutableList<String> = mutableListOf(),
@@ -116,7 +116,7 @@ class CatalogueFragment(
         ) { sorting, min, max, brandList ->
             this.sortingOrder = sorting
             this.currentPage = 0
-            this.totalProducts = 0
+            totalProducts = 0
             this.minPrice = min.toInt()
             this.maxPrice = maxPrice
             this.brandList.clear()
@@ -237,7 +237,6 @@ class CatalogueFragment(
         fun newInstance(
             sortingOrder: String,
             currentPage: Int,
-            totalProducts: Int,
             minPrice: Int,
             maxPrice: Int,
             brandList: MutableList<String>,
@@ -245,7 +244,6 @@ class CatalogueFragment(
         ) = CatalogueFragment(
             sortingOrder,
             currentPage,
-            totalProducts,
             minPrice,
             maxPrice,
             brandList,

@@ -19,6 +19,7 @@ import com.mirrar.tablettest.databinding.ActivityDeepAractivityBinding
 import com.mirrar.tablettest.network.Resource
 import com.mirrar.tablettest.products.model.product.Product
 import com.mirrar.tablettest.products.viewModel.ProductViewModel
+import com.mirrar.tablettest.utility.AppConstraint.totalProducts
 import com.mirrar.tablettest.utility.Bookmarks
 import com.mirrar.tablettest.utility.GlobalProducts
 import com.mirrar.tablettest.utility.HelperFunctions.downloadAndSaveFile
@@ -58,7 +59,6 @@ class DeepARActivityHelper(
 
     private var sortingOrder = "low_to_high"
     private var currentPage = 0
-    private var totalProducts = 0
     private var minPrice = 0
     private var maxPrice = 0
     private var brandList = mutableListOf<String>()
@@ -73,7 +73,6 @@ class DeepARActivityHelper(
             transaction.add(R.id.container, CatalogueFragment.newInstance(
                 sortingOrder,
                 currentPage,
-                totalProducts,
                 minPrice,
                 maxPrice,
                 brandList
@@ -193,7 +192,7 @@ class DeepARActivityHelper(
         ) { sorting, min, max, brandList ->
             this.sortingOrder = sorting
             this.currentPage = 0
-            this.totalProducts = 0
+            totalProducts = 0
             this.minPrice = min.toInt()
             this.maxPrice = max.toInt()
             this.brandList.clear()
@@ -257,7 +256,7 @@ class DeepARActivityHelper(
                 }
 
                 is Resource.Loading -> {
-
+                    adapter?.onLoading(true)
                 }
 
                 is Resource.Success -> {

@@ -11,6 +11,7 @@ import com.mirrar.tablettest.R
 import com.mirrar.tablettest.databinding.FragmentCameraImagePreviewBinding
 import com.mirrar.tablettest.utility.AppConstraint.AR_BITMAP
 import com.mirrar.tablettest.utility.AppConstraint.recommendationModel
+import com.mirrar.tablettest.utility.AppConstraint.totalProducts
 import com.mirrar.tablettest.utility.GlobalProducts
 import com.mirrar.tablettest.view.fragment.email.EmailSavePopupFragment
 
@@ -42,6 +43,7 @@ class CameraImagePreviewFragment : Fragment() {
 //                findNavController().navigate(R.id.action_cameraImagePreviewFragment4_to_tryOnFragment)
 //
 //            }
+            totalProducts = 0
             findNavController().navigate(R.id.action_cameraImagePreviewFragment4_to_tryOnFragment)
         }
 
