@@ -2,6 +2,7 @@ package com.mirrar.tablettest.view.fragment.selfie
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,15 +19,16 @@ import com.mirrar.tablettest.utility.Bookmarks
 import com.mirrar.tablettest.utility.HelperFunctions
 import com.mirrar.tablettest.view.activity.MainActivity
 import com.mirrar.tablettest.view.fragment.email.EmailHelper
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import com.mirrar.tablettest.view.fragment.selfie.adapter.SelfieAdapter
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class SelfieFragment : DialogFragment() {
 
     private var _binding: FragmentSelfieBinding? = null
     private val binding get() = _binding!!
+    private val scrollOffset = 50
 
     override fun onDestroyView() {
         super.onDestroyView()
@@ -72,6 +74,21 @@ class SelfieFragment : DialogFragment() {
         binding.imageView2.setOnClickListener {
             dismissDialog()
         }
+
+        try {
+            if (binding.imageRecycler.childCount > 0) {
+                binding.imageRecycler.postDelayed({
+                    binding.imageRecycler.smoothScrollBy(scrollOffset, 0)
+                }, 500)
+
+
+                binding.imageRecycler.postDelayed({
+                    binding.imageRecycler.smoothScrollBy(-scrollOffset, 0)
+                }, 1000)
+            }
+        } catch (e: Exception) {
+        }
+
 
         binding.finish.setOnClickListener {
             Bookmarks.clearAll()
@@ -121,7 +138,9 @@ class SelfieFragment : DialogFragment() {
                 } else {
                     Toast.makeText(
                         requireContext(), "Failed to send email.", Toast.LENGTH_SHORT
-                    ).show()
+                    ).apply {
+                        setGravity(Gravity.CENTER, 0, 0)
+                    }.show()
                 }
             }
         }

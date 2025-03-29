@@ -356,7 +356,9 @@ class TryOnFragment : Fragment() {
             if (isGranted) {
                 openGallery()
             } else {
-                Toast.makeText(requireContext(), "Permission Denied", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Permission Denied", Toast.LENGTH_SHORT).apply {
+                    setGravity(Gravity.CENTER, 0, 0)
+                }.show()
             }
         }
 
@@ -403,7 +405,9 @@ class TryOnFragment : Fragment() {
     private fun handleImageSelection(uri: Uri) {
         //binding.imagePreview.setImageURI(uri)
         applyAR()
-        Toast.makeText(requireContext(), "Image Selected: $uri", Toast.LENGTH_SHORT).show()
+        Toast.makeText(requireContext(), "Image Selected: $uri", Toast.LENGTH_SHORT).apply {
+            setGravity(Gravity.CENTER, 0, 0)
+        }.show()
     }
 
     private fun applyAR() {

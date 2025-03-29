@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.util.Base64
 import android.util.Log
+import android.view.Gravity
 import android.widget.Toast
 import com.mirrar.tablettest.network.RetrofitClient
 import com.mirrar.tablettest.utility.AppConstraint.BREVO_API_KEY
@@ -57,7 +58,9 @@ object EmailHelper {
                     res(response.body())
                     Toast.makeText(
                         context, "Email has been sent.", Toast.LENGTH_SHORT
-                    ).show()
+                    ).apply {
+                        setGravity(Gravity.CENTER, 0, 0)
+                    }.show()
                 }
 
                 override fun onFailure(call: Call<SendEmailApiResponse>, t: Throwable) {
