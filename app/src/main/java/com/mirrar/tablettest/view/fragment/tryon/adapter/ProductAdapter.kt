@@ -53,10 +53,12 @@ class ProductAdapter(private val clickListener: (Int, Product) -> Unit) :
         holder.binding.selectorHighlight.isVisible = selectedIndex == position
         holder.binding.nonSelectorHighlight.isVisible = selectedIndex != position
 
-        val url = if (!list[position].imageSmall.isNullOrBlank()) {
-            list[position].imageSmall
+        val url = if (!list[position].asset2DUrl.isNullOrBlank()) {
+            list[position].asset2DUrl
         } else if (!list[position].imageThumbnail.isNullOrBlank()) {
             list[position].imageThumbnail
+        } else if (!list[position].imageSmall.isNullOrBlank()) {
+            list[position].imageSmall
         } else {
             list[position].imageUrlBase ?: ""
         }
