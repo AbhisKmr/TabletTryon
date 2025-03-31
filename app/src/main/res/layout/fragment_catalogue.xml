@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    tools:context="com.mirrar.tablettest.view.fragment.catalogue.CatalogueFragment">
+    tools:context="com.mirrar.tablettryon.view.fragment.catalogue.CatalogueFragment">
 
     <androidx.drawerlayout.widget.DrawerLayout
         android:id="@+id/drawerLayout"

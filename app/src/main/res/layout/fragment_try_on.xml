@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    tools:context="com.mirrar.tablettest.view.fragment.tryon.TryOnFragment">
+    tools:context="com.mirrar.tablettryon.view.fragment.tryon.TryOnFragment">
 
     <ImageView
         android:id="@+id/imageView"
@@ -132,11 +132,11 @@
         app:layout_constraintHeight_percent=".7"
         app:layout_constraintTop_toBottomOf="@+id/cardView2">
 
-        <!--        <com.mirrar.tablettest.tools.CameraSourcePreview-->
+        <!--        <com.mirrar.tablettryon.tools.CameraSourcePreview-->
         <!--            android:layout_width="match_parent"-->
         <!--            android:layout_height="match_parent">-->
 
-        <!--        </com.mirrar.tablettest.tools.CameraSourcePreview>-->
+        <!--        </com.mirrar.tablettryon.tools.CameraSourcePreview>-->
         <ImageView
             android:id="@+id/imagePreview"
             android:layout_width="match_parent"
@@ -144,13 +144,13 @@
             android:scaleType="centerCrop"
             android:src="@drawable/tryon_image" />
 
-        <!--        <com.mirrar.tablettest.tools.CanvasView-->
+        <!--        <com.mirrar.tablettryon.tools.CanvasView-->
         <!--            android:id="@+id/canvasView"-->
         <!--            android:layout_width="match_parent"-->
         <!--            android:layout_height="match_parent"-->
         <!--            android:visibility="gone" />-->
 
-        <!--        <com.mirrar.tablettest.tools.OverlayView-->
+        <!--        <com.mirrar.tablettryon.tools.OverlayView-->
         <!--            android:id="@+id/overlay"-->
         <!--            android:layout_width="match_parent"-->
         <!--            android:layout_height="match_parent" />-->

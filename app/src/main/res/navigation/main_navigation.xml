@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/homeFragment"
-        android:name="com.mirrar.tablettest.view.fragment.HomeFragment"
+        android:name="com.mirrar.tablettryon.view.fragment.HomeFragment"
         android:label="fragment_home"
         tools:layout="@layout/fragment_home">
         <action
@@ -17,7 +17,7 @@
 
     <fragment
         android:id="@+id/cameraFragment"
-        android:name="com.mirrar.tablettest.view.fragment.camera.CameraFragment"
+        android:name="com.mirrar.tablettryon.view.fragment.camera.CameraFragment"
         android:label="fragment_camera"
         tools:layout="@layout/fragment_camera">
         <action
@@ -28,7 +28,7 @@
     </fragment>
     <fragment
         android:id="@+id/cameraImagePreviewFragment4"
-        android:name="com.mirrar.tablettest.view.fragment.camera.CameraImagePreviewFragment"
+        android:name="com.mirrar.tablettryon.view.fragment.camera.CameraImagePreviewFragment"
         android:label="fragment_camera_image_preview"
         tools:layout="@layout/fragment_camera_image_preview">
 
@@ -41,7 +41,7 @@
     </fragment>
     <fragment
         android:id="@+id/tryOnFragment"
-        android:name="com.mirrar.tablettest.view.fragment.tryon.TryOnFragment"
+        android:name="com.mirrar.tablettryon.view.fragment.tryon.TryOnFragment"
         android:label="fragment_try_on"
         tools:layout="@layout/fragment_try_on" >
         <action
@@ -50,12 +50,12 @@
     </fragment>
     <fragment
         android:id="@+id/catalogueFragment"
-        android:name="com.mirrar.tablettest.view.fragment.catalogue.CatalogueFragment"
+        android:name="com.mirrar.tablettryon.view.fragment.catalogue.CatalogueFragment"
         android:label="fragment_catalogue"
         tools:layout="@layout/fragment_catalogue" />
     <fragment
         android:id="@+id/deepARFragment"
-        android:name="com.mirrar.tablettest.DeepARFragment"
+        android:name="com.mirrar.tablettryon.DeepARFragment"
         android:label="fragment_deep_a_r"
         tools:layout="@layout/fragment_deep_a_r" >
         <action
@@ -64,7 +64,7 @@
     </fragment>
     <dialog
         android:id="@+id/selfieFragment"
-        android:name="com.mirrar.tablettest.view.fragment.selfie.SelfieFragment"
+        android:name="com.mirrar.tablettryon.view.fragment.selfie.SelfieFragment"
         android:label="fragment_selfie"
         tools:layout="@layout/fragment_selfie" />
 </navigation>

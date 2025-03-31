@@ -37,7 +37,7 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
-            android:name="com.mirrar.tablettest.DeepARActivity"
+            android:name="com.mirrar.tablettryon.DeepARActivity"
             android:exported="false" />
 
         <uses-native-library
@@ -48,7 +48,7 @@
             android:required="false" />
 
         <activity
-            android:name="com.mirrar.tablettest.view.activity.MainActivity"
+            android:name="com.mirrar.tablettryon.view.activity.MainActivity"
             android:exported="true"
             android:screenOrientation="portrait">
             <intent-filter>

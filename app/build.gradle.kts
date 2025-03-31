@@ -7,12 +7,12 @@ plugins {
 }
 
 android {
-    namespace = "com.mirrar.tablettest"
+    namespace = "com.mirrar.tablettryon"
     compileSdk = 35
     buildToolsVersion = "23.0.1"
 
     defaultConfig {
-        applicationId = "com.mirrar.tablettest"
+        applicationId = "com.mirrar.tablettryon"
         minSdk = 24
         targetSdk = 35
         versionCode = 1

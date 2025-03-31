@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#BA111111"
-    tools:context="com.mirrar.tablettest.view.fragment.email.EmailPopupFragment">
+    tools:context="com.mirrar.tablettryon.view.fragment.email.EmailPopupFragment">
 
     <View
         android:id="@+id/closeView"

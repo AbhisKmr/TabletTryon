@@ -133,7 +133,7 @@
         app:layout_constraintHeight_percent=".7"
         app:layout_constraintTop_toBottomOf="@+id/cardView2">
 
-        <com.mirrar.tablettest.tools.CameraSourcePreview
+        <com.mirrar.tablettryon.tools.CameraSourcePreview
             android:id="@+id/cameraSourcePreview"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
@@ -143,7 +143,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
 
-        </com.mirrar.tablettest.tools.CameraSourcePreview>
+        </com.mirrar.tablettryon.tools.CameraSourcePreview>
 
         <ImageView
             android:layout_width="match_parent"
