@@ -133,6 +133,7 @@ class SelfieFragment : DialogFragment() {
                 binding.sendProgress.isVisible = false
                 binding.sendTv.text = "Send"
                 if (it != null) {
+                    startActivity(Intent(requireActivity(), MainActivity::class.java))
                     requireActivity().finish()
 //                    dismissDialog()
                 } else {

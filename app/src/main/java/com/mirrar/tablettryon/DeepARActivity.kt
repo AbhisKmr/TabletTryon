@@ -246,30 +246,15 @@ class DeepARActivity : AppCompatActivity(), SurfaceHolder.Callback, AREventListe
             height = cameraResolutionPreset.width
         }
 
+        /*
         val dis = getDisplaySize(this)
         val bar = getActionBarSize(this)
         val nav = getNavigationBarHeight(this)
-        /*
-        var width = 1356 - 42//IMAGE_RENDER_SIZE.width
-        W:1356 || h:1525
-        @get:JvmName("getHeightProperty")
-        var height = 2220-(112+84)//IMAGE_RENDER_SIZE.height
-
-
-
 
         println("W:${binding.cardView3.width} || h:${binding.cardView3.height}")
         println("d-W:${dis.first} || d-h:${dis.second}")
         println("nav:${nav} || bar:${bar}")
-
-        W:1368 || h:1613
-        d-W:1440 || d-h:2220
-        nav:84 || bar:96
-         */
-
-        binding.cameraSourcePreview.width = binding.cardView3.width - (nav / 2)
-        binding.cameraSourcePreview.height = dis.second - (bar + nav)
-        binding.cameraSourcePreview.invalidate()
+        */
 
         val cameraResolution = Size((height * cameraRatio).toInt(), height)
         val cameraSelector = CameraSelector.Builder().requireLensFacing(lensFacing)

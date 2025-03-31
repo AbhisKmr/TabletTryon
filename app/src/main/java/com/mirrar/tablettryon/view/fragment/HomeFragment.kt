@@ -243,7 +243,8 @@ class HomeFragment : Fragment() {
             return null
         }
 
-        val (name, extension) = getFileNameAndExtension(url)
+        val (_name, extension) = getFileNameAndExtension(url)
+        val name = _name.trim().replace(" ", "_")
         return downloadAndSaveFile(requireContext(), url, "${name}.${extension}")
     }
 
