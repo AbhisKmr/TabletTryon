@@ -3,7 +3,6 @@ package com.mirrar.tablettryon.view.fragment.selfie.adapter
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.lifecycle.DEFAULT_ARGS_KEY
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.mirrar.tablettryon.databinding.SelfieItemBinding

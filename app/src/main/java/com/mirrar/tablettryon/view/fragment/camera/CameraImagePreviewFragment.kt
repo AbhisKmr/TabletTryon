@@ -1,11 +1,9 @@
 package com.mirrar.tablettryon.view.fragment.camera
 
 import android.os.Bundle
-import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
@@ -13,8 +11,8 @@ import com.mirrar.tablettryon.R
 import com.mirrar.tablettryon.databinding.FragmentCameraImagePreviewBinding
 import com.mirrar.tablettryon.utility.AppConstraint.AR_BITMAP
 import com.mirrar.tablettryon.utility.AppConstraint.recommendationModel
+import com.mirrar.tablettryon.utility.AppConstraint.totalProducts
 import com.mirrar.tablettryon.utility.GlobalProducts
-import com.mirrar.tablettryon.view.fragment.email.EmailHelper
 import com.mirrar.tablettryon.view.fragment.email.EmailSavePopupFragment
 
 class CameraImagePreviewFragment : Fragment() {
@@ -45,6 +43,7 @@ class CameraImagePreviewFragment : Fragment() {
 //                findNavController().navigate(R.id.action_cameraImagePreviewFragment4_to_tryOnFragment)
 //
 //            }
+            totalProducts = 0
             findNavController().navigate(R.id.action_cameraImagePreviewFragment4_to_tryOnFragment)
         }
 

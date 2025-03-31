@@ -17,6 +17,8 @@ import android.os.SystemClock;
 import android.provider.MediaStore;
 import android.util.Log;
 
+import com.mirrar.tablettryon.R;
+
 import java.io.FileNotFoundException;
 import java.lang.ref.WeakReference;
 import java.nio.ByteBuffer;

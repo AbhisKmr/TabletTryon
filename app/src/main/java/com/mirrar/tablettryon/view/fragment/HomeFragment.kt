@@ -122,7 +122,7 @@ class HomeFragment : Fragment() {
             }
         }
 
-        binding.club.setOnTouchListener { _, event ->
+        binding.imageView6.setOnTouchListener { _, event ->
             when (event.action) {
                 MotionEvent.ACTION_DOWN -> {
                     isHolding = true
@@ -200,6 +200,7 @@ class HomeFragment : Fragment() {
             .setTitle("Confirmation")
             .setMessage("Are you sure you want to proceed? This will reset all local data.")
             .setPositiveButton("Yes") { dialog, _ ->
+                appSharedPref.putBoolean("appStart", false)
                 clearAppCache(requireContext())
                 changeGotoView(false)
                 onStartDownload()
@@ -217,21 +218,22 @@ class HomeFragment : Fragment() {
     }
 
     private suspend fun saveFileToLocal(p: Product) = withContext(Dispatchers.IO) {
-        val asset2DUrlPath = async { urlToFilePath(p.asset2DUrl) }.await()
-        val imageExtra1Path = async { urlToFilePath(p.imageExtra1) }.await()
-        val imageExtra2Path = async { urlToFilePath(p.imageExtra2) }.await()
-        val imageSmallPath = async { urlToFilePath(p.imageSmall) }.await()
-        val imageThumbnailPath = async { urlToFilePath(p.imageThumbnail) }.await()
-        val imageUrlBasePath = async { urlToFilePath(p.imageUrlBase) }.await()
-        val asset3DUrlPath = async { urlToFilePath(p.asset3DUrl) }.await()
+        val asset2DUrlPath = async { urlToFilePath(p.asset2DUrl) }
+        val imageExtra1Path = async { urlToFilePath(p.imageExtra1) }
+        val imageExtra2Path = async { urlToFilePath(p.imageExtra2) }
+        val imageSmallPath = async { urlToFilePath(p.imageSmall) }
+        val imageThumbnailPath = async { urlToFilePath(p.imageThumbnail) }
+        val imageUrlBasePath = async { urlToFilePath(p.imageUrlBase) }
+        val asset3DUrlPath = async { urlToFilePath(p.asset3DUrl) }
 
-        p.asset2DUrlPath = asset2DUrlPath
-        p.imageExtra1Path = imageExtra1Path
-        p.imageExtra2Path = imageExtra2Path
-        p.imageSmallPath = imageSmallPath
-        p.imageThumbnailPath = imageThumbnailPath
-        p.imageUrlBasePath = imageUrlBasePath
-        p.asset3DUrlPath = asset3DUrlPath
+        // Await all at once to execute in parallel
+        p.asset2DUrlPath = asset2DUrlPath.await()
+        p.imageExtra1Path = imageExtra1Path.await()
+        p.imageExtra2Path = imageExtra2Path.await()
+        p.imageSmallPath = imageSmallPath.await()
+        p.imageThumbnailPath = imageThumbnailPath.await()
+        p.imageUrlBasePath = imageUrlBasePath.await()
+        p.asset3DUrlPath = asset3DUrlPath.await()
 
         productViewModel.updateProduct(p)
     }

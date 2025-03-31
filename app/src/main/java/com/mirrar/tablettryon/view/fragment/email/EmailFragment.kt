@@ -2,6 +2,7 @@ package com.mirrar.tablettryon.view.fragment.email
 
 import android.graphics.Bitmap
 import android.os.Bundle
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,7 +10,6 @@ import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.withCreated
 import com.bumptech.glide.Glide
 import com.mirrar.tablettryon.R
 import com.mirrar.tablettryon.databinding.FragmentEmailBinding
@@ -93,7 +93,9 @@ class EmailFragment(private val p: Product, private val bitmap: Bitmap) : Dialog
                             requireContext(),
                             "Failed to send email.",
                             Toast.LENGTH_SHORT
-                        ).show()
+                        ).apply {
+                            setGravity(Gravity.CENTER, 0, 0)
+                        }.show()
                     }
                 }
             )

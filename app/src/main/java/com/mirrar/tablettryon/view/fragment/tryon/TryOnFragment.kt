@@ -43,6 +43,7 @@ import com.mirrar.tablettryon.products.viewModel.ProductViewModel
 import com.mirrar.tablettryon.tools.FilterManager
 import com.mirrar.tablettryon.utility.AppConstraint.AR_BITMAP
 import com.mirrar.tablettryon.utility.AppConstraint.IS_3D_ENABLED
+import com.mirrar.tablettryon.utility.AppConstraint.totalProducts
 import com.mirrar.tablettryon.utility.Bookmarks
 import com.mirrar.tablettryon.utility.GlobalProducts
 import com.mirrar.tablettryon.utility.HelperFunctions.isValidUrl
@@ -73,7 +74,6 @@ class TryOnFragment : Fragment() {
 
     private var sortingOrder = "low_to_high"
     private var currentPage = 0
-    private var totalProducts = 0
     private var minPrice = 0
     private var maxPrice = 0
     private var brandList = mutableListOf<String>()
@@ -198,7 +198,6 @@ class TryOnFragment : Fragment() {
                 R.id.container, CatalogueFragment.newInstance(
                     sortingOrder,
                     currentPage,
-                    totalProducts,
                     minPrice,
                     maxPrice,
                     brandList
@@ -219,7 +218,7 @@ class TryOnFragment : Fragment() {
         ) { sorting, min, max, brandList ->
             this.sortingOrder = sorting
             this.currentPage = 0
-            this.totalProducts = 0
+            totalProducts = 0
             this.minPrice = min.toInt()
             this.maxPrice = max.toInt()
             this.brandList.clear()
@@ -284,6 +283,7 @@ class TryOnFragment : Fragment() {
 
                 is Resource.Loading -> {
 
+                    adapter.onLoading(true)
                 }
 
                 is Resource.Success -> {
@@ -356,7 +356,9 @@ class TryOnFragment : Fragment() {
             if (isGranted) {
                 openGallery()
             } else {
-                Toast.makeText(requireContext(), "Permission Denied", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Permission Denied", Toast.LENGTH_SHORT).apply {
+                    setGravity(Gravity.CENTER, 0, 0)
+                }.show()
             }
         }
 
@@ -403,7 +405,9 @@ class TryOnFragment : Fragment() {
     private fun handleImageSelection(uri: Uri) {
         //binding.imagePreview.setImageURI(uri)
         applyAR()
-        Toast.makeText(requireContext(), "Image Selected: $uri", Toast.LENGTH_SHORT).show()
+        Toast.makeText(requireContext(), "Image Selected: $uri", Toast.LENGTH_SHORT).apply {
+            setGravity(Gravity.CENTER, 0, 0)
+        }.show()
     }
 
     private fun applyAR() {

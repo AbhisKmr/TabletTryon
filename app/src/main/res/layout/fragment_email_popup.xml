@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#BA111111"
-    tools:context=".view.fragment.email.EmailPopupFragment">
+    tools:context="com.mirrar.tablettryon.view.fragment.email.EmailPopupFragment">
 
     <View
         android:id="@+id/closeView"
@@ -50,7 +50,7 @@
                 android:layout_gravity="center"
                 android:fontFamily="@font/manrope_extra_bold"
                 android:gravity="center"
-                android:text="Discover Your Best Look with Personalized AI"
+                android:text="Share an email to receive your favorite\nsunglasses in your inbox."
                 android:textColor="@color/black"
                 android:textSize="16sp" />
 

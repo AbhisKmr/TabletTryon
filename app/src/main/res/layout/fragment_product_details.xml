@@ -7,7 +7,7 @@
     android:background="#BA111111"
     android:clickable="true"
     android:focusable="true"
-    tools:context=".view.fragment.ProductDetailsFragment">
+    tools:context="com.mirrar.tablettryon.view.fragment.ProductDetailsFragment">
 
     <View
         android:id="@+id/closeView"

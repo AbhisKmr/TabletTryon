@@ -3,7 +3,6 @@ package com.mirrar.tablettryon.tools
 import android.annotation.SuppressLint
 import android.widget.RadioButton
 import androidx.core.view.isVisible
-import com.algolia.search.model.recommend.RecommendationModel
 import com.mirrar.tablettryon.databinding.FilterNavLayoutBinding
 import com.mirrar.tablettryon.products.viewModel.ProductViewModel
 import com.mirrar.tablettryon.tools.filter.FilterDataModel

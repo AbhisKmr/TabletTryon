@@ -21,7 +21,7 @@ class FilterChipAdapter : RecyclerView.Adapter<FilterChipAdapter.ViewHolder>() {
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
-    ): FilterChipAdapter.ViewHolder {
+    ): ViewHolder {
         this.ctx = parent.context
         return ViewHolder(
             FilterChipItemBinding.inflate(
@@ -34,7 +34,7 @@ class FilterChipAdapter : RecyclerView.Adapter<FilterChipAdapter.ViewHolder>() {
 
     @SuppressLint("NotifyDataSetChanged")
     override fun onBindViewHolder(
-        holder: FilterChipAdapter.ViewHolder,
+        holder: ViewHolder,
         @SuppressLint("RecyclerView") position: Int
     ) {
 

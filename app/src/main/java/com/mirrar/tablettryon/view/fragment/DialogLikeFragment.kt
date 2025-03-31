@@ -8,13 +8,7 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
-import androidx.navigation.fragment.findNavController
-import com.mirrar.tablettryon.R
 import com.mirrar.tablettryon.databinding.CustomAlertLayoutBinding
-import com.mirrar.tablettryon.tools.FirebaseHelper
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 
 class DialogLikeFragment(private val tncTxt: String, val onNext: () -> Unit) : Fragment() {

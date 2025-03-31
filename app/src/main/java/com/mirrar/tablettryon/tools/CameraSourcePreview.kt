@@ -5,7 +5,6 @@ import android.content.Context
 import android.util.AttributeSet
 import android.util.Log
 import android.view.ViewGroup
-import com.mirrar.tablettryon.utility.AppConstraint.IMAGE_RENDER_SIZE
 
 class CameraSourcePreview(
     context: Context,

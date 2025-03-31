@@ -1,6 +1,7 @@
 package com.mirrar.tablettryon.view.fragment.email
 
 import android.os.Bundle
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -87,7 +88,9 @@ class EmailPopupFragment(val emailTag: String, val p: Product? = null) : DialogF
                     binding.sendTv.text = "Send"
                     Toast.makeText(
                         requireContext(), "Failed to send email.", Toast.LENGTH_SHORT
-                    ).show()
+                    ).apply {
+                        setGravity(Gravity.CENTER, 0, 0)
+                    }.show()
                 }
             }
         }

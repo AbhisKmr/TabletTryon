@@ -1,10 +1,6 @@
 package com.mirrar.tablettryon.network
 
 import okhttp3.*
-import okhttp3.logging.HttpLoggingInterceptor
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import java.io.IOException
 
 class CurlInterceptor : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {

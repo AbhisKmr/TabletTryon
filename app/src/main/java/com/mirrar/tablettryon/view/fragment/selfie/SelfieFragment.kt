@@ -1,9 +1,9 @@
 package com.mirrar.tablettryon.view.fragment.selfie
 
 import android.content.Intent
-import android.graphics.Bitmap
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.util.Log
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,11 +11,8 @@ import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentTransaction
-import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
 import com.mirrar.tablettryon.R
 import com.mirrar.tablettryon.databinding.FragmentSelfieBinding
-import com.mirrar.tablettryon.products.model.product.Product
 import com.mirrar.tablettryon.utility.AppConstraint.recommendationModel
 import com.mirrar.tablettryon.utility.AppConstraint.userEmail
 import com.mirrar.tablettryon.utility.AppConstraint.userName
@@ -23,20 +20,16 @@ import com.mirrar.tablettryon.utility.Bookmarks
 import com.mirrar.tablettryon.utility.HelperFunctions
 import com.mirrar.tablettryon.view.activity.MainActivity
 import com.mirrar.tablettryon.view.fragment.email.EmailHelper
-import com.mirrar.tablettryon.view.fragment.email.dataModel.emailApi.SendEmailApiRequest
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import com.mirrar.tablettryon.view.fragment.email.dataModel.emailApi.Object
 import com.mirrar.tablettryon.view.fragment.selfie.adapter.SelfieAdapter
 import kotlinx.coroutines.CoroutineScope
-import kotlin.math.roundToInt
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class SelfieFragment : DialogFragment() {
 
     private var _binding: FragmentSelfieBinding? = null
     private val binding get() = _binding!!
+    private val scrollOffset = 100
 
     override fun onDestroyView() {
         super.onDestroyView()
@@ -82,6 +75,20 @@ class SelfieFragment : DialogFragment() {
         binding.imageView2.setOnClickListener {
             dismissDialog()
         }
+
+        try {
+            binding.imageRecycler.postDelayed({
+                binding.imageRecycler.smoothScrollBy(scrollOffset, 0)
+            }, 500)
+
+
+            binding.imageRecycler.postDelayed({
+                binding.imageRecycler.smoothScrollBy(-scrollOffset, 0)
+            }, 1000)
+        } catch (e: Exception) {
+            Log.e("Exception", "onViewCreated: ${e.localizedMessage}", )
+        }
+
 
         binding.finish.setOnClickListener {
             Bookmarks.clearAll()
@@ -131,7 +138,9 @@ class SelfieFragment : DialogFragment() {
                 } else {
                     Toast.makeText(
                         requireContext(), "Failed to send email.", Toast.LENGTH_SHORT
-                    ).show()
+                    ).apply {
+                        setGravity(Gravity.CENTER, 0, 0)
+                    }.show()
                 }
             }
         }

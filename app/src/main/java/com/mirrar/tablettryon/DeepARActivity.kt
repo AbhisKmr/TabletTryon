@@ -29,7 +29,6 @@ import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
-import androidx.core.graphics.createBitmap
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.LifecycleOwner
 import com.google.common.util.concurrent.ListenableFuture
@@ -41,13 +40,11 @@ import com.mirrar.tablettryon.network.Retrofit
 import com.mirrar.tablettryon.products.model.product.Product
 import com.mirrar.tablettryon.products.viewModel.ProductViewModel
 import com.mirrar.tablettryon.tools.DeepARActivityHelper
-import com.mirrar.tablettryon.utility.AppConstraint.AR_BITMAP
 import com.mirrar.tablettryon.utility.AppConstraint.cameraRatio
 import com.mirrar.tablettryon.utility.HelperFunctions.getActionBarSize
 import com.mirrar.tablettryon.utility.HelperFunctions.getDisplaySize
 import com.mirrar.tablettryon.utility.HelperFunctions.getNavigationBarHeight
 import com.mirrar.tablettryon.view.fragment.selfie.SelfieFragment
-import java.nio.Buffer
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.util.concurrent.ExecutionException
@@ -252,10 +249,27 @@ class DeepARActivity : AppCompatActivity(), SurfaceHolder.Callback, AREventListe
         val dis = getDisplaySize(this)
         val bar = getActionBarSize(this)
         val nav = getNavigationBarHeight(this)
+        /*
+        var width = 1356 - 42//IMAGE_RENDER_SIZE.width
+        W:1356 || h:1525
+        @get:JvmName("getHeightProperty")
+        var height = 2220-(112+84)//IMAGE_RENDER_SIZE.height
+
+
+
 
         println("W:${binding.cardView3.width} || h:${binding.cardView3.height}")
         println("d-W:${dis.first} || d-h:${dis.second}")
         println("nav:${nav} || bar:${bar}")
+
+        W:1368 || h:1613
+        d-W:1440 || d-h:2220
+        nav:84 || bar:96
+         */
+
+        binding.cameraSourcePreview.width = binding.cardView3.width - (nav / 2)
+        binding.cameraSourcePreview.height = dis.second - (bar + nav)
+        binding.cameraSourcePreview.invalidate()
 
         val cameraResolution = Size((height * cameraRatio).toInt(), height)
         val cameraSelector = CameraSelector.Builder().requireLensFacing(lensFacing)

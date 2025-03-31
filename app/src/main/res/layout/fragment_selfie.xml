@@ -7,7 +7,7 @@
     android:background="#BA111111"
     android:clickable="true"
     android:focusable="true"
-    tools:context=".view.fragment.selfie.SelfieFragment">
+    tools:context="com.mirrar.tablettryon.view.fragment.selfie.SelfieFragment">
 
     <View
         android:id="@+id/closeView"
@@ -25,7 +25,7 @@
         android:clipChildren="true"
         android:focusable="true"
         app:cardCornerRadius="64dp"
-        app:layout_constraintHeight_percent=".8"
+        app:layout_constraintHeight_percent=".7"
         app:layout_constraintTop_toTopOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -35,12 +35,14 @@
             app:layout_constraintHeight_percent=".8"
             app:layout_constraintTop_toTopOf="parent">
 
+
+            <!--            app:cardBackgroundColor="@color/primery_purple"-->
             <androidx.cardview.widget.CardView
                 android:id="@+id/cardView6"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:elevation="0dp"
-                app:cardBackgroundColor="@color/primery_purple"
+                app:cardBackgroundColor="@color/white"
                 app:cardCornerRadius="64dp"
                 app:cardElevation="0dp"
                 app:layout_constraintHeight_percent=".6"
@@ -51,31 +53,19 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
+                app:layout_constraintBottom_toTopOf="@+id/imageRecycler"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/cardView6">
+                app:layout_constraintTop_toTopOf="@+id/imageRecycler">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:layout_marginTop="44dp"
                     android:fontFamily="@font/manrope_extra_bold"
-                    android:text="Your style"
-                    android:textColor="@color/white"
-                    android:textSize="26sp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginTop="-8dp"
-                    android:fontFamily="@font/manrope_extra_bold"
-                    android:maxLines="1"
-                    android:text="Lorem ipsum simply dummy text"
+                    android:text="Thank you for exploring your perfect look!"
                     android:textColor="@color/black"
-                    android:textSize="16sp"
-                    android:visibility="gone" />
+                    android:textSize="22sp" />
 
             </LinearLayout>
 
@@ -107,13 +97,14 @@
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:layout_marginHorizontal="24dp"
+                android:layout_marginTop="80dp"
                 android:orientation="horizontal"
                 android:visibility="gone"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 app:layout_constraintBottom_toBottomOf="@+id/cardView6"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/linearLayout5"
+                app:layout_constraintTop_toTopOf="parent"
                 tools:listitem="@layout/selfie_item"
                 tools:visibility="visible" />
 
@@ -155,71 +146,88 @@
             </LinearLayout>
 
             <TextView
+                android:id="@+id/textView14"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="44dp"
                 android:fontFamily="@font/manrope_bold"
                 android:gravity="center"
                 android:text="Receive your style on your mobile via QR code / Email"
                 android:textColor="@color/text_black"
                 android:textSize="16sp"
+                app:layout_constraintBottom_toBottomOf="@+id/cardView6"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/cardView6" />
 
-            <TextView
-                android:id="@+id/textView11"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/manrope_bold"
-                android:text="Scan the code"
-                android:textColor="@color/black"
-                android:textSize="14sp"
-                app:layout_constraintBottom_toTopOf="@+id/imageView4"
-                app:layout_constraintEnd_toEndOf="@+id/imageView4"
-                app:layout_constraintStart_toStartOf="@+id/imageView4" />
-
-            <ImageView
-                android:id="@+id/imageView4"
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:layout_marginStart="62dp"
-                android:layout_marginTop="40dp"
-                android:scaleType="centerCrop"
+                android:background="@drawable/edit_text_border"
                 app:layout_constraintBottom_toBottomOf="@+id/linearLayout3"
                 app:layout_constraintDimensionRatio="1:1"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/linearLayout3" />
+                app:layout_constraintStart_toStartOf="@+id/imageRecycler"
+                app:layout_constraintTop_toTopOf="@+id/linearLayout3">
 
-            <ProgressBar
-                android:id="@+id/qrLoader"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="@+id/imageView4"
-                app:layout_constraintDimensionRatio="1:1"
-                app:layout_constraintEnd_toEndOf="@+id/imageView4"
-                app:layout_constraintStart_toStartOf="@+id/imageView4"
-                app:layout_constraintTop_toBottomOf="@+id/textView11"
-                tools:visibility="visible" />
+                <TextView
+                    android:id="@+id/textView11"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:fontFamily="@font/manrope_bold"
+                    android:text="Scan the code"
+                    android:textColor="@color/black"
+                    android:textSize="12sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <ImageView
+                    android:id="@+id/imageView4"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_marginVertical="12dp"
+                    android:padding="12dp"
+                    android:scaleType="centerCrop"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintDimensionRatio="1:1"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/textView11"
+                    tools:src="@drawable/qr_code" />
+
+                <ProgressBar
+                    android:id="@+id/qrLoader"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="@+id/imageView4"
+                    app:layout_constraintDimensionRatio="1:1"
+                    app:layout_constraintEnd_toEndOf="@+id/imageView4"
+                    app:layout_constraintStart_toStartOf="@+id/imageView4"
+                    app:layout_constraintTop_toBottomOf="@+id/textView11"
+                    tools:visibility="visible" />
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/guideline"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                app:layout_constraintGuide_percent="0.5" />
+                app:layout_constraintGuide_percent="0.43" />
 
             <LinearLayout
                 android:id="@+id/linearLayout3"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="62dp"
+                android:layout_marginTop="32dp"
+                android:background="@drawable/edit_text_border"
                 android:orientation="vertical"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
+                android:padding="32dp"
+                app:layout_constraintEnd_toEndOf="@+id/imageRecycler"
                 app:layout_constraintStart_toStartOf="@+id/guideline"
-                app:layout_constraintTop_toBottomOf="@+id/cardView6">
+                app:layout_constraintTop_toBottomOf="@+id/textView14">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -227,12 +235,12 @@
                     android:fontFamily="@font/manrope_extra_bold"
                     android:text="Get it on your inbox"
                     android:textColor="@color/black"
-                    android:textSize="14sp" />
+                    android:textSize="12sp" />
 
                 <androidx.appcompat.widget.AppCompatEditText
                     android:id="@+id/name"
                     android:layout_width="match_parent"
-                    android:layout_height="58dp"
+                    android:layout_height="50dp"
                     android:layout_gravity="center"
                     android:layout_marginTop="16dp"
                     android:background="@drawable/edit_text_border"
@@ -245,7 +253,7 @@
                 <androidx.appcompat.widget.AppCompatEditText
                     android:id="@+id/email"
                     android:layout_width="match_parent"
-                    android:layout_height="58dp"
+                    android:layout_height="50dp"
                     android:layout_gravity="center"
                     android:layout_marginTop="16dp"
                     android:background="@drawable/edit_text_border"
@@ -258,12 +266,12 @@
                 <androidx.cardview.widget.CardView
                     android:id="@+id/send"
                     android:layout_width="match_parent"
-                    android:layout_height="58dp"
+                    android:layout_height="50dp"
                     android:layout_marginTop="12dp"
                     android:elevation="0dp"
                     android:textAllCaps="false"
                     android:textColor="@color/white"
-                    app:cardBackgroundColor="@color/primery_purple"
+                    app:cardBackgroundColor="@color/black"
                     app:cardCornerRadius="8dp"
                     app:cardElevation="0dp">
 
@@ -289,58 +297,78 @@
                 </androidx.cardview.widget.CardView>
             </LinearLayout>
 
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/linearLayout6"
+                android:layout_width="0dp"
+                android:layout_height="54dp"
+                android:orientation="horizontal"
+                android:visibility="visible"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/imageRecycler"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/linearLayout3">
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/imageView2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    app:cardBackgroundColor="@color/primery_purple"
+                    app:cardCornerRadius="84dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:maxLines="@integer/material_motion_duration_long_1"
+                        android:paddingHorizontal="24dp"
+                        android:text="Go Back"
+                        android:textColor="@color/white" />
+
+                </androidx.cardview.widget.CardView>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/finish"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="end"
+                    android:elevation="0dp"
+                    app:cardElevation="0dp"
+                    android:layout_marginEnd="12dp"
+                    app:cardBackgroundColor="@color/white"
+                    app:cardCornerRadius="84dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:strokeColor="@color/chip_gray"
+                    app:strokeWidth="0dp">
+
+                    <TextView
+                        android:layout_width="84dp"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:text="Exit"
+                        android:textColor="@color/black" />
+
+                </com.google.android.material.card.MaterialCardView>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.cardview.widget.CardView>
 
-    <LinearLayout
-        android:id="@+id/linearLayout6"
-        android:layout_width="wrap_content"
-        android:layout_height="84dp"
-        android:layout_marginBottom="80dp"
-        android:orientation="horizontal"
+    <ImageView
+        android:id="@+id/imageView7"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:scaleType="fitEnd"
+        android:src="@drawable/club_avolta_web"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <androidx.cardview.widget.CardView
-            android:id="@+id/imageView2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:cardBackgroundColor="@color/text_black"
-            app:cardCornerRadius="84dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="84dp"
-                android:gravity="center"
-                android:maxLines="@integer/material_motion_duration_long_1"
-                android:paddingHorizontal="24dp"
-                android:text="Go Back"
-                android:textColor="@color/white" />
-
-        </androidx.cardview.widget.CardView>
-
-        <androidx.cardview.widget.CardView
-            android:id="@+id/finish"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="44dp"
-            app:cardBackgroundColor="@color/text_black"
-            app:cardCornerRadius="84dp">
-
-            <TextView
-                android:layout_width="84dp"
-                android:layout_height="84dp"
-                android:gravity="center"
-                android:text="Exit"
-                android:textColor="@color/white" />
-
-        </androidx.cardview.widget.CardView>
-
-    </LinearLayout>
+        app:layout_constraintEnd_toEndOf="@+id/constraintLayout"
+        app:layout_constraintStart_toStartOf="@+id/constraintLayout" />
 
     <androidx.appcompat.widget.AppCompatEditText
+        android:id="@+id/appCompatEditText"
         android:layout_width="match_parent"
         android:layout_height="?actionBarSize"
         android:elevation="12dp"

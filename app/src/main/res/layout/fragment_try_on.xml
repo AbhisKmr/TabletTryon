@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/background"
-    tools:context=".view.fragment.tryon.TryOnFragment">
+    android:background="@color/white"
+    tools:context="com.mirrar.tablettryon.view.fragment.tryon.TryOnFragment">
 
     <ImageView
         android:id="@+id/imageView"
@@ -14,6 +14,7 @@
         android:layout_marginStart="36dp"
         android:scaleType="center"
         android:src="@drawable/avolta_logo"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="@+id/cardView2"
         app:layout_constraintDimensionRatio="2:1"
         app:layout_constraintHeight_percent=".08"
@@ -76,7 +77,7 @@
 
     </androidx.cardview.widget.CardView>
 
-    <androidx.cardview.widget.CardView
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/cardView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -86,7 +87,9 @@
         app:cardCornerRadius="255dp"
         app:cardElevation="0dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        app:strokeColor="@color/chip_gray"
+        app:strokeWidth="1dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -114,7 +117,7 @@
                 android:textColor="@color/red_txt_color"
                 android:textSize="18sp" />
         </LinearLayout>
-    </androidx.cardview.widget.CardView>
+    </com.google.android.material.card.MaterialCardView>
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardView3"
@@ -370,7 +373,8 @@
         app:layout_constraintEnd_toEndOf="@+id/cardView3"
         app:layout_constraintStart_toEndOf="@+id/imageView3"
         app:layout_constraintTop_toBottomOf="@+id/cardView3"
-        tools:listitem="@layout/product_card">
+        tools:listitem="@layout/product_card"
+        tools:visibility="visible">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -382,6 +386,7 @@
                 android:layout_height="match_parent"
                 android:layout_marginStart="12dp"
                 android:elevation="0dp"
+                app:cardBackgroundColor="@color/chip_gray"
                 app:cardCornerRadius="28dp"
                 app:cardElevation="0dp" />
 
@@ -390,6 +395,7 @@
                 android:layout_height="match_parent"
                 android:layout_marginStart="12dp"
                 android:elevation="0dp"
+                app:cardBackgroundColor="@color/chip_gray"
                 app:cardCornerRadius="28dp"
                 app:cardElevation="0dp" />
 
@@ -398,6 +404,7 @@
                 android:layout_height="match_parent"
                 android:layout_marginStart="12dp"
                 android:elevation="0dp"
+                app:cardBackgroundColor="@color/chip_gray"
                 app:cardCornerRadius="28dp"
                 app:cardElevation="0dp" />
 
@@ -406,6 +413,7 @@
                 android:layout_height="match_parent"
                 android:layout_marginStart="12dp"
                 android:elevation="0dp"
+                app:cardBackgroundColor="@color/chip_gray"
                 app:cardCornerRadius="28dp"
                 app:cardElevation="0dp" />
 
@@ -414,6 +422,7 @@
                 android:layout_height="match_parent"
                 android:layout_marginStart="12dp"
                 android:elevation="0dp"
+                app:cardBackgroundColor="@color/chip_gray"
                 app:cardCornerRadius="28dp"
                 app:cardElevation="0dp" />
 
@@ -422,6 +431,7 @@
                 android:layout_height="match_parent"
                 android:layout_marginStart="12dp"
                 android:elevation="0dp"
+                app:cardBackgroundColor="@color/chip_gray"
                 app:cardCornerRadius="28dp"
                 app:cardElevation="0dp" />
 
@@ -430,6 +440,7 @@
                 android:layout_height="match_parent"
                 android:layout_marginStart="12dp"
                 android:elevation="0dp"
+                app:cardBackgroundColor="@color/chip_gray"
                 app:cardCornerRadius="28dp"
                 app:cardElevation="0dp" />
 
@@ -438,6 +449,7 @@
                 android:layout_height="match_parent"
                 android:layout_marginStart="12dp"
                 android:elevation="0dp"
+                app:cardBackgroundColor="@color/chip_gray"
                 app:cardCornerRadius="28dp"
                 app:cardElevation="0dp" />
         </LinearLayout>
@@ -459,16 +471,16 @@
             android:id="@+id/catalogue"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
-            android:backgroundTint="@color/white"
+            android:backgroundTint="@color/primery_purple"
             android:drawableLeft="@drawable/catalogue"
             android:drawablePadding="4dp"
             android:maxWidth="1000dp"
             android:maxLines="1"
-            android:paddingHorizontal="24dp"
-            android:paddingVertical="17dp"
+            android:paddingHorizontal="44dp"
+            android:paddingVertical="18dp"
             android:text="Catalogue"
-            android:textColor="@color/text_black"
-            android:textSize="14sp"
+            android:textColor="@color/white"
+            android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="@+id/next"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/next" />
@@ -477,15 +489,16 @@
             android:id="@+id/next"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/white"
-            android:drawableLeft="@drawable/ic_sefie"
+            android:backgroundTint="@color/primery_purple"
+            android:drawableLeft="@drawable/ic_email"
+            android:drawableTint="@color/white"
             android:maxWidth="1000dp"
             android:maxLines="1"
-            android:paddingHorizontal="24dp"
-            android:paddingVertical="17dp"
-            android:text="Receive you selfie!"
-            android:textColor="@color/text_black"
-            android:textSize="14sp"
+            android:paddingHorizontal="44dp"
+            android:paddingVertical="18dp"
+            android:text="Receive your selfie!"
+            android:textColor="@color/white"
+            android:textSize="18sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 

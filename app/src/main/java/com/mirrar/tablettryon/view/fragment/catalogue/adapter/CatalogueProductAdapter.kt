@@ -27,7 +27,7 @@ class CatalogueProductAdapter(private val clickListener: (Int, Product) -> Unit)
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
-    ): CatalogueProductAdapter.ViewHolder {
+    ): ViewHolder {
         this.ctx = parent.context
         return ViewHolder(
             CatalogueProductItemBinding.inflate(
@@ -39,7 +39,7 @@ class CatalogueProductAdapter(private val clickListener: (Int, Product) -> Unit)
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    override fun onBindViewHolder(holder: CatalogueProductAdapter.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
         val p = list[position]
 

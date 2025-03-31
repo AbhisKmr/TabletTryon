@@ -1,9 +1,7 @@
 package com.mirrar.tablettryon.network
 
 import com.mirrar.tablettryon.products.model.product.ApiProduct
-import okhttp3.ResponseBody
 import retrofit2.Response
-import java.util.UUID
 
 class Repository(private val apiService: ApiService) {
 

@@ -10,6 +10,7 @@ import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.Log
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -265,7 +266,9 @@ class CameraFragment : Fragment() {
         if (permissions.all { it.value }) {
             startCamera()
         } else {
-            Toast.makeText(requireContext(), "Camera Permission Denied", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), "Camera Permission Denied", Toast.LENGTH_SHORT).apply {
+                setGravity(Gravity.CENTER, 0, 0)
+            }.show()
         }
     }
 

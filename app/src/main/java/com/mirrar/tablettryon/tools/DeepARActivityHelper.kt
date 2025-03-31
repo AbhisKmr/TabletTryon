@@ -11,7 +11,6 @@ import androidx.drawerlayout.widget.DrawerLayout.DrawerListener
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.mirrar.tablettryon.DeepARActivity
@@ -20,6 +19,7 @@ import com.mirrar.tablettryon.databinding.ActivityDeepAractivityBinding
 import com.mirrar.tablettryon.network.Resource
 import com.mirrar.tablettryon.products.model.product.Product
 import com.mirrar.tablettryon.products.viewModel.ProductViewModel
+import com.mirrar.tablettryon.utility.AppConstraint.totalProducts
 import com.mirrar.tablettryon.utility.Bookmarks
 import com.mirrar.tablettryon.utility.GlobalProducts
 import com.mirrar.tablettryon.utility.HelperFunctions.downloadAndSaveFile
@@ -32,7 +32,6 @@ import com.mirrar.tablettryon.view.fragment.tryon.viewModel.AlgoliaViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class DeepARActivityHelper(
     private val deepARActivity: DeepARActivity,
@@ -60,7 +59,6 @@ class DeepARActivityHelper(
 
     private var sortingOrder = "low_to_high"
     private var currentPage = 0
-    private var totalProducts = 0
     private var minPrice = 0
     private var maxPrice = 0
     private var brandList = mutableListOf<String>()
@@ -75,7 +73,6 @@ class DeepARActivityHelper(
             transaction.add(R.id.container, CatalogueFragment.newInstance(
                 sortingOrder,
                 currentPage,
-                totalProducts,
                 minPrice,
                 maxPrice,
                 brandList
@@ -170,15 +167,15 @@ class DeepARActivityHelper(
 
             CoroutineScope(Dispatchers.IO).launch {
                 val name = p.localItemCode.trim().replace(" ", "_")
-//                val path =
-//                    downloadAndSaveFile(deepARActivity, p.asset3DUrl ?: "none", "$name.deepar")
-                println(p.asset3DUrl)
                 val path =
-                    downloadAndSaveFile(
-                        deepARActivity,
-                        assetsUrl[i % assetsUrl.size],
-                        "$name.deepar"
-                    )
+                    downloadAndSaveFile(deepARActivity, p.asset3DUrlPath ?: "none", "$name.deepar")
+                println(p.asset3DUrl)
+//                val path =
+//                    downloadAndSaveFile(
+//                        deepARActivity,
+//                        assetsUrl[i % assetsUrl.size],
+//                        "$name.deepar"
+//                    )
 
                 applyEffect(path ?: "none")
 
@@ -195,7 +192,7 @@ class DeepARActivityHelper(
         ) { sorting, min, max, brandList ->
             this.sortingOrder = sorting
             this.currentPage = 0
-            this.totalProducts = 0
+            totalProducts = 0
             this.minPrice = min.toInt()
             this.maxPrice = max.toInt()
             this.brandList.clear()
@@ -259,7 +256,7 @@ class DeepARActivityHelper(
                 }
 
                 is Resource.Loading -> {
-
+                    adapter?.onLoading(true)
                 }
 
                 is Resource.Success -> {

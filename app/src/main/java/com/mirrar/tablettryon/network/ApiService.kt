@@ -60,7 +60,7 @@ interface ApiService {
     @POST("process-glasses")
     fun getRecommendationBasedOnFace(@Part image: MultipartBody.Part): Call<FaceRecommendationModel>
 
-    @GET("filter-products")
+    @GET("fetch-products")
     suspend fun getFilteredProducts(
         @Query("sort_order") sortOrder: String,
         @Query("page") page: Int,
