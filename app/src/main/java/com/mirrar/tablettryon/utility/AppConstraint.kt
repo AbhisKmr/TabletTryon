@@ -14,6 +14,7 @@ object AppConstraint {
     var CLUB_AVOLTA = ""
     var ALGOLIA_INDEX = "avolta-glasses"
     var IS_3D_ENABLED = false
+    var IS_FILTER_APPLIED = false
 
     var AR_BITMAP: Bitmap? = null
     var recommendationModel: FaceRecommendationModel? = null

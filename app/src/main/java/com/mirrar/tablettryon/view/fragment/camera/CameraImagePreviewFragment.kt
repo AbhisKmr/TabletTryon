@@ -10,6 +10,7 @@ import androidx.navigation.fragment.findNavController
 import com.mirrar.tablettryon.R
 import com.mirrar.tablettryon.databinding.FragmentCameraImagePreviewBinding
 import com.mirrar.tablettryon.utility.AppConstraint.AR_BITMAP
+import com.mirrar.tablettryon.utility.AppConstraint.IS_FILTER_APPLIED
 import com.mirrar.tablettryon.utility.AppConstraint.recommendationModel
 import com.mirrar.tablettryon.utility.AppConstraint.totalProducts
 import com.mirrar.tablettryon.utility.GlobalProducts
@@ -44,6 +45,7 @@ class CameraImagePreviewFragment : Fragment() {
 //
 //            }
             totalProducts = 0
+            IS_FILTER_APPLIED = false
             findNavController().navigate(R.id.action_cameraImagePreviewFragment4_to_tryOnFragment)
         }
 

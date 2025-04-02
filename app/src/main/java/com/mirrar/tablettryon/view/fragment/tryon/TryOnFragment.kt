@@ -43,6 +43,7 @@ import com.mirrar.tablettryon.products.viewModel.ProductViewModel
 import com.mirrar.tablettryon.tools.FilterManager
 import com.mirrar.tablettryon.utility.AppConstraint.AR_BITMAP
 import com.mirrar.tablettryon.utility.AppConstraint.IS_3D_ENABLED
+import com.mirrar.tablettryon.utility.AppConstraint.IS_FILTER_APPLIED
 import com.mirrar.tablettryon.utility.AppConstraint.totalProducts
 import com.mirrar.tablettryon.utility.Bookmarks
 import com.mirrar.tablettryon.utility.GlobalProducts
@@ -154,7 +155,11 @@ class TryOnFragment : Fragment() {
 
         binding.cardView2.setOnClickListener {
             if (Bookmarks.getBookmarks().isEmpty()) {
-                Toast.makeText(requireContext(), "Click on heart to wishlist products first.", Toast.LENGTH_SHORT).apply {
+                Toast.makeText(
+                    requireContext(),
+                    "Click on heart to wishlist products first.",
+                    Toast.LENGTH_SHORT
+                ).apply {
                     setGravity(Gravity.TOP or Gravity.RIGHT, 200, 10)
                 }.show()
                 return@setOnClickListener
@@ -250,13 +255,23 @@ class TryOnFragment : Fragment() {
                         maxPrice = 1000
                     }
                     isLoading = true
-                    productViewModel.fetchProduct(
-                        sortingOrder = sortingOrder,
-                        page = currentPage,
-                        min = minPrice,
-                        max = maxPrice,
-                        brands = brandList
-                    )
+
+                    if (IS_FILTER_APPLIED) {
+                        productViewModel.filterProduct(
+                            sortingOrder = sortingOrder,
+                            page = currentPage,
+                            min = minPrice,
+                            max = maxPrice
+                        )
+                    } else {
+                        productViewModel.fetchProduct(
+                            sortingOrder = sortingOrder,
+                            page = currentPage,
+                            min = minPrice,
+                            max = maxPrice,
+                            brands = brandList
+                        )
+                    }
                 }
             }
         })

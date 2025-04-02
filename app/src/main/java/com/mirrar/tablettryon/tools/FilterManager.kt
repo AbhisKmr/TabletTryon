@@ -6,6 +6,7 @@ import androidx.core.view.isVisible
 import com.mirrar.tablettryon.databinding.FilterNavLayoutBinding
 import com.mirrar.tablettryon.products.viewModel.ProductViewModel
 import com.mirrar.tablettryon.tools.filter.FilterDataModel
+import com.mirrar.tablettryon.utility.AppConstraint.IS_FILTER_APPLIED
 import com.mirrar.tablettryon.utility.AppConstraint.recommendationModel
 import com.mirrar.tablettryon.utility.GlobalProducts
 import com.mirrar.tablettryon.utility.HelperFunctions.rotateImage
@@ -72,6 +73,7 @@ class FilterManager(
             filterListAdapter.notifyDataSetChanged()
             minPrince = 0f
             maxPrince = 10000f
+            IS_FILTER_APPLIED = false
             updateRange(minPrince, maxPrince)
             applyFilter("low_to_high", minPrince, maxPrince, emptyList())
             GlobalProducts.updateProduct(recommendationModel?.recommendations ?: emptyList())
@@ -112,7 +114,8 @@ class FilterManager(
             if (maxPrince == 0f) {
                 maxPrince = 1000f
             }
-            productViewModel.fetchProduct(
+            IS_FILTER_APPLIED = true
+            productViewModel.filterProduct(
                 sortingOrder = sorting,
                 min = minPrince.toInt(),
                 max = maxPrince.toInt(),

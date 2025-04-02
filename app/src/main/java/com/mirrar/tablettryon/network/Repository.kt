@@ -5,7 +5,24 @@ import retrofit2.Response
 
 class Repository(private val apiService: ApiService) {
 
-    suspend fun fetchCategories(
+    suspend fun fetchProducts(
+        sortingOrder: String,
+        uuid: String,
+        page: Int,
+        minPrice: Int,
+        maxPrice: Int,
+        brands: List<String>
+    ): Resource<ApiProduct> {
+        return try {
+            val response =
+                apiService.getProducts(sortingOrder, page, uuid, minPrice, maxPrice, brands)
+            handleApiResponse(response)
+        } catch (e: Exception) {
+            Resource.Error("Network error: ${e.localizedMessage}")
+        }
+    }
+
+    suspend fun filterProducts(
         sortingOrder: String,
         uuid: String,
         page: Int,

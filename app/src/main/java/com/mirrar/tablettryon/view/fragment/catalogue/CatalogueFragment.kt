@@ -24,6 +24,7 @@ import com.mirrar.tablettryon.network.Retrofit
 import com.mirrar.tablettryon.products.model.product.Product
 import com.mirrar.tablettryon.products.viewModel.ProductViewModel
 import com.mirrar.tablettryon.tools.FilterManager
+import com.mirrar.tablettryon.utility.AppConstraint.IS_FILTER_APPLIED
 import com.mirrar.tablettryon.utility.AppConstraint.totalProducts
 import com.mirrar.tablettryon.utility.GlobalProducts
 import com.mirrar.tablettryon.view.fragment.ProductDetailsFragment
@@ -148,13 +149,22 @@ class CatalogueFragment(
                     }
                     isLoading = true
                     binding.productLoading.isVisible = true
-                    productViewModel.fetchProduct(
-                        sortingOrder = sortingOrder,
-                        page = currentPage,
-                        min = minPrice,
-                        max = maxPrice,
-                        brands = brandList
-                    )
+                    if (IS_FILTER_APPLIED) {
+                        productViewModel.filterProduct(
+                            sortingOrder = sortingOrder,
+                            page = currentPage,
+                            min = minPrice,
+                            max = maxPrice
+                        )
+                    } else {
+                        productViewModel.fetchProduct(
+                            sortingOrder = sortingOrder,
+                            page = currentPage,
+                            min = minPrice,
+                            max = maxPrice,
+                            brands = brandList
+                        )
+                    }
                 }
             }
         })

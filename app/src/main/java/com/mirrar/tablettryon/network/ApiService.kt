@@ -61,6 +61,16 @@ interface ApiService {
     fun getRecommendationBasedOnFace(@Part image: MultipartBody.Part): Call<FaceRecommendationModel>
 
     @GET("fetch-products")
+    suspend fun getProducts(
+        @Query("sort_order") sortOrder: String,
+        @Query("page") page: Int,
+        @Query("uuid") uuid: String,
+        @Query("min_price") minPrice: Int,
+        @Query("max_price") maxPrice: Int,
+        @Query("brand") brands: List<String>
+    ): Response<ApiProduct>
+
+    @GET("filter-products")
     suspend fun getFilteredProducts(
         @Query("sort_order") sortOrder: String,
         @Query("page") page: Int,

@@ -367,6 +367,7 @@
                 android:layout_height="match_parent"
                 android:layout_marginStart="12dp"
                 android:elevation="0dp"
+                app:cardBackgroundColor="@color/chip_gray"
                 app:cardCornerRadius="28dp"
                 app:cardElevation="0dp" />
 
@@ -375,6 +376,7 @@
                 android:layout_height="match_parent"
                 android:layout_marginStart="12dp"
                 android:elevation="0dp"
+                app:cardBackgroundColor="@color/chip_gray"
                 app:cardCornerRadius="28dp"
                 app:cardElevation="0dp" />
 
@@ -383,6 +385,7 @@
                 android:layout_height="match_parent"
                 android:layout_marginStart="12dp"
                 android:elevation="0dp"
+                app:cardBackgroundColor="@color/chip_gray"
                 app:cardCornerRadius="28dp"
                 app:cardElevation="0dp" />
 
@@ -391,6 +394,7 @@
                 android:layout_height="match_parent"
                 android:layout_marginStart="12dp"
                 android:elevation="0dp"
+                app:cardBackgroundColor="@color/chip_gray"
                 app:cardCornerRadius="28dp"
                 app:cardElevation="0dp" />
 
@@ -399,6 +403,7 @@
                 android:layout_height="match_parent"
                 android:layout_marginStart="12dp"
                 android:elevation="0dp"
+                app:cardBackgroundColor="@color/chip_gray"
                 app:cardCornerRadius="28dp"
                 app:cardElevation="0dp" />
 
@@ -407,6 +412,7 @@
                 android:layout_height="match_parent"
                 android:layout_marginStart="12dp"
                 android:elevation="0dp"
+                app:cardBackgroundColor="@color/chip_gray"
                 app:cardCornerRadius="28dp"
                 app:cardElevation="0dp" />
 
@@ -415,6 +421,7 @@
                 android:layout_height="match_parent"
                 android:layout_marginStart="12dp"
                 android:elevation="0dp"
+                app:cardBackgroundColor="@color/chip_gray"
                 app:cardCornerRadius="28dp"
                 app:cardElevation="0dp" />
 
@@ -423,6 +430,7 @@
                 android:layout_height="match_parent"
                 android:layout_marginStart="12dp"
                 android:elevation="0dp"
+                app:cardBackgroundColor="@color/chip_gray"
                 app:cardCornerRadius="28dp"
                 app:cardElevation="0dp" />
         </LinearLayout>
