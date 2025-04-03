@@ -154,7 +154,8 @@ class CatalogueFragment(
                             sortingOrder = sortingOrder,
                             page = currentPage,
                             min = minPrice,
-                            max = maxPrice
+                            max = maxPrice,
+                            brands = brandList,
                         )
                     } else {
                         productViewModel.fetchProduct(

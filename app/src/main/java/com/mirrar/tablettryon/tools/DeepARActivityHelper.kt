@@ -135,7 +135,11 @@ class DeepARActivityHelper(
 
         binding.cardView2.setOnClickListener {
             if (Bookmarks.getBookmarks().isEmpty()) {
-                Toast.makeText(deepARActivity, "Click on heart to wishlist products first.", Toast.LENGTH_SHORT).apply {
+                Toast.makeText(
+                    deepARActivity,
+                    "Click on heart to wishlist products first.",
+                    Toast.LENGTH_SHORT
+                ).apply {
                     setGravity(Gravity.TOP or Gravity.RIGHT, 200, 10)
                 }.show()
                 return@setOnClickListener
@@ -230,7 +234,8 @@ class DeepARActivityHelper(
                             sortingOrder = sortingOrder,
                             page = currentPage,
                             min = minPrice,
-                            max = maxPrice
+                            max = maxPrice,
+                            brands = brandList,
                         )
                     } else {
                         productViewModel.fetchProduct(

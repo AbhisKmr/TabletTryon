@@ -260,6 +260,7 @@ class TryOnFragment : Fragment() {
                         productViewModel.filterProduct(
                             sortingOrder = sortingOrder,
                             page = currentPage,
+                            brands = brandList,
                             min = minPrice,
                             max = maxPrice
                         )
