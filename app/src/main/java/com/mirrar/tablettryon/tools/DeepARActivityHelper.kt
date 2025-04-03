@@ -167,14 +167,17 @@ class DeepARActivityHelper(
             selectedProduct = p
             binding.brand.text = p.brand
             binding.productCode.text = p.localItemCode
-            binding.productPrice.text =
-                "${p.currency} ${p.priceDutyFree}"
+            binding.productPrice.text = "${p.currency} ${p.priceDutyFree}"
 
             CoroutineScope(Dispatchers.IO).launch {
-                val name = p.localItemCode.trim().replace(" ", "_")
-                val path =
-                    downloadAndSaveFile(deepARActivity, p.asset3DUrlPath ?: "none", "$name.deepar")
-                println(p.asset3DUrl)
+
+                val path = if (p.asset3DUrlPath == null) {
+                    val name = p.localItemCode.trim().replace(" ", "_")
+                    downloadAndSaveFile(deepARActivity, p.asset3DUrl ?: "none", "$name.deepar")
+                } else {
+                    p.asset3DUrlPath
+                }
+
 //                val path =
 //                    downloadAndSaveFile(
 //                        deepARActivity,
