@@ -40,7 +40,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/manrope_extra_bold"
-                android:text="Tell Us About You"
+                android:text="Share an email..."
                 android:textColor="@color/black"
                 android:textSize="36sp" />
 
@@ -50,7 +50,8 @@
                 android:layout_gravity="center"
                 android:fontFamily="@font/manrope_extra_bold"
                 android:gravity="center"
-                android:text="Share an email to recive your fav sunglasses in your inbox"
+                android:text="To recive your fav sunglasses in your inbox"
+                android:textStyle="bold"
                 android:textColor="@color/black"
                 android:textSize="16sp" />
 
