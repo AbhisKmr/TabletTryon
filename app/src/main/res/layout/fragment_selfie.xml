@@ -64,7 +64,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:fontFamily="@font/manrope_extra_bold"
-                    android:text="Thank you for exploring your perfect look!"
+                    android:text="Receive your next perfect pair via QR code or email"
                     android:textColor="@color/black"
                     android:textSize="22sp" />
 
@@ -234,7 +234,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/manrope_extra_bold"
-                    android:text="Get it on your inbox"
+                    android:text="Receive an email"
                     android:textColor="@color/black"
                     android:textSize="12sp" />
 
