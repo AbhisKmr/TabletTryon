@@ -105,11 +105,21 @@
                 android:src="@drawable/ic_heart_red" />
 
             <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:fontFamily="@font/manrope_bold"
+                android:gravity="center_vertical"
+                android:paddingHorizontal="12dp"
+                android:text="Wishlist"
+                android:textColor="@color/black"
+                android:textSize="18sp" />
+
+            <TextView
                 android:id="@+id/bookmarkCount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginStart="12dp"
                 android:background="@drawable/wishlist_txt_background"
                 android:fontFamily="@font/manrope_bold"
                 android:gravity="center_vertical"
@@ -459,7 +469,7 @@
             android:maxLines="1"
             android:paddingHorizontal="44dp"
             android:paddingVertical="18dp"
-            android:text="Catalogue"
+            android:text="View Catalogue"
             android:textColor="@color/white"
             android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="@+id/next"
@@ -477,7 +487,7 @@
             android:maxLines="1"
             android:paddingHorizontal="44dp"
             android:paddingVertical="18dp"
-            android:text="Receive your selfie!"
+            android:text="Get recommendations"
             android:textColor="@color/white"
             android:textSize="18sp"
             app:layout_constraintEnd_toEndOf="parent"

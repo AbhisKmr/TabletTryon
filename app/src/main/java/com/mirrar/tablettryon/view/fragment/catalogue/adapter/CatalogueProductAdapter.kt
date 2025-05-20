@@ -63,7 +63,7 @@ class CatalogueProductAdapter(private val clickListener: (Int, Product) -> Unit)
         updateHeartIcon(holder.binding.wishlist, p.isBookmarked)
 
         holder.binding.brand.text = p.brand
-        holder.binding.productCode.text = p.localItemCode
+        holder.binding.productCode.text = "${p.categories} ${p.localItemCode}"
         holder.binding.productPrice.text =
             "${p.currency} ${p.priceDutyFree}"
 

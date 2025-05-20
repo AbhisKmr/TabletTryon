@@ -43,7 +43,7 @@
                 android:gravity="center"
                 android:text="Share an email to receive details of your favorite sunglasses"
                 android:textColor="@color/black"
-                android:textSize="32sp" />
+                android:textSize="22sp" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -62,7 +62,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="50dp"
                 android:fontFamily="@font/manrope_regular"
-                android:text="Your Name"
+                android:text="Your name"
                 android:textColor="@color/black"
                 android:textSize="16sp" />
 
@@ -74,7 +74,7 @@
                 android:layout_marginTop="16dp"
                 android:background="@drawable/edit_text_border"
                 android:gravity="center_vertical"
-                android:hint="john doe"
+                android:hint="Enter your name"
                 android:inputType="textPersonName"
                 android:paddingHorizontal="16dp" />
 
@@ -83,7 +83,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
                 android:fontFamily="@font/manrope_regular"
-                android:text="Your Email"
+                android:text="Your email"
                 android:textColor="@color/black"
                 android:textSize="16sp" />
 
@@ -118,7 +118,7 @@
                     android:layout_gravity="center"
                     android:fontFamily="@font/manrope_bold"
                     android:gravity="center"
-                    android:text="Send"
+                    android:text="Save &amp; continue"
                     android:textColor="@color/white"
                     android:textSize="18sp" />
 
